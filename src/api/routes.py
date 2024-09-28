@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, SmokerUser
+from api.models import db, User, SmokerUser, Coach
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from datetime import datetime
@@ -92,6 +92,88 @@ def delete_smoker(smoker_id):
     db.session.delete(smoker)
     db.session.commit()
     return jsonify({"message": "Usuario eliminado correctamente"}), 200
+
+# CRUD COACHES
+
+# Obtener todos los coaches (GET)
+@api.route('/coaches', methods=['GET'])
+def get_all_coaches():
+    # Devuelve todos los coaches en formato JSON
+    coaches = Coach.query.all()
+    return jsonify([coach.serialize() for coach in coaches]), 200
+
+# Obtener un coach por ID (GET)
+@api.route('/coaches/<int:coach_id>', methods=['GET'])
+def get_coach(coach_id):
+    # Busca un coach por ID y devuelve su información
+    coach = Coach.query.get(coach_id)
+    if coach is None:
+        return jsonify({"error": "Coach no encontrado"}), 404
+    return jsonify(coach.serialize()), 200
+
+# Crear un nuevo coach (POST)
+@api.route('/coaches', methods=['POST'])
+def create_coach():
+    data = request.get_json()
+
+    # Verifica que se reciban todos los campos obligatorios
+    required_fields = ['email_coach', 'password_coach', 'nombre_coach', 'genero_coach', 'direccion', 'latitud', 'longitud', 'descripcion_coach', 'precio_servicio']
+    if not data or not all(key in data for key in required_fields):
+        return jsonify({"error": "Datos incompletos"}), 400
+
+    # Crea un nuevo objeto Coach y lo guarda en la base de datos
+    new_coach = Coach(
+        email_coach=data['email_coach'],
+        password_coach=data['password_coach'],
+        nombre_coach=data['nombre_coach'],
+        genero_coach=data['genero_coach'],
+        direccion=data['direccion'],
+        latitud=data['latitud'],
+        longitud=data['longitud'],
+        descripcion_coach=data['descripcion_coach'],
+        foto_coach=data.get('foto_coach'),  # Opcional
+        precio_servicio=data['precio_servicio']
+    )
+
+    db.session.add(new_coach)
+    db.session.commit()
+    return jsonify(new_coach.serialize()), 201
+
+# Actualizar un coach existente (PUT)
+@api.route('/coaches/<int:coach_id>', methods=['PUT'])
+def update_coach(coach_id):
+    coach = Coach.query.get(coach_id)
+    if coach is None:
+        return jsonify({"error": "Coach no encontrado"}), 404
+
+    data = request.get_json()
+
+    # Actualiza los atributos del coach con los nuevos datos
+    coach.email_coach = data.get('email_coach', coach.email_coach)
+    coach.password_coach = data.get('password_coach', coach.password_coach)
+    coach.nombre_coach = data.get('nombre_coach', coach.nombre_coach)
+    coach.genero_coach = data.get('genero_coach', coach.genero_coach)
+    coach.direccion = data.get('direccion', coach.direccion)
+    coach.latitud = data.get('latitud', coach.latitud)
+    coach.longitud = data.get('longitud', coach.longitud)
+    coach.descripcion_coach = data.get('descripcion_coach', coach.descripcion_coach)
+    coach.foto_coach = data.get('foto_coach', coach.foto_coach)
+    coach.precio_servicio = data.get('precio_servicio', coach.precio_servicio)
+
+    db.session.commit()
+    return jsonify(coach.serialize()), 200
+
+# Eliminar un coach (DELETE)
+@api.route('/coaches/<int:coach_id>', methods=['DELETE'])
+def delete_coach(coach_id):
+    coach = Coach.query.get(coach_id)
+    if coach is None:
+        return jsonify({"error": "Coach no encontrado"}), 404
+
+    db.session.delete(coach)
+    db.session.commit()
+    return jsonify({"message": "Coach eliminado correctamente"}), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True)
