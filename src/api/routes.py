@@ -206,3 +206,26 @@ def add_consuming():
     
     return jsonify(new_type.serialize()), 201
 
+@api.route('/tiposconsumo/<int:id>', methods=['PUT'])
+def update_consuming(id):
+    data = request.get_json()
+
+    tipo_consumo = TiposConsumo.query.get(id)
+    if not tipo_consumo:
+        return jsonify({"error": "Tipo de consumo no encontrado"}), 404
+
+    if 'name' in data:
+        tipo_consumo.name = data['name']
+
+    db.session.commit()
+    return jsonify(tipo_consumo.serialize()), 200
+
+@api.route('/tiposconsumo/<int:id>', methods=['DELETE'])
+def delete_consuming(id):
+    tiposconsumo = TiposConsumo.query.get(id)
+    if tiposconsumo is None:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    db.session.delete(tiposconsumo)
+    db.session.commit()
+    return jsonify({"message": "consumo eliminado correctamente"}), 200
