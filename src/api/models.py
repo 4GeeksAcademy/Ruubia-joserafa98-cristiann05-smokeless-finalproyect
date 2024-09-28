@@ -78,7 +78,7 @@ class SmokerUser(db.Model):
             "foto_usuario": self.foto_usuario
             # do not serialize the password, its a security breach
         }
-    class TiposConsumo(db.Model):
+class TiposConsumo(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         name = db.Column(db.String(120), unique=True, nullable=False)
 
