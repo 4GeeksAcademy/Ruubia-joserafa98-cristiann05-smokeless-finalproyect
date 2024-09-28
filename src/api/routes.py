@@ -101,3 +101,26 @@ if __name__ == '__main__':
 def get_all_consuming():
     tiposconsumo = TiposConsumo.query.all()
     return jsonify([tiposconsumo.serialize() for tiposconsumo in tiposconsumo]), 200
+
+@api.route('/tiposconsumo/<int:tiposconsumo_id>', methods=['GET'])
+def get_consuming(consuming_id):
+    tiposconsumo = TiposConsumo.query.get(consuming_id)
+    if tiposconsumo is None:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    return jsonify(tiposconsumo.serialize()), 200
+
+@api.route('/api/tiposconsumo', methods=['POST'])
+def add_consuming():
+    data = request.get_json()
+
+    required_fields = ['name'] 
+    if not data or not all(key in data for key in required_fields):
+        return jsonify({"error": "Datos incompletos"}), 400
+
+    new_type = TiposConsumo(name=data['name']) 
+
+    db.session.add(new_type)
+    db.session.commit()
+    
+    return jsonify(new_type.serialize()), 201
+
