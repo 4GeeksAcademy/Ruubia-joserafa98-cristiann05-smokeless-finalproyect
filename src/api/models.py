@@ -47,3 +47,16 @@ class SmokerUser(db.Model):
             "id_tipo": self.id_tipo,
             "foto_usuario": self.foto_usuario
         }
+    class TiposConsumo(db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        name = db.Column(db.String(120), unique=True, nullable=False)
+
+        def __repr__(self):
+            return f'<TiposConsumo {self.name}>'
+
+        def serialize(self):
+            return {
+                "id": self.id,
+                "name": self.name,
+                # do not serialize the password, its a security breach
+            }
