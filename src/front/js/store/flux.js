@@ -1,21 +1,21 @@
 const getState = ({ getStore, getActions, setStore }) => {
     return {
         store: {
-            smokers: [] // Aquí almacenarás la lista de fumadores
+            smokers: [],
+            tiposConsumo: []
         },
         actions: {
-            // Obtener todos los fumadores
             getSmokers: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/smokers`);
                     const data = await response.json();
-                    setStore({ smokers: data }); // Guardamos la lista de fumadores en el store
+                    setStore({ smokers: data }); 
                 } catch (error) {
                     console.error("Error fetching smokers:", error);
                 }
             },
 
-            // Crear un nuevo fumador
+            
             createSmoker: async (smokerData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/smokers`, {
@@ -73,6 +73,17 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error deleting smoker:", error);
                 }
             },
+            
+            getConsuming: async () => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo`);
+                    const data = await response.json();
+                    setStore({ tiposConsumo: data }); 
+                } catch (error) {
+                    console.error("Error fetching tiposconsumo:", error);
+                }
+            },
+
         },
     };
 };
