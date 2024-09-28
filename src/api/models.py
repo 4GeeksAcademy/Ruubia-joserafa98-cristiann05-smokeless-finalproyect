@@ -46,6 +46,7 @@ class Coach(db.Model):
             "descripcion_coach": self.descripcion_coach,
             "foto_coach": self.foto_coach,
             "precio_servicio": self.precio_servicio
+        }
     
 class SmokerUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -77,7 +78,6 @@ class SmokerUser(db.Model):
             "foto_usuario": self.foto_usuario
             # do not serialize the password, its a security breach
         }
-                    }
     class TiposConsumo(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         name = db.Column(db.String(120), unique=True, nullable=False)
