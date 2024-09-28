@@ -73,7 +73,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error deleting smoker:", error);
                 }
             },
-            
+
             getConsuming: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo`);
@@ -81,6 +81,24 @@ const getState = ({ getStore, getActions, setStore }) => {
                     setStore({ tiposConsumo: data }); 
                 } catch (error) {
                     console.error("Error fetching tiposconsumo:", error);
+                }
+            },
+            createConsuming: async (consumingData) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(consumingData),
+                    });
+
+                    if (response.ok) {
+                        const newConsuming = await response.json();
+                        setStore({ tiposConsumo: [...getStore().tiposConsumo, newConsuming] });
+                    }
+                } catch (error) {
+                    console.error("Error creating consuming:", error);
                 }
             },
 
