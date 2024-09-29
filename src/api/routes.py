@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, SmokerUser, Coach
+from api.models import db, User, SmokerUser, Coach, TiposConsumo
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from datetime import datetime
@@ -177,3 +177,55 @@ def delete_coach(coach_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+@api.route('/tiposconsumo', methods=['GET'])
+def get_all_consuming():
+    tiposconsumo = TiposConsumo.query.all()
+    return jsonify([tiposconsumo.serialize() for tiposconsumo in tiposconsumo]), 200
+
+@api.route('/tiposconsumo/<int:tiposconsumo_id>', methods=['GET'])
+def get_consuming(consuming_id):
+    tiposconsumo = TiposConsumo.query.get(consuming_id)
+    if tiposconsumo is None:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    return jsonify(tiposconsumo.serialize()), 200
+
+@api.route('/tiposconsumo', methods=['POST'])
+def add_consuming():
+    data = request.get_json()
+
+    required_fields = ['name'] 
+    if not data or not all(key in data for key in required_fields):
+        return jsonify({"error": "Datos incompletos"}), 400
+
+    new_type = TiposConsumo(name=data['name'])
+
+    db.session.add(new_type)
+    db.session.commit()
+    
+    return jsonify(new_type.serialize()), 201
+
+@api.route('/tiposconsumo/<int:id>', methods=['PUT'])
+def update_consuming(id):
+    data = request.get_json()
+
+    tipo_consumo = TiposConsumo.query.get(id)
+    if not tipo_consumo:
+        return jsonify({"error": "Tipo de consumo no encontrado"}), 404
+
+    if 'name' in data:
+        tipo_consumo.name = data['name']
+
+    db.session.commit()
+    return jsonify(tipo_consumo.serialize()), 200
+
+@api.route('/tiposconsumo/<int:id>', methods=['DELETE'])
+def delete_consuming(id):
+    tiposconsumo = TiposConsumo.query.get(id)
+    if tiposconsumo is None:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    db.session.delete(tiposconsumo)
+    db.session.commit()
+    return jsonify({"message": "consumo eliminado correctamente"}), 200
