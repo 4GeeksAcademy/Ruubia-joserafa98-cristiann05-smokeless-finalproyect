@@ -183,10 +183,6 @@ def delete_coach(coach_id):
     return jsonify({"message": "Coach eliminado correctamente"}), 200
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
 @api.route('/tiposconsumo', methods=['GET'])
 def get_all_consuming():
     tiposconsumo = TiposConsumo.query.all()
@@ -237,3 +233,7 @@ def delete_consuming(id):
     db.session.delete(tiposconsumo)
     db.session.commit()
     return jsonify({"message": "consumo eliminado correctamente"}), 200
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
