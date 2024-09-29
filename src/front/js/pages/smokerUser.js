@@ -3,7 +3,7 @@ import { Context } from "../store/appContext";
 
 const SmokerUser = () => {
     const { store, actions } = useContext(Context);
-    const { smokers } = store;
+    const { smokers, tiposConsumo } = store;  
     const [smokerToEdit, setSmokerToEdit] = useState(null);
     const [formData, setFormData] = useState({
         email_usuario: "",
@@ -14,11 +14,12 @@ const SmokerUser = () => {
         numerocigarro_usuario: 0,
         periodicidad: "",
         tiempo_fumando: "",
-        id_tipo: 1,
+        id_tipo: "1",  
     });
 
     useEffect(() => {
-        actions.getSmokers(); // Obtener la lista de fumadores al cargar el componente
+        actions.getSmokers(); 
+        actions.getConsuming(); 
     }, []);
 
     const handleInputChange = (e) => {
@@ -32,9 +33,9 @@ const SmokerUser = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (smokerToEdit) {
-            actions.updateSmoker(smokerToEdit.id, formData); // Editar un fumador existente
+            actions.updateSmoker(smokerToEdit.id, formData); 
         } else {
-            actions.createSmoker(formData); // Crear un nuevo fumador
+            actions.createSmoker(formData); 
         }
         resetForm();
     };
@@ -45,7 +46,7 @@ const SmokerUser = () => {
     };
 
     const handleDelete = (smokerId) => {
-        actions.deleteSmoker(smokerId); // Eliminar un fumador
+        actions.deleteSmoker(smokerId); 
     };
 
     const resetForm = () => {
@@ -59,7 +60,7 @@ const SmokerUser = () => {
             numerocigarro_usuario: 0,
             periodicidad: "",
             tiempo_fumando: "",
-            id_tipo: 1,
+            id_tipo: "1", 
         });
     };
 
@@ -174,6 +175,27 @@ const SmokerUser = () => {
                                 />
                             </div>
                         </div>
+
+                        {/* Select para Tipos de Consumo */}
+                        <div className="form-group">
+                            <label htmlFor="id_tipo">Tipo de Consumo</label>
+                            <select
+                                className="form-control"
+                                id="id_tipo"
+                                name="id_tipo"
+                                value={formData.id_tipo}
+                                onChange={handleInputChange}
+                                required
+                            >
+                                <option value="">Seleccione el tipo de consumo</option>
+                                {tiposConsumo && tiposConsumo.map((tipo) => (
+                                    <option key={tipo.id} value={tipo.id.toString()}> 
+                                        {tipo.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
                         <button type="submit" className="btn btn-primary">
                             {smokerToEdit ? "Actualizar" : "Agregar"}
                         </button>
@@ -194,6 +216,7 @@ const SmokerUser = () => {
                             <th scope="col">Número de Cigarros</th>
                             <th scope="col">Periodicidad</th>
                             <th scope="col">Tiempo Fumando</th>
+                            <th scope="col">Tipo de Consumo</th>
                             <th scope="col" className="text-center">Acciones</th>
                         </tr>
                     </thead>
@@ -207,9 +230,10 @@ const SmokerUser = () => {
                                 <td>{smoker.numerocigarro_usuario}</td>
                                 <td>{smoker.periodicidad}</td>
                                 <td>{smoker.tiempo_fumando}</td>
+                                <td>{smoker.id_tipo ? tiposConsumo.find(tipo => tipo.id === smoker.id_tipo)?.name : ''}</td> 
                                 <td className="text-center">
-                                    <button onClick={() => handleEdit(smoker)} className="btn btn-warning btn-sm mr-2">Editar</button>
-                                    <button onClick={() => handleDelete(smoker.id)} className="btn btn-danger btn-sm">Eliminar</button>
+                                    <button className="btn btn-warning" onClick={() => handleEdit(smoker)}>Editar</button>
+                                    <button className="btn btn-danger" onClick={() => handleDelete(smoker.id)}>Eliminar</button>
                                 </td>
                             </tr>
                         ))}
@@ -221,3 +245,4 @@ const SmokerUser = () => {
 };
 
 export default SmokerUser;
+
