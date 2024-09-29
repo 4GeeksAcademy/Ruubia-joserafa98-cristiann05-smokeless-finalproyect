@@ -58,8 +58,9 @@ class SmokerUser(db.Model):
     numerocigarro_usuario = db.Column(db.Integer, nullable=False)
     periodicidad = db.Column(db.String(50), nullable=False)
     tiempo_fumando = db.Column(db.String(10), nullable=False)
-    id_tipo = db.Column(db.Integer, nullable=False)
-    foto_usuario = db.Column(db.String(255), nullable=True)  # Puede ser una URL o ruta
+    id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=False) 
+    tipo_consumo = db.relationship('TiposConsumo', backref='smokers')
+    foto_usuario = db.Column(db.String(255), nullable=True)
 
     def __repr__(self):
         return f'<SmokerUser {self.email_usuario}>'
@@ -75,6 +76,7 @@ class SmokerUser(db.Model):
             "periodicidad": self.periodicidad,
             "tiempo_fumando": self.tiempo_fumando,
             "id_tipo": self.id_tipo,
+            "tipo_consumo": self.tipo_consumo.serialize(),
             "foto_usuario": self.foto_usuario
             # do not serialize the password, its a security breach
         }

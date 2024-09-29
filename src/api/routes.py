@@ -34,25 +34,33 @@ def get_smoker(smoker_id):
 def create_smoker():
     data = request.get_json()
     
-    # Verifica que se reciban todos los campos obligatorios
     required_fields = ['email_usuario', 'password_email', 'nombre_usuario', 'genero_usuario', 
                        'nacimiento_usuario', 'numerocigarro_usuario', 'periodicidad', 
                        'tiempo_fumando', 'id_tipo']
     if not data or not all(key in data for key in required_fields):
         return jsonify({"error": "Datos incompletos"}), 400
 
-    # Crea un nuevo objeto SmokerUser y lo guarda en la base de datos
+    # Verifica si el email ya está en uso
+    existing_smoker = SmokerUser.query.filter_by(email_usuario=data['email_usuario']).first()
+    if existing_smoker:
+        return jsonify({"error": "El email ya está en uso"}), 400
+
+    try:
+        nacimiento = datetime.strptime(data['nacimiento_usuario'], '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({"error": "Formato de fecha incorrecto, usa YYYY-MM-DD"}), 400
+
     new_smoker = SmokerUser(
         email_usuario=data['email_usuario'],
-        password_email=data['password_email'],
+        password_email=data['password_email'],  # Aquí deberías considerar hacer hashing
         nombre_usuario=data['nombre_usuario'],
         genero_usuario=data['genero_usuario'],
-        nacimiento_usuario=datetime.strptime(data['nacimiento_usuario'], '%Y-%m-%d').date(),
+        nacimiento_usuario=nacimiento,
         numerocigarro_usuario=data['numerocigarro_usuario'],
         periodicidad=data['periodicidad'],
         tiempo_fumando=data['tiempo_fumando'],
         id_tipo=data['id_tipo'],
-        foto_usuario=data.get('foto_usuario')  # Opcional
+        foto_usuario=data.get('foto_usuario')
     )
     
     db.session.add(new_smoker)
