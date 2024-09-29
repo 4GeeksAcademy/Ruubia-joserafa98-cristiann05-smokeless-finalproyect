@@ -2,7 +2,8 @@ const getState = ({ getStore, getActions, setStore }) => {
     return {
         store: {
             smokers: [],
-            tiposConsumo: []
+            tiposConsumo: [],
+            coaches: []
         },
         actions: {
             getSmokers: async () => {
@@ -15,7 +16,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            
             createSmoker: async (smokerData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/smokers`, {
@@ -35,7 +35,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            // Actualizar un fumador existente
             updateSmoker: async (smokerId, updatedData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/smokers/${smokerId}`, {
@@ -58,7 +57,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            // Eliminar un fumador
             deleteSmoker: async (smokerId) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/smokers/${smokerId}`, {
@@ -83,6 +81,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error fetching tiposconsumo:", error);
                 }
             },
+
             createConsuming: async (consumingData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo`, {
@@ -137,9 +136,77 @@ const getState = ({ getStore, getActions, setStore }) => {
                 } catch (error) {
                     console.error("Error deleting consuming:", error);
                 }
-            },            
+            },
+
+            // Acciones para Coaches
+            getCoaches: async () => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches`);
+                    const data = await response.json();
+                    setStore({ coaches: data }); 
+                } catch (error) {
+                    console.error("Error fetching coaches:", error);
+                }
+            },
+
+            createCoach: async (coachData) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(coachData),
+                    });
+
+                    if (response.ok) {
+                        const newCoach = await response.json();
+                        setStore({ coaches: [...getStore().coaches, newCoach] });
+                    }
+                } catch (error) {
+                    console.error("Error creating coach:", error);
+                }
+            },
+
+            updateCoach: async (coachId, updatedData) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/${coachId}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(updatedData),
+                    });
+            
+                    if (response.ok) {
+                        const updatedCoach = await response.json();
+                        const updatedCoaches = getStore().coaches.map(coach =>
+                            coach.id === coachId ? updatedCoach : coach
+                        );
+                        setStore({ coaches: updatedCoaches }); 
+                    }
+                } catch (error) {
+                    console.error("Error updating coach:", error);
+                }
+            },
+
+            deleteCoach: async (coachId) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/${coachId}`, {
+                        method: "DELETE",
+                    });
+            
+                    if (response.ok) {
+                        const updatedCoaches = getStore().coaches.filter(coach => coach.id !== coachId);
+                        setStore({ coaches: updatedCoaches });
+                    }
+                } catch (error) {
+                    console.error("Error deleting coach:", error);
+                }
+            },
         },
     };
 };
 
 export default getState;
+
