@@ -1,46 +1,85 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react"; 
 import { Context } from "../store/appContext";
 
 const CoachUser = () => {
     const { store, actions } = useContext(Context);
-    const { coaches } = store; // Obtenemos los datos de los coaches desde el store
+    const { coaches } = store;
     const [coachToEdit, setCoachToEdit] = useState(null);
+    
+    // Datos por defecto que deseas establecer
+    const defaultData = {
+        direccion: "Dirección predeterminada",
+        latitud: 0.0,
+        longitud: 0.0,
+        descripcion_coach: "Descripción predeterminada",
+        foto_coach: "url-de-la-foto-predeterminada",
+        precio_servicio: 50.0,
+    };
+
     const [formData, setFormData] = useState({
         email_coach: "",
         nombre_coach: "",
-        especialidad: "",
-        experiencia: "",
+        password_coach: "",
+        genero_coach: "",
+        ...defaultData,
     });
 
     useEffect(() => {
-        actions.getCoaches(); // Llama a la acción para obtener los datos de los coaches
-    }, []);
+        // Función para obtener coaches
+        const fetchCoaches = async () => {
+            await actions.getCoaches();
+        };
+
+        // Obtener coaches al montar el componente
+        fetchCoaches();
+
+        // Establecer polling cada 5 segundos (5000 ms)
+        const interval = setInterval(() => {
+            fetchCoaches();
+        }, 5000);
+
+        // Limpiar el intervalo al desmontar el componente
+        return () => clearInterval(interval);
+    }, [actions]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
+        setFormData((prevData) => ({
+            ...prevData,
             [name]: value,
-        });
+        }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!formData.email_coach || !formData.nombre_coach || !formData.password_coach || !formData.genero_coach) {
+            console.error("Por favor, completa todos los campos requeridos.");
+            return;
+        }
+
+        console.log("Datos a enviar:", formData);
+
         if (coachToEdit) {
-            actions.updateCoach(coachToEdit.id, formData); // Actualiza el coach existente
+            await actions.updateCoach(coachToEdit.id, formData);
         } else {
-            actions.createCoach(formData); // Crea un nuevo coach
+            await actions.createCoach(formData);
         }
         resetForm();
     };
 
     const handleEdit = (coach) => {
         setCoachToEdit(coach);
-        setFormData(coach);
+        setFormData({
+            email_coach: coach.email_coach,
+            nombre_coach: coach.nombre_coach,
+            password_coach: "", // No llenamos la contraseña por razones de seguridad
+            genero_coach: coach.genero_coach,
+            ...defaultData,
+        });
     };
 
-    const handleDelete = (coachId) => {
-        actions.deleteCoach(coachId); // Elimina el coach
+    const handleDelete = async (coachId) => {
+        await actions.deleteCoach(coachId);
     };
 
     const resetForm = () => {
@@ -48,8 +87,9 @@ const CoachUser = () => {
         setFormData({
             email_coach: "",
             nombre_coach: "",
-            especialidad: "",
-            experiencia: "",
+            password_coach: "",
+            genero_coach: "",
+            ...defaultData,
         });
     };
 
@@ -88,29 +128,37 @@ const CoachUser = () => {
                         </div>
                         <div className="form-row">
                             <div className="form-group col-md-6">
-                                <label htmlFor="especialidad">Especialidad</label>
+                                <label htmlFor="password_coach">Contraseña</label>
                                 <input
-                                    type="text"
+                                    type="password"
                                     className="form-control"
-                                    id="especialidad"
-                                    name="especialidad"
-                                    value={formData.especialidad}
+                                    id="password_coach"
+                                    name="password_coach"
+                                    value={formData.password_coach}
                                     onChange={handleInputChange}
                                     required
                                 />
                             </div>
                             <div className="form-group col-md-6">
-                                <label htmlFor="experiencia">Años de experiencia</label>
+                                <label htmlFor="genero_coach">Género</label>
                                 <input
-                                    type="number"
+                                    type="text"
                                     className="form-control"
-                                    id="experiencia"
-                                    name="experiencia"
-                                    value={formData.experiencia}
+                                    id="genero_coach"
+                                    name="genero_coach"
+                                    value={formData.genero_coach}
                                     onChange={handleInputChange}
                                     required
                                 />
                             </div>
+                        </div>
+                        <div className="d-none">
+                            <input type="text" name="direccion" value={formData.direccion} readOnly />
+                            <input type="number" name="latitud" value={formData.latitud} readOnly />
+                            <input type="number" name="longitud" value={formData.longitud} readOnly />
+                            <textarea name="descripcion_coach" value={formData.descripcion_coach} readOnly></textarea>
+                            <input type="text" name="foto_coach" value={formData.foto_coach} readOnly />
+                            <input type="number" name="precio_servicio" value={formData.precio_servicio} readOnly />
                         </div>
 
                         <button type="submit" className="btn btn-primary">
@@ -128,8 +176,7 @@ const CoachUser = () => {
                         <tr>
                             <th scope="col">Nombre</th>
                             <th scope="col">Email</th>
-                            <th scope="col">Especialidad</th>
-                            <th scope="col">Años de Experiencia</th>
+                            <th scope="col">Género</th>
                             <th scope="col" className="text-center">Acciones</th>
                         </tr>
                     </thead>
@@ -138,8 +185,7 @@ const CoachUser = () => {
                             <tr key={coach.id}>
                                 <td>{coach.nombre_coach}</td>
                                 <td>{coach.email_coach}</td>
-                                <td>{coach.especialidad}</td>
-                                <td>{coach.experiencia}</td>
+                                <td>{coach.genero_coach}</td>
                                 <td className="text-center">
                                     <button className="btn btn-warning" onClick={() => handleEdit(coach)}>Editar</button>
                                     <button className="btn btn-danger" onClick={() => handleDelete(coach.id)}>Eliminar</button>
