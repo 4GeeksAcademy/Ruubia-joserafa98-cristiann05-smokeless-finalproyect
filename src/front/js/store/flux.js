@@ -102,6 +102,42 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
+            updateConsuming: async (consumingId, updatedData) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo/${consumingId}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(updatedData),
+                    });
+            
+                    if (response.ok) {
+                        const updatedConsuming = await response.json();
+                        const updatedTiposConsumo = getStore().tiposConsumo.map(consuming =>
+                            consuming.id === consumingId ? updatedConsuming : consuming
+                        );
+                        setStore({ tiposConsumo: updatedTiposConsumo }); 
+                    }
+                } catch (error) {
+                    console.error("Error updating consuming:", error);
+                }
+            },
+            
+            deleteConsuming: async (consumingId) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo/${consumingId}`, {
+                        method: "DELETE",
+                    });
+            
+                    if (response.ok) {
+                        const updatedTiposConsumo = getStore().tiposConsumo.filter(consuming => consuming.id !== consumingId);
+                        setStore({ tiposConsumo: updatedTiposConsumo });
+                    }
+                } catch (error) {
+                    console.error("Error deleting consuming:", error);
+                }
+            },            
         },
     };
 };
