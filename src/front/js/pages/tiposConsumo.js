@@ -43,7 +43,6 @@ const TiposConsumo = ()=>{
 
     return (
         <div className="container">
-            {/* Formulario para agregar nuevo consumo */}
             <form onSubmit={handleSubmit}>
                 <input 
                     className="form-control form-control-lg" 
@@ -58,9 +57,8 @@ const TiposConsumo = ()=>{
                 </button>
             </form>
 
-            {/* Select para elegir tipo de consumo */}
-            <select className="form-select mt-3" aria-label="Default select example">
-                <option selected>choose your type of consuming</option>
+            <select className="form-select mt-3" aria-label="Default select example" >
+                <option value="" disabled>choose your type of consuming</option>
                 {store.tiposConsumo && store.tiposConsumo.length > 0 ? (
                     store.tiposConsumo.map((tipo, index) => (
                         <option key={index} value={tipo.id}>
@@ -72,7 +70,6 @@ const TiposConsumo = ()=>{
                 )}
             </select>
 
-            {/* Formulario de edición (aparece solo cuando editas) */}
             {editingId && (
                 <form onSubmit={handleEditSubmit} className="mt-3">
                     <input 
@@ -87,7 +84,6 @@ const TiposConsumo = ()=>{
                 </form>
             )}
 
-            {/* Lista de tipos de consumo con botones de editar y borrar */}
             <ul className="list-group mt-3">
                 {store.tiposConsumo && store.tiposConsumo.length > 0 ? (
                     store.tiposConsumo.map((tipo, index) => (
