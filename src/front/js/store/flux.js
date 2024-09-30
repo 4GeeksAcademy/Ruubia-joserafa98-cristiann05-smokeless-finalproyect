@@ -309,6 +309,37 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
             
+            //login coach
+            loginCoach: async (coachData) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/login`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(coachData),
+                    });
+            
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        setStore({
+                            isAuthenticated: true, 
+                            coachId: data.coach_id, 
+
+                        });
+                        localStorage.setItem("token", data.token); 
+                        return true; 
+                    } else {
+                        return false; 
+                    }
+                } catch (error) {
+                    console.error("Error during login:", error);
+                    return false; 
+                }
+            },
+            
+            
         },
     };
 };

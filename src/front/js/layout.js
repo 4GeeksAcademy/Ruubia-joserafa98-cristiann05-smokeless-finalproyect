@@ -12,6 +12,7 @@ import ControlPanelSmoker from "./pages/controlPanelSmoker";
 import TiposConsumo from "./pages/tiposConsumo";
 import CoachUser from "./pages/CoachUser"; 
 import SignupCoach from "./pages/signupCoach";
+import LoginCoach from "./pages/loginCoach"
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -37,6 +38,7 @@ const Layout = () => {
                         <Route element={<TiposConsumo />} path="/tiposconsumo" />
                         <Route element={<CoachUser />} path="/coaches" />
                         <Route element={<SignupCoach />} path="/signup-coach" />
+                        <Route element={<LoginCoach />} path="/login-coach" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
