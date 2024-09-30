@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, SmokerUser, Coach, TiposConsumo
+from api.models import db, SmokerUser, Coach, TiposConsumo, Seguimiento
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from datetime import datetime
@@ -333,7 +333,55 @@ def delete_consuming(id):
     return jsonify({"message": "consumo eliminado correctamente"}), 200
  
  # RUTAS PARA JOSE
+@api.route('/seguimiento', methods=['GET'])
+def get_all_following():
+    following = Seguimiento.query.all()
+    return jsonify([following.serialize() for following in following]), 200
 
+@api.route('/seguimiento/<int:seguimiento_id>', methods=['GET'])
+def get_following(following_id):
+    following = Seguimiento.query.get(following_id)
+    if following is None:
+        return jsonify({"error": "Seguimiento no encontrado"}), 404
+    return jsonify(following.serialize()), 200
+
+@api.route('/seguimiento', methods=['POST'])
+def add_following():
+    data = request.get_json()
+
+    required_fields = ['cantidad', 'id_usuario', 'id_tipo']
+    if not data or not all(key in data for key in required_fields):
+        return jsonify({"error": "Datos incompletos"}), 400
+
+    new_following = Seguimiento(
+        cantidad=data['cantidad'],
+        id_usuario=data['id_usuario'],
+        id_tipo=data['id_tipo']
+    )
+
+    db.session.add(new_following)
+    db.session.commit()
+    
+    return jsonify(new_following.serialize()), 201
+
+
+@api.route('/seguimiento/<int:id>', methods=['PUT'])
+def update_following(id):
+    data = request.get_json()
+
+    following = Seguimiento.query.get(id)
+    if not following:
+        return jsonify({"error": "Seguimiento no encontrado"}), 404
+
+    if 'cantidad' in data:
+        following.cantidad = data['cantidad']
+    if 'id_usuario' in data:
+        following.id_usuario = data['id_usuario']
+    if 'id_tipo' in data:
+        following.id_tipo = data['id_tipo']
+
+    db.session.commit()
+    return jsonify(following.serialize()), 200
 
 
 # Ruta protegida

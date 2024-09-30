@@ -195,7 +195,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
                         //SEGUIMIENTO Y SOLICITUDES DE JOSE
-
+            
             // Acciones para Coaches
             getCoaches: async () => {
                 try {
