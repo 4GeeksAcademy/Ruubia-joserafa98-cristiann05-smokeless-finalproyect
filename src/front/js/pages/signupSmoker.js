@@ -6,19 +6,34 @@ const SignupSmoker = () => {
     const { actions } = useContext(Context);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState(""); // Estado para la confirmación
     const [error, setError] = useState(""); // Para manejar errores
+    const [successMessage, setSuccessMessage] = useState(""); // Para manejar mensajes de éxito
     const navigate = useNavigate();
 
     const handleSignup = async (event) => {
         event.preventDefault();
+
+        // Limpiar los mensajes de error y éxito
+        setError("");
+        setSuccessMessage("");
+
+        // Validar que las contraseñas coincidan
+        if (password !== confirmPassword) {
+            setError("Las contraseñas no coinciden. Por favor, inténtalo de nuevo.");
+            return;
+        }
 
         const smokerData = { email_usuario: email, password_email: password };
 
         try {
             const success = await actions.signupSmoker(smokerData);
             if (success) {
-                // Redirige al control panel si el registro fue exitoso
-                navigate("/control-panel-smoker");
+                // Mostrar un mensaje de éxito y redirigir al login
+                setSuccessMessage("Registro exitoso. Redirigiendo al login...");
+                setTimeout(() => {
+                    navigate("/login-smoker"); // Cambia la ruta al login
+                }, 2000); // Redirige después de 2 segundos
             } else {
                 // Manejo de error en caso de que el registro falle
                 setError("Error: El registro no se pudo completar. Intenta de nuevo.");
@@ -37,6 +52,7 @@ const SignupSmoker = () => {
         <div className="container mt-5">
             <h1>Signup for Smokers</h1>
             {error && <div className="alert alert-danger">{error}</div>} {/* Muestra el mensaje de error */}
+            {successMessage && <div className="alert alert-success">{successMessage}</div>} {/* Muestra el mensaje de éxito */}
             <form onSubmit={handleSignup}>
                 <div className="form-group">
                     <label>Email</label>
@@ -55,6 +71,16 @@ const SignupSmoker = () => {
                         className="form-control"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Confirm Password</label> {/* Campo de confirmación */}
+                    <input
+                        type="password"
+                        className="form-control"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                         required
                     />
                 </div>
