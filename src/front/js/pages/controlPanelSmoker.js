@@ -14,6 +14,14 @@ const ControlPanelSmoker = () => {
         }
     }, [store.isAuthenticated, navigate]); // Dependencias de useEffect
 
+    const handleLogout = () => {
+        // Elimina el token del localStorage
+        localStorage.removeItem("token");
+
+        // Redirigir a la página de login
+        navigate("/login-smoker");
+    };
+
     return (
         <div className="container mt-5">
             <h1>Welcome to your Dashboard!</h1>
@@ -21,6 +29,9 @@ const ControlPanelSmoker = () => {
             <p>Here you will be able to manage your profile, track your smoking habits, and much more.</p>
             <button className="btn btn-primary">Manage Profile</button>
             <button className="btn btn-secondary ml-3">Track Smoking</button>
+            <button className="btn btn-danger mt-3" onClick={handleLogout}>
+                Logout
+            </button> {/* Botón para cerrar sesión */}
         </div>
     );
 };
