@@ -72,6 +72,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
+
+            //SIGNUP Y LOGIN DE CRISTIAN
+
             getConsuming: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo`);
@@ -137,6 +140,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error deleting consuming:", error);
                 }
             },
+
+                        //SEGUIMIENTO Y SOLICITUDES DE JOSE
+
 
             // Acciones para Coaches
             getCoaches: async () => {
@@ -204,6 +210,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error deleting coach:", error);
                 }
             },
+                        //SIGNUP Y LOGIN DE BEA
+
         },
     };
 };

@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, SmokerUser, Coach, TiposConsumo
+from api.models import db, SmokerUser, Coach, TiposConsumo
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from datetime import datetime
@@ -101,8 +101,11 @@ def delete_smoker(smoker_id):
     db.session.commit()
     return jsonify({"message": "Usuario eliminado correctamente"}), 200
 
-# CRUD COACHES
+ # RUTAS PARA CRISTIAN
 
+
+
+# CRUD COACHES
 # Obtener todos los coaches (GET)
 @api.route('/coaches', methods=['GET'])
 def get_all_coaches():
@@ -183,6 +186,9 @@ def delete_coach(coach_id):
     return jsonify({"message": "Coach eliminado correctamente"}), 200
 
 
+ # RUTAS PARA BEA
+
+
 @api.route('/tiposconsumo', methods=['GET'])
 def get_all_consuming():
     tiposconsumo = TiposConsumo.query.all()
@@ -233,6 +239,8 @@ def delete_consuming(id):
     db.session.delete(tiposconsumo)
     db.session.commit()
     return jsonify({"message": "consumo eliminado correctamente"}), 200
+ 
+ # RUTAS PARA JOSE
 
 
 if __name__ == '__main__':

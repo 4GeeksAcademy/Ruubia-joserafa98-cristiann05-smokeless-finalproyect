@@ -24,6 +24,33 @@ export const Navbar = () => {
           <Link to="/tiposconsumo">
             <button className="btn btn-outline-success mx-2">Tipos de Consumo</button>
           </Link>
+          {/* Nuevos botones de Registrarse e Iniciar Sesión como fumador */}
+          <Link to="/login-smoker">
+            <button className="btn btn-outline-info mx-2">Iniciar Sesión fumador</button>
+          </Link>
+          <Link to="/signup-smoker">
+            <button className="btn btn-outline-warning mx-2">Registrarse como fumador</button>
+          </Link>
+          {/* Nuevos botones de Registrarse e Iniciar Sesión como coach */}
+
+          <Link to="/login-coach">
+            <button className="btn btn-outline-info mx-2">Iniciar Sesión coach</button>
+          </Link>
+          <Link to="/signup-coach">
+            <button className="btn btn-outline-warning mx-2">Registrarse como coach</button>
+          </Link>
+
+           {/* Nuevos botones de formularios como seguimiento y solicitudes[JOSE] */}
+
+           <Link to="/ejemplo">
+            <button className="btn btn-outline-info mx-2">ejemplo</button>
+          </Link>
+          <Link to="/ejemplo">
+            <button className="btn btn-outline-warning mx-2">ejemplo</button>
+          </Link>
+
+
+
         </div>
       </div>
     </nav>
