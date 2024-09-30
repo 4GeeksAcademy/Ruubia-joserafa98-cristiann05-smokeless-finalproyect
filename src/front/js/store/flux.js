@@ -230,7 +230,33 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
                         //SIGNUP Y LOGIN DE BEA
-
+            //SIGNUP COACH
+            signupCoach: async (coachData) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/signup-coach`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(coachData),
+                    });
+            
+                    if (response.ok) {
+                        const newCoach = await response.json();
+                        setStore({ coaches: [...getStore().coaches, newCoach] });
+                        localStorage.setItem("token", newCoach.token);  // Guarda el token si es parte de la respuesta
+                        return true;
+                    } else {
+                        const errorData = await response.json();
+                        console.error("Error en la respuesta del servidor:", errorData);
+                        return false;
+                    }
+                } catch (error) {
+                    console.error("Error durante el registro del coach:", error);
+                    return false;
+                }
+            },
+            
         },
     };
 };

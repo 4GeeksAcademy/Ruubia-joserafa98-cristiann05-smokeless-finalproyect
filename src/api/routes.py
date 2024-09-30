@@ -7,7 +7,9 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from datetime import datetime
 
+
 api = Blueprint('api', __name__)
+
 
 # Allow CORS requests to this API
 CORS(api)
@@ -123,6 +125,7 @@ def get_coach(coach_id):
     return jsonify(coach.serialize()), 200
 
 # Crear un nuevo coach (POST)
+# Crear un nuevo coach (POST)
 @api.route('/coaches', methods=['POST'])
 def create_coach():
     data = request.get_json()
@@ -150,6 +153,7 @@ def create_coach():
     db.session.commit()
     return jsonify(new_coach.serialize()), 201
 
+
 # Actualizar un coach existente (PUT)
 @api.route('/coaches/<int:coach_id>', methods=['PUT'])
 def update_coach(coach_id):
@@ -174,6 +178,7 @@ def update_coach(coach_id):
     db.session.commit()
     return jsonify(coach.serialize()), 200
 
+
 # Eliminar un coach (DELETE)
 @api.route('/coaches/<int:coach_id>', methods=['DELETE'])
 def delete_coach(coach_id):
@@ -187,6 +192,40 @@ def delete_coach(coach_id):
 
 
  # RUTAS PARA BEA
+@api.route('/signup', methods=['POST'])
+def signup_coach():
+    email = request.json.get('email_coach', None)
+    password = request.json.get('password_coach', None)
+
+    if not email or not password:
+        return jsonify({"msg": "Faltan email o password"}), 400
+
+    # Verificar si el email ya está en uso
+    existing_coach = Coach.query.filter_by(email_coach=email).first()
+    if existing_coach:
+        return jsonify({"msg": "El coach ya existe"}), 400
+
+    # Crear el nuevo coach, aplicando hashing a la contraseña
+    new_coach = Coach(
+        email_coach=email,
+        password_coach=password,  
+        nombre_coach=None,  # Opcional
+        genero_coach=None,   # Opcional
+        direccion=None,  # Opcional
+        latitud=None,  # Opcional
+        longitud=None,  # Opcional
+        descripcion_coach=None,  # Opcional
+        foto_coach=None,  # Opcional
+        precio_servicio=None  # Opcional
+    )
+
+    db.session.add(new_coach)
+    db.session.commit()
+
+    return jsonify({"msg": "Coach creado exitosamente"}), 201
+
+
+
 
 
 @api.route('/tiposconsumo', methods=['GET'])
