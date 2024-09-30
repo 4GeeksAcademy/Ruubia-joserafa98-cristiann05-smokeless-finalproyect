@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
@@ -16,8 +17,8 @@ class Coach(db.Model):
     precio_servicio = db.Column(db.Float)
 
     def __repr__(self):
-        return f'<Coach {self.email}>'
-
+        return f'<Coach {self.email_coach}>'
+    
     def serialize(self):
         return {
             "id": self.id,
@@ -29,20 +30,20 @@ class Coach(db.Model):
             "longitud": self.longitud,
             "descripcion_coach": self.descripcion_coach,
             "foto_coach": self.foto_coach,
-            "precio_servicio": self.precio_servicio
+            "precio_servicio": self.precio_servicio,
         }
-    
+
 class SmokerUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email_usuario = db.Column(db.String(120), unique=True, nullable=False)
-    password_email = db.Column(db.String(80), unique=False, nullable=False)
+    password_email = db.Column(db.String(80), nullable=False)
     nombre_usuario = db.Column(db.String(80), nullable=False)
     genero_usuario = db.Column(db.String(10), nullable=False)
     nacimiento_usuario = db.Column(db.Date, nullable=False)
     numerocigarro_usuario = db.Column(db.Integer, nullable=False)
     periodicidad = db.Column(db.String(50), nullable=False)
     tiempo_fumando = db.Column(db.String(10), nullable=False)
-    id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=False) 
+    id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=False)
     tipo_consumo = db.relationship('TiposConsumo', backref='smokers')
     foto_usuario = db.Column(db.String(255), nullable=True)
 
@@ -60,21 +61,19 @@ class SmokerUser(db.Model):
             "periodicidad": self.periodicidad,
             "tiempo_fumando": self.tiempo_fumando,
             "id_tipo": self.id_tipo,
-            "tipo_consumo": self.tipo_consumo.serialize(),
+            "tipo_consumo": self.tipo_consumo.serialize() if self.tipo_consumo else None,
             "foto_usuario": self.foto_usuario
-            # do not serialize the password, its a security breach
         }
     
 class TiposConsumo(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        name = db.Column(db.String(120), unique=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=True, nullable=False)
 
-        def __repr__(self):
-            return f'<TiposConsumo {self.name}>'
+    def __repr__(self):
+        return f'<TiposConsumo {self.name}>'
 
-        def serialize(self):
-            return {
-                "id": self.id,
-                "name": self.name,
-                # do not serialize the password, its a security breach
-            }
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+        }

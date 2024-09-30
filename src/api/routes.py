@@ -52,7 +52,7 @@ def create_smoker():
 
     new_smoker = SmokerUser(
         email_usuario=data['email_usuario'],
-        password_email=data['password_email'],  # Aquí deberías considerar hacer hashing
+        password_email=data['password_email'],
         nombre_usuario=data['nombre_usuario'],
         genero_usuario=data['genero_usuario'],
         nacimiento_usuario=nacimiento,
@@ -135,7 +135,7 @@ def create_coach():
     # Crea un nuevo objeto Coach y lo guarda en la base de datos
     new_coach = Coach(
         email_coach=data['email_coach'],
-        password_coach=data['password_coach'],
+        password_coach=data['password_coach'],  # Considera usar hash para contraseñas
         nombre_coach=data['nombre_coach'],
         genero_coach=data['genero_coach'],
         direccion=data['direccion'],
@@ -161,7 +161,7 @@ def update_coach(coach_id):
 
     # Actualiza los atributos del coach con los nuevos datos
     coach.email_coach = data.get('email_coach', coach.email_coach)
-    coach.password_coach = data.get('password_coach', coach.password_coach)
+    coach.password_coach = data.get('password_coach', coach.password_coach)  # Considera el hash
     coach.nombre_coach = data.get('nombre_coach', coach.nombre_coach)
     coach.genero_coach = data.get('genero_coach', coach.genero_coach)
     coach.direccion = data.get('direccion', coach.direccion)

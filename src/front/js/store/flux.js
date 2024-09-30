@@ -10,7 +10,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/smokers`);
                     const data = await response.json();
-                    setStore({ smokers: data }); 
+                    setStore({ smokers: data });
                 } catch (error) {
                     console.error("Error fetching smokers:", error);
                 }
@@ -79,7 +79,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo`);
                     const data = await response.json();
-                    setStore({ tiposConsumo: data }); 
+                    setStore({ tiposConsumo: data });
                 } catch (error) {
                     console.error("Error fetching tiposconsumo:", error);
                 }
@@ -113,25 +113,25 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(updatedData),
                     });
-            
+
                     if (response.ok) {
                         const updatedConsuming = await response.json();
                         const updatedTiposConsumo = getStore().tiposConsumo.map(consuming =>
                             consuming.id === consumingId ? updatedConsuming : consuming
                         );
-                        setStore({ tiposConsumo: updatedTiposConsumo }); 
+                        setStore({ tiposConsumo: updatedTiposConsumo });
                     }
                 } catch (error) {
                     console.error("Error updating consuming:", error);
                 }
             },
-            
+
             deleteConsuming: async (consumingId) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo/${consumingId}`, {
                         method: "DELETE",
                     });
-            
+
                     if (response.ok) {
                         const updatedTiposConsumo = getStore().tiposConsumo.filter(consuming => consuming.id !== consumingId);
                         setStore({ tiposConsumo: updatedTiposConsumo });
@@ -148,13 +148,17 @@ const getState = ({ getStore, getActions, setStore }) => {
             getCoaches: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/coaches`);
+                    if (!response.ok) {
+                        throw new Error(`Error fetching coaches: ${response.status}`);
+                    }
                     const data = await response.json();
-                    setStore({ coaches: data }); 
+                    setStore({ coaches: data });
                 } catch (error) {
                     console.error("Error fetching coaches:", error);
                 }
             },
 
+            // Crear un nuevo coach
             createCoach: async (coachData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/coaches`, {
@@ -165,15 +169,21 @@ const getState = ({ getStore, getActions, setStore }) => {
                         body: JSON.stringify(coachData),
                     });
 
-                    if (response.ok) {
-                        const newCoach = await response.json();
-                        setStore({ coaches: [...getStore().coaches, newCoach] });
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Error creating coach: ${errorText}`);
                     }
+
+                    const newCoach = await response.json();
+                    setStore((prevStore) => ({
+                        coaches: [...prevStore.coaches, newCoach], // Agregar el nuevo coach al estado
+                    }));
                 } catch (error) {
                     console.error("Error creating coach:", error);
                 }
             },
 
+            // Actualizar un coach existente
             updateCoach: async (coachId, updatedData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/${coachId}`, {
@@ -183,29 +193,38 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(updatedData),
                     });
-            
-                    if (response.ok) {
-                        const updatedCoach = await response.json();
-                        const updatedCoaches = getStore().coaches.map(coach =>
-                            coach.id === coachId ? updatedCoach : coach
-                        );
-                        setStore({ coaches: updatedCoaches }); 
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Error updating coach: ${errorText}`);
                     }
+
+                    const updatedCoach = await response.json();
+                    setStore((prevStore) => ({
+                        coaches: prevStore.coaches.map(coach =>
+                            coach.id === coachId ? updatedCoach : coach
+                        ),
+                    }));
                 } catch (error) {
                     console.error("Error updating coach:", error);
                 }
             },
 
+            // Eliminar un coach
             deleteCoach: async (coachId) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/${coachId}`, {
                         method: "DELETE",
                     });
-            
-                    if (response.ok) {
-                        const updatedCoaches = getStore().coaches.filter(coach => coach.id !== coachId);
-                        setStore({ coaches: updatedCoaches });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Error deleting coach: ${errorText}`);
                     }
+
+                    setStore((prevStore) => ({
+                        coaches: prevStore.coaches.filter(coach => coach.id !== coachId),
+                    }));
                 } catch (error) {
                     console.error("Error deleting coach:", error);
                 }
