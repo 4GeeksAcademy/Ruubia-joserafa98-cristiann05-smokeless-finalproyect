@@ -5,7 +5,9 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/home";
-import SmokerUser from "./pages/smokerUser"; 
+import SmokerUser from "./pages/smokerUser";
+import SignupSmoker from "./pages/signupSmoker"; 
+import ControlPanelSmoker from "./pages/controlPanelSmoker";
 import TiposConsumo from "./pages/tiposConsumo";
 import CoachUser from "./pages/CoachUser"; 
 import injectContext from "./store/appContext";
@@ -27,6 +29,8 @@ const Layout = () => {
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<SmokerUser />} path="/smokeruser" />
+                        <Route element={<SignupSmoker />} path="/signup-smoker" />
+                        <Route element={<ControlPanelSmoker />} path="/control-panel-smoker" />
                         <Route element={<TiposConsumo />} path="/tiposconsumo" />
                         <Route element={<CoachUser />} path="/coaches" />
                         <Route element={<h1>Not found!</h1>} />
