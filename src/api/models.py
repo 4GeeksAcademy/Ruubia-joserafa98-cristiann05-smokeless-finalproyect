@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
@@ -37,15 +36,15 @@ class SmokerUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email_usuario = db.Column(db.String(120), unique=True, nullable=False)
     password_email = db.Column(db.String(80), nullable=False)
-    nombre_usuario = db.Column(db.String(80), nullable=False)
-    genero_usuario = db.Column(db.String(10), nullable=False)
-    nacimiento_usuario = db.Column(db.Date, nullable=False)
-    numerocigarro_usuario = db.Column(db.Integer, nullable=False)
-    periodicidad = db.Column(db.String(50), nullable=False)
-    tiempo_fumando = db.Column(db.String(10), nullable=False)
-    id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=False)
+    nombre_usuario = db.Column(db.String(80), nullable=True)  # Opcional
+    genero_usuario = db.Column(db.String(10), nullable=True)  # Opcional
+    nacimiento_usuario = db.Column(db.Date, nullable=True)  # Opcional
+    numerocigarro_usuario = db.Column(db.Integer, nullable=True)  # Opcional
+    periodicidad = db.Column(db.String(50), nullable=True)  # Opcional
+    tiempo_fumando = db.Column(db.String(10), nullable=True)  # Opcional
+    id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=True)  # Opcional
     tipo_consumo = db.relationship('TiposConsumo', backref='smokers')
-    foto_usuario = db.Column(db.String(255), nullable=True)
+    foto_usuario = db.Column(db.String(255), nullable=True)  # Opcional
 
     def __repr__(self):
         return f'<SmokerUser {self.email_usuario}>'
@@ -56,7 +55,7 @@ class SmokerUser(db.Model):
             "email_usuario": self.email_usuario,
             "nombre_usuario": self.nombre_usuario,
             "genero_usuario": self.genero_usuario,
-            "nacimiento_usuario": self.nacimiento_usuario.isoformat(),
+            "nacimiento_usuario": self.nacimiento_usuario.isoformat() if self.nacimiento_usuario else None,
             "numerocigarro_usuario": self.numerocigarro_usuario,
             "periodicidad": self.periodicidad,
             "tiempo_fumando": self.tiempo_fumando,
