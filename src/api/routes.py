@@ -139,6 +139,25 @@ def signup():
 
     return jsonify({"msg": "Usuario creado exitosamente"}), 201
 
+# Ruta de Login
+@api.route('/login', methods=['POST'])
+def login():
+    email = request.json.get('email_usuario', None)
+    password = request.json.get('password_email', None)
+
+    if not email or not password:
+        return jsonify({"msg": "Faltan email o password"}), 400
+
+    # Buscar el usuario en la base de datos
+    user = SmokerUser.query.filter_by(email_usuario=email).first()
+    if not user:
+        return jsonify({"msg": "Credenciales inválidas"}), 401
+
+    # Verificar la contraseña directamente
+    if user.password_email != password:  # Aquí comparas directamente
+        return jsonify({"msg": "Credenciales inválidas"}), 401    
+    return jsonify({"msg": "Login exitoso", "user_id": user.id}), 200
+
 # CRUD COACHES
 # Obtener todos los coaches (GET)
 @api.route('/coaches', methods=['GET'])

@@ -3,7 +3,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         store: {
             smokers: [],
             tiposConsumo: [],
-            coaches: []
+            coaches: [],
+            loggedInUser: null,
         },
         actions: {
             getSmokers: async () => {
@@ -96,8 +97,36 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error durante el registro del fumador:", error);
                     return false;
                 }
+            },
+            
+            loginSmoker: async (smokerData) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/login`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(smokerData),
+                    });
+            
+                    if (response.ok) {
+                        const data = await response.json();
+                        // Suponiendo que `data` contiene el ID del usuario y el token
+                        setStore({
+                            isAuthenticated: true, // Marca al usuario como autenticado
+                            userId: data.user_id, // Guarda el ID del usuario en el store
+                            // Otras propiedades que necesites
+                        });
+                        localStorage.setItem("token", data.token); // Guarda el token si es necesario
+                        return true; // Indica que el inicio de sesión fue exitoso
+                    } else {
+                        return false; // Indica que el inicio de sesión falló
+                    }
+                } catch (error) {
+                    console.error("Error during login:", error);
+                    return false; // Indica que ocurrió un error durante el inicio de sesión
+                }
             },            
-
 
             getConsuming: async () => {
                 try {
