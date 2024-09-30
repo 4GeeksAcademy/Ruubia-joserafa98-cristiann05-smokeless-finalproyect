@@ -13,6 +13,7 @@ import TiposConsumo from "./pages/tiposConsumo";
 import CoachUser from "./pages/CoachUser"; 
 import SignupCoach from "./pages/signupCoach";
 import LoginCoach from "./pages/loginCoach"
+import ControlPanelCoach from "./pages/controlPanelCoach";
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -39,6 +40,7 @@ const Layout = () => {
                         <Route element={<CoachUser />} path="/coaches" />
                         <Route element={<SignupCoach />} path="/signup-coach" />
                         <Route element={<LoginCoach />} path="/login-coach" />
+                        <Route element={<ControlPanelCoach />} path="/control-panel-coach" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
