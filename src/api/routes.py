@@ -103,9 +103,38 @@ def delete_smoker(smoker_id):
     db.session.commit()
     return jsonify({"message": "Usuario eliminado correctamente"}), 200
 
- # RUTAS PARA CRISTIAN
+# Ruta de Sign Up
+@api.route('/signup', methods=['POST'])
+def signup():
+    email = request.json.get('email_usuario', None)
+    password = request.json.get('password_email', None)
 
+    if not email or not password:
+        return jsonify({"msg": "Faltan email o password"}), 400
 
+    # Verificar si el email ya está en uso
+    existing_user = SmokerUser.query.filter_by(email_usuario=email).first()
+    if existing_user:
+        return jsonify({"msg": "El usuario ya existe"}), 400
+
+    # Crear el nuevo usuario, aplicando hashing a la contraseña
+    new_user = SmokerUser(
+        email_usuario=email,
+        password_email=password,
+        nombre_usuario=None,  # Opcional
+        genero_usuario=None,   # Opcional
+        nacimiento_usuario=None,  # Opcional
+        numerocigarro_usuario=None,  # Opcional
+        periodicidad=None,  # Opcional
+        tiempo_fumando=None,  # Opcional
+        id_tipo=None,  # Opcional
+        foto_usuario=None  # Opcional
+    )
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({"msg": "Usuario creado exitosamente"}), 201
 
 # CRUD COACHES
 # Obtener todos los coaches (GET)
@@ -281,6 +310,15 @@ def delete_consuming(id):
  
  # RUTAS PARA JOSE
 
+
+
+# Ruta protegida
+@api.route("/protected", methods=["GET"])
+@jwt_required()
+def protected():
+    # Obtenemos la identidad del usuario actual usando el token JWT
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
