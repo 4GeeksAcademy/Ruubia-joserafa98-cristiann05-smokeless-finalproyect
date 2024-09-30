@@ -244,7 +244,7 @@ def delete_coach(coach_id):
     return jsonify({"message": "Coach eliminado correctamente"}), 200
 
 
- # RUTAS PARA BEA
+ # signup coach
 @api.route('/signup', methods=['POST'])
 def signup_coach():
     email = request.json.get('email_coach', None)
@@ -277,6 +277,26 @@ def signup_coach():
 
     return jsonify({"msg": "Coach creado exitosamente"}), 201
 
+ # login coach
+
+@api.route('/login', methods=['POST'])
+def login_coach():
+    email = request.json.get('email_coach', None)
+    password = request.json.get('password_coach', None)
+
+    if not email or not password:
+        return jsonify({"msg": "Missing email or password"}), 400
+
+    # Buscar el coach en la base de datos
+    coach = Coach.query.filter_by(email_coach=email).first()
+    if not coach:
+        return jsonify({"msg": "Invalid credentials"}), 401
+
+    # Verificar la contraseña directamente (esto no es seguro)
+    if coach.password_coach != password:  # Compara directamente
+        return jsonify({"msg": "Invalid credentials"}), 401
+    
+    return jsonify({"msg": "Login successful", "coach_id": coach.id}), 200
 
 
 
