@@ -3,32 +3,32 @@ import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 const LoginSmoker = () => {
-    const { actions } = useContext(Context);
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState(false); // Para manejar errores
-    const [success, setSuccess] = useState(false); // Para manejar mensajes de éxito
-    const navigate = useNavigate();
+  const { actions } = useContext(Context);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
-    const handleLogin = async (event) => {
-        event.preventDefault();
+  const handleLogin = async (event) => {
+    event.preventDefault();
 
-        const smokerData = { email_usuario: email, password_email: password };
-
-        try {
-            const success = await actions.loginSmoker(smokerData);
-            if (success) {
-                setSuccess(true); // Mensaje de éxito
-                setTimeout(() => {
-                    navigate("/control-panel-smoker"); // Redirige al panel de control
-                }, 2000); // Espera 2 segundos antes de redirigir
-            } else {
-                setError(true); // Mensaje de error
-            }
-        } catch (error) {
-            setError(true); // Mensaje de error
-        }
-    };
+    const smokerData = { email_usuario: email, password_email: password };
+    
+    try {
+      const success = await actions.loginSmoker(smokerData);
+      if (success) {
+        setSuccess(true);
+        setTimeout(() => {
+          navigate("/control-panel-smoker");
+        }, 2000);
+      } else {
+        setError(true);
+      }
+    } catch (error) {
+      setError(true);
+    }
+  };
 
     return (
         <div className="container mt-5">

@@ -141,7 +141,6 @@ def signup():
 
     return jsonify({"msg": "Usuario creado exitosamente"}), 201
 
-# Ruta de Login
 @api.route('/login', methods=['POST'])
 def login():
     email = request.json.get('email_usuario', None)
@@ -150,15 +149,23 @@ def login():
     if not email or not password:
         return jsonify({"msg": "Faltan email o password"}), 400
 
-    # Buscar el usuario en la base de datos
     user = SmokerUser.query.filter_by(email_usuario=email).first()
     if not user:
         return jsonify({"msg": "Credenciales inválidas"}), 401
-
-    # Verificar la contraseña directamente
-    if user.password_email != password:  # Aquí comparas directamente
+    if user.password_email != password:
         return jsonify({"msg": "Credenciales inválidas"}), 401    
-    return jsonify({"msg": "Login exitoso", "user_id": user.id}), 200
+
+   
+    seguimientos = Seguimiento.query.filter_by(id_usuario=user.id).all()
+
+    return jsonify({
+        "msg": "Login exitoso",
+        "user_id": user.id,
+        "nombre_usuario": user.nombre_usuario,
+        "seguimientos": [s.serialize() for s in seguimientos], 
+        "foto_usuario": user.foto_usuario
+    }), 200
+
 
 # CRUD COACHES
 # Obtener todos los coaches (GET)
@@ -355,8 +362,26 @@ def delete_consuming(id):
  # RUTAS PARA JOSE
 @api.route('/seguimiento', methods=['GET'])
 def get_all_following():
-    following = Seguimiento.query.all()
-    return jsonify([following.serialize() for following in following]), 200
+    user_id = request.args.get('user_id')  
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400  
+
+    try:
+        user_id = int(user_id) 
+    except ValueError:
+        return jsonify({"error": "Invalid user_id format"}), 422
+
+    following = Seguimiento.query.filter_by(id_usuario=user_id).all()
+
+    print(f"Seguimientos obtenidos para user_id {user_id}: {following}") 
+
+    if not following:
+        return jsonify({"error": "No followings found"}), 404 
+
+    return jsonify([f.serialize() for f in following]), 200 
+
+
+
 
 @api.route('/seguimiento/<int:seguimiento_id>', methods=['GET'])
 def get_following(following_id):

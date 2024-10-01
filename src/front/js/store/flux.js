@@ -112,22 +112,27 @@ const getState = ({ getStore, getActions, setStore }) => {
             
                     if (response.ok) {
                         const data = await response.json();
-                        // Suponiendo que `data` contiene el ID del usuario y el token
                         setStore({
-                            isAuthenticated: true, // Marca al usuario como autenticado
-                            userId: data.user_id, // Guarda el ID del usuario en el store
-                            // Otras propiedades que necesites
+                            isAuthenticated: true,
+                            userId: data.id,
+                            nombreUsuario: data.nombre_usuario,
+                            numerocigarro_usuario: data.numerocigarro_usuario,
+                            periodicidad: data.periodicidad,
+                            tipo_consumo: data.tipo_consumo,
+                            fotoUsuario: data.foto_usuario,
                         });
-                        localStorage.setItem("token", data.token); // Guarda el token si es necesario
-                        return true; // Indica que el inicio de sesión fue exitoso
+                        localStorage.setItem("token", data.token);
+                        return true;
                     } else {
-                        return false; // Indica que el inicio de sesión falló
+                        return false;
                     }
                 } catch (error) {
                     console.error("Error during login:", error);
-                    return false; // Indica que ocurrió un error durante el inicio de sesión
+                    return false;
                 }
-            },            
+            },
+            
+            
 
             getConsuming: async () => {
                 try {
@@ -196,18 +201,21 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
                         //SEGUIMIENTO Y SOLICITUDES DE JOSE
-            getFollowing: async () => {
-                try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/seguimiento`);
-                        if (!response.ok) {
-                            throw new Error(`Error fetching seguimiento: ${response.status}`);
-                        }
-                    const data = await response.json();
-                        setStore({ seguimiento: data });
+
+                        getFollowing: async (userId) => {
+                            try {
+                                const response = await fetch(`${API_URL}/seguimiento?user_id=${userId}`);
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                const data = await response.json();
+                                console.log("Datos obtenidos:", data);
+                                setStore({ seguimiento: data });
                             } catch (error) {
-                                console.error("Error fetching seguimiento:", error);
+                                console.error("Error en la solicitud de seguimientos:", error);
                             }
-            },
+                        },        
+                             
             createFollowing: async (followingData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/seguimiento`, {
