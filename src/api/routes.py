@@ -122,40 +122,27 @@ def signup():
     if existing_user:
         return jsonify({"msg": "El usuario ya existe"}), 400
 
-    # Crear el nuevo usuario, aplicando hashing a la contraseña
+    # Crear el nuevo usuario
     new_user = SmokerUser(
         email_usuario=email,
-        password_email=password,
-        nombre_usuario=None,  # Opcional
-        genero_usuario=None,   # Opcional
-        nacimiento_usuario=None,  # Opcional
-        numerocigarro_usuario=None,  # Opcional
-        periodicidad=None,  # Opcional
-        tiempo_fumando=None,  # Opcional
-        id_tipo=None,  # Opcional
-        foto_usuario=None  # Opcional
+        password_email=password
     )
 
     db.session.add(new_user)
     db.session.commit()
 
-    seguimiento_data = {
-        'cantidad': '0',  # Puedes establecer un valor inicial
-        'id_usuario': new_user.id,
-        'id_tipo': None  # O el ID de tipo que quieras asignar
-    }
-
-    # Agregar el seguimiento a la base de datos
-    new_following = Seguimiento(
-        cantidad=seguimiento_data['cantidad'],
-        id_usuario=seguimiento_data['id_usuario'],
-        id_tipo=seguimiento_data['id_tipo']
+    # Crear un seguimiento inicial (esto asume que tienes un id_tipo para el seguimiento)
+    initial_following = Seguimiento(
+        cantidad=0,  # O el valor que consideres inicial
+        id_usuario=new_user.id,
+        id_tipo=None  # O el id_tipo que quieras asignar
     )
-
-    db.session.add(new_following)
+    
+    db.session.add(initial_following)
     db.session.commit()
 
-    return jsonify({"msg": "Usuario creado exitosamente", "following": new_following.serialize()}), 201
+    return jsonify({"msg": "Usuario creado exitosamente", "user_id": new_user.id}), 201
+
 
 
 @api.route('/login', methods=['POST'])
@@ -380,6 +367,7 @@ def delete_consuming(id):
 @api.route('/seguimiento', methods=['GET'])
 def get_all_following():
     user_id = request.args.get('user_id')  
+    print(f"Recibiendo user_id: {user_id}")  # Agregar esta línea para depuración
     if not user_id:
         return jsonify({"error": "user_id is required"}), 400  
 
@@ -395,7 +383,8 @@ def get_all_following():
     if not following:
         return jsonify({"error": "No followings found"}), 404 
 
-    return jsonify([f.serialize() for f in following]), 200 
+    return jsonify([f.serialize() for f in following]), 200
+
 
 
 

@@ -5,19 +5,16 @@ const FollowingList = () => {
     const { store, actions } = useContext(Context);
 
     useEffect(() => {
-        const fetchFollowingData = async () => {
-            if (store.userId) {
-                await actions.getFollowing(store.userId); // Llama a la acción para obtener los datos de seguimiento
-            }
-        };
-
-        fetchFollowingData();
-    }, [store.userId, actions]);
+        // Verificar si existe userId para obtener los seguimientos
+        if (store.userId) {
+            actions.getFollowing(store.userId);
+        }
+    }, [store.userId, actions]); // Dependencias para el useEffect
 
     return (
         <div className="container mt-5">
             <h1 className="text-center mb-4">Este es tu progreso</h1>
-            {store.seguimiento && store.seguimiento.length > 0 ? ( // Asegúrate de que este valor esté disponible en el store
+            {store.seguimiento && store.seguimiento.length > 0 ? ( // Usar la propiedad seguimiento del store
                 <div className="row">
                     {store.seguimiento.map(following => (
                         <div className="col-md-4 mb-4" key={following.id}>
@@ -49,12 +46,4 @@ const FollowingList = () => {
 };
 
 export default FollowingList;
-
-
-
-
-
-
-
-
 
