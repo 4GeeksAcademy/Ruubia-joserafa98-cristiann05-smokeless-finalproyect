@@ -76,6 +76,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             signupSmoker: async (smokerData) => {
                 try {
+                    // Primer paso: crear el nuevo usuario
                     const response = await fetch(`${process.env.BACKEND_URL}/api/signup`, {
                         method: "POST",
                         headers: {
@@ -88,7 +89,28 @@ const getState = ({ getStore, getActions, setStore }) => {
                         const newSmoker = await response.json();
                         setStore({ smokers: [...getStore().smokers, newSmoker] });
                         localStorage.setItem("token", newSmoker.token);  // Guarda el token si es parte de la respuesta
-                        return true;
+                        
+                        // Segundo paso: crear el seguimiento (si es necesario)
+                        const seguimientoData = {
+                            cantidad: smokerData.cantidad,  // Asegúrate de que estos datos están en smokerData
+                            id_usuario: newSmoker.id,  // ID del nuevo usuario
+                            id_tipo: smokerData.id_tipo,  // Asegúrate de que este dato está en smokerData
+                        };
+            
+                        const seguimientoResponse = await fetch(`${process.env.BACKEND_URL}/api/seguimiento`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(seguimientoData),
+                        });
+            
+                        if (!seguimientoResponse.ok) {
+                            const errorData = await seguimientoResponse.json();
+                            console.error("Error al registrar seguimiento:", errorData);
+                        }
+            
+                        return true;  // Registro y seguimiento exitosos
                     } else {
                         const errorData = await response.json();
                         console.error("Error en la respuesta del servidor:", errorData);
@@ -99,6 +121,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false;
                 }
             },
+            
             
             loginSmoker: async (smokerData) => {
                 try {

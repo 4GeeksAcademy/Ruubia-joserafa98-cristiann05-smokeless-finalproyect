@@ -139,7 +139,24 @@ def signup():
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({"msg": "Usuario creado exitosamente"}), 201
+    seguimiento_data = {
+        'cantidad': '0',  # Puedes establecer un valor inicial
+        'id_usuario': new_user.id,
+        'id_tipo': None  # O el ID de tipo que quieras asignar
+    }
+
+    # Agregar el seguimiento a la base de datos
+    new_following = Seguimiento(
+        cantidad=seguimiento_data['cantidad'],
+        id_usuario=seguimiento_data['id_usuario'],
+        id_tipo=seguimiento_data['id_tipo']
+    )
+
+    db.session.add(new_following)
+    db.session.commit()
+
+    return jsonify({"msg": "Usuario creado exitosamente", "following": new_following.serialize()}), 201
+
 
 @api.route('/login', methods=['POST'])
 def login():
