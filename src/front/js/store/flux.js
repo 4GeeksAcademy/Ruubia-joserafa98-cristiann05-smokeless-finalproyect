@@ -5,6 +5,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             tiposConsumo: [],
             coaches: [],
             loggedInUser: null,
+            seguimiento: []
         },
         actions: {
             getSmokers: async () => {
@@ -195,21 +196,42 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
                         //SEGUIMIENTO Y SOLICITUDES DE JOSE
-
-
-            // Acciones para Coaches
-            getCoaches: async () => {
+            getFollowing: async () => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches`);
-                    if (!response.ok) {
-                        throw new Error(`Error fetching coaches: ${response.status}`);
-                    }
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/seguimiento`);
+                        if (!response.ok) {
+                            throw new Error(`Error fetching seguimiento: ${response.status}`);
+                        }
                     const data = await response.json();
-                    setStore({ coaches: data });
-                } catch (error) {
-                    console.error("Error fetching coaches:", error);
-                }
+                        setStore({ seguimiento: data });
+                            } catch (error) {
+                                console.error("Error fetching seguimiento:", error);
+                            }
             },
+            createFollowing: async (followingData) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/seguimiento`, {
+                        method: "POST",
+                        headers: {
+                                "Content-Type": "application/json",
+                        },
+                                body: JSON.stringify(followingData),
+                         });
+                        
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            throw new Error(`Error creating seguimiento: ${errorText}`);
+                        }
+                        
+                    const newFollowing = await response.json();
+                        setStore((prevStore) => ({
+                            seguimiento: [...prevStore.seguimiento, newFollowing], 
+                            }));
+                        } catch (error) {
+                            console.error("Error creating seguimiento:", error);
+                        }
+            },
+                        
 
             // Crear un nuevo coach
             createCoach: async (coachData) => {

@@ -67,7 +67,7 @@ class SmokerUser(db.Model):
 class TiposConsumo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
-
+    
     def __repr__(self):
         return f'<TiposConsumo {self.name}>'
 
@@ -76,3 +76,28 @@ class TiposConsumo(db.Model):
             "id": self.id,
             "name": self.name,
         }
+
+class Seguimiento(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cantidad = db.Column(db.String(120), nullable=False)
+    
+    id_usuario = db.Column(db.Integer, db.ForeignKey('smoker_user.id'), nullable=False)  # Relación con SmokerUser
+    usuario = db.relationship('SmokerUser', backref='seguimientos')
+
+    id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=True)  # Relación con TiposConsumo
+    tipo_consumo = db.relationship('TiposConsumo', backref='seguimientos')
+
+    def __repr__(self):
+        return f'<Seguimiento {self.id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "cantidad": self.cantidad,
+            "id_usuario": self.id_usuario,
+            "nombre_usuario":self.usuario.nombre_usuario,
+            "id_tipo": self.id_tipo,
+            "nombre_tipo":self.tipo_consumo.name,
+            "numerocigarro_usuario": self.usuario.numerocigarro_usuario  # Obtienes el número desde la relación
+        }
+
