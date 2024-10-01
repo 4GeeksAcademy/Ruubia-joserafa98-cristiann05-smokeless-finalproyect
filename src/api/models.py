@@ -95,7 +95,9 @@ class Seguimiento(db.Model):
             "id": self.id,
             "cantidad": self.cantidad,
             "id_usuario": self.id_usuario,
+            "nombre_usuario":self.usuario.nombre_usuario,
             "id_tipo": self.id_tipo,
+            "nombre_tipo":self.tipo_consumo.name,
             "numerocigarro_usuario": self.usuario.numerocigarro_usuario  # Obtienes el número desde la relación
         }
 

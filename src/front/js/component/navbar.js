@@ -42,8 +42,8 @@ export const Navbar = () => {
 
            {/* Nuevos botones de formularios como seguimiento y solicitudes[JOSE] */}
 
-           <Link to="/ejemplo">
-            <button className="btn btn-outline-info mx-2">ejemplo</button>
+           <Link to="/seguimiento">
+            <button className="btn btn-outline-info mx-2">seguimiento</button>
           </Link>
           <Link to="/ejemplo">
             <button className="btn btn-outline-warning mx-2">ejemplo</button>
