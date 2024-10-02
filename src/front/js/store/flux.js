@@ -263,7 +263,53 @@ const getState = ({ getStore, getActions, setStore }) => {
                         }
             },
                         
+            getAllCoaches: async () => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+            
+                    if (response.ok) {
+                        const coaches = await response.json();
+                        setStore({
+                            coaches: coaches,  
+                        });
+                    } else {
+                        const errorText = await response.text();
+                        throw new Error(`Error fetching coaches: ${errorText}`);
+                    }
+                } catch (error) {
+                    console.error("Error fetching all coaches:", error);
+                }
+            },
 
+            getCoach: async (coachId) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/${coachId}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+            
+                    if (response.ok) {
+                        const coach = await response.json();
+                        setStore({
+                            selectedCoach: coach,  // Puedes guardar el coach seleccionado en el store
+                        });
+                        return coach;
+                    } else {
+                        const errorText = await response.text();
+                        throw new Error(`Error fetching coach: ${errorText}`);
+                    }
+                } catch (error) {
+                    console.error("Error fetching coach:", error);
+                }
+            },
+            
             // Crear un nuevo coach
             createCoach: async (coachData) => {
                 try {

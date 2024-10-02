@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 import FollowingList from "./seguimiento";
+import CoachCard from "../component/CoachCards";
 
 const ControlPanelSmoker = () => {
     const { store } = useContext(Context);
@@ -26,6 +27,7 @@ const ControlPanelSmoker = () => {
                 Logout
             </button>
             <FollowingList />
+            <CoachCard />
         </div>
     );
 };
