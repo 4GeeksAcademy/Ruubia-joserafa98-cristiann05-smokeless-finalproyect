@@ -1,81 +1,106 @@
-# WebApp boilerplate with React JS and Flask API
+# Smokeless - Proyecto Final
 
-Build web applications using React.js for the front end and python/flask for your backend API.
+Smokeless es una plataforma web diseñada para ayudar a los fumadores a dejar de fumar mediante el seguimiento y la interacción con entrenadores especializados. El sistema permite a los usuarios fumadores y a los entrenadores trabajar juntos a través de un panel de control personalizado, herramientas de seguimiento y más.
 
-- Documentation can be found here: https://start.4geeksacademy.com/starters/react-flask
-- Here is a video on [how to use this template](https://www.loom.com/share/f37c6838b3f1496c95111e515e83dd9b)
-- Integrated with Pipenv for package managing.
-- Fast deployment to heroku [in just a few steps here](https://start.4geeksacademy.com/backend/deploy-heroku-posgres).
-- Use of .env file.
-- SQLAlchemy integration for database abstraction.
+## Tabla de Contenidos
+- [Características](#características)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Instalación](#instalación)
+- [Uso](#uso)
+- [Tecnologías Utilizadas](#tecnologías-utilizadas)
+- [Contribuciones](#contribuciones)
+- [Licencia](#licencia)
 
-### 1) Installation:
+## Características
+- **Registro y autenticación de usuarios**: Tanto los entrenadores como los fumadores pueden registrarse y acceder a sus respectivos paneles de control.
+- **Panel de Control**: Cada tipo de usuario tiene acceso a un panel personalizado para gestionar su progreso o monitorear a los fumadores.
+- **Seguimiento de consumo**: Los fumadores pueden registrar su progreso, y los entrenadores pueden observar este seguimiento para proporcionar retroalimentación.
+- **Componentes reutilizables**: Diseño modular y reutilizable para los diferentes elementos de la interfaz.
 
-> If you use Github Codespaces (recommended) or Gitpod this template will already come with Python, Node and the Posgres Database installed. If you are working locally make sure to install Python 3.10, Node 
 
-It is recomended to install the backend first, make sure you have Python 3.8, Pipenv and a database engine (Posgress recomended)
-
-1. Install the python packages: `$ pipenv install`
-2. Create a .env file based on the .env.example: `$ cp .env.example .env`
-3. Install your database engine and create your database, depending on your database you have to create a DATABASE_URL variable with one of the possible values, make sure you replace the valudes with your database information:
-
-| Engine    | DATABASE_URL                                        |
-| --------- | --------------------------------------------------- |
-| SQLite    | sqlite:////test.db                                  |
-| MySQL     | mysql://username:password@localhost:port/example    |
-| Postgress | postgres://username:password@localhost:5432/example |
-
-4. Migrate the migrations: `$ pipenv run migrate` (skip if you have not made changes to the models on the `./src/api/models.py`)
-5. Run the migrations: `$ pipenv run upgrade`
-6. Run the application: `$ pipenv run start`
-
-> Note: Codespaces users can connect to psql by typing: `psql -h localhost -U gitpod example`
-
-### Undo a migration
-
-You are also able to undo a migration by running
-
-```sh
-$ pipenv run downgrade
-```
-
-### Backend Populate Table Users
-
-To insert test users in the database execute the following command:
-
-```sh
-$ flask insert-test-users 5
-```
-
-And you will see the following message:
+## Estructura del Proyecto
 
 ```
-  Creating test users
-  test_user1@test.com created.
-  test_user2@test.com created.
-  test_user3@test.com created.
-  test_user4@test.com created.
-  test_user5@test.com created.
-  Users created successfully!
-```
+src/                             # Directorio principal
+├── api                         # Lógica del backend y rutas de la API
+│   ├── init.py                # Inicialización del módulo
+│   ├── admin.py               # Administración del sistema
+│   ├── commands.py            # Comandos de gestión
+│   ├── models.py              # Definición de modelos de la base de datos
+│   ├── routes.py              # Rutas de la API
+│   └── utils.py               # Funciones auxiliares
+├── app.py                     # Punto de entrada de la aplicación
+├── front                      # Código del frontend
+│   ├── img                    # Imágenes y logos
+│   ├── js                     # Scripts y componentes de frontend
+│   └── styles                 # Archivos de estilo CSS
+└── wsgi.py                    # Configuración WSGI para el despliegue
+``` 
+├── api                  # Lógica del backend y rutas de la API
+│   ├── init.py         # Inicialización del módulo
+│   ├── admin.py        # Administración del sistema
+│   ├── commands.py     # Comandos de gestión
+│   ├── models.py       # Definición de modelos de la base de datos
+│   ├── routes.py       # Rutas de la API
+│   └── utils.py        # Funciones auxiliares
+├── app.py              # Punto de entrada de la aplicación
+├── front               # Código del frontend
+│   ├── img             # Imágenes y logos
+│   ├── js              # Scripts y componentes de frontend
+│   └── styles          # Archivos de estilo CSS
+└── wsgi.py             # Configuración WSGI para el despliegue
 
-### **Important note for the database and the data inside it**
+## Instalación
 
-Every Github codespace environment will have **its own database**, so if you're working with more people eveyone will have a different database and different records inside it. This data **will be lost**, so don't spend too much time manually creating records for testing, instead, you can automate adding records to your database by editing ```commands.py``` file inside ```/src/api``` folder. Edit line 32 function ```insert_test_data``` to insert the data according to your model (use the function ```insert_test_users``` above as an example). Then, all you need to do is run ```pipenv run insert-test-data```.
+Sigue los pasos a continuación para ejecutar el proyecto localmente:
 
-### Front-End Manual Installation:
+1. Clona este repositorio:
 
--   Make sure you are using node version 14+ and that you have already successfully installed and runned the backend.
+    ```bash
+    git clone https://github.com/4GeeksAcademy/Ruubia-joserafa98-cristiann05-smokeless-finalproyect.git
+    ```
 
-1. Install the packages: `$ npm install`
-2. Start coding! start the webpack dev server `$ npm run start`
+2. Instala las dependencias necesarias del backend (asegúrate de tener [Pipenv](https://pipenv.pypa.io/en/latest/) instalado):
 
-## Publish your website!
+    ```bash
+    pipenv install
+    ```
 
-This boilerplate it's 100% read to deploy with Render.com and Heroku in a matter of minutes. Please read the [official documentation about it](https://start.4geeksacademy.com/deploy).
+3. Instala las dependencias del frontend:
 
-### Contributors
+    ```bash
+    npm install
+    ```
 
-This template was built as part of the 4Geeks Academy [Coding Bootcamp](https://4geeksacademy.com/us/coding-bootcamp) by [Alejandro Sanchez](https://twitter.com/alesanchezr) and many other contributors. Find out more about our [Full Stack Developer Course](https://4geeksacademy.com/us/coding-bootcamps/part-time-full-stack-developer), and [Data Science Bootcamp](https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning).
+## Uso
 
-You can find other templates and resources like this at the [school github page](https://github.com/4geeksacademy/).
+1. **Iniciar el backend**:
+   
+   Para iniciar el servidor backend con la base de datos:
+
+   ```bash
+   pipenv run start
+   ```
+
+2. **Iniciar el frontend**:
+
+   Para iniciar el servidor del frontend:
+
+   ```bash
+   npm run start
+   ```
+
+Abre tu navegador en http://localhost:3000 para ver la aplicación frontend, y el backend correrá en http://localhost:5000.
+
+## Tecnologías Utilizadas
+- **Backend**: Python (Flask)
+- **Frontend**: HTML, CSS, JavaScript (React)
+- **Base de datos**: SQLAlchemy (SQLite/PostgreSQL)
+- **Despliegue**: WSGI
+
+## Contribuciones
+¡Las contribuciones son bienvenidas! Si deseas colaborar, por favor abre un issue o realiza un pull request.
+
+## Licencia
+Este proyecto está bajo la Licencia MIT. Consulta el archivo LICENSE para más detalles.
+
