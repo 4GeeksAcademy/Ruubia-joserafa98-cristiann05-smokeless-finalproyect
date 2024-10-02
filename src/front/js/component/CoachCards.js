@@ -33,7 +33,7 @@ const CoachCard = () => {
                             <p className="card-text text-dark">
                                 <strong>Dirección:</strong> {coach.direccion}
                             </p>
-                            <a href="#" className="btn btn-primary">Ver Detalles</a>
+                            <a href="#" className="btn btn-primary">contratar</a>
                         </div>
                     </div>
                 </div>
