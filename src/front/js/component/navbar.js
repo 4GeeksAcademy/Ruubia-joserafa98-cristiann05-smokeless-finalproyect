@@ -1,58 +1,68 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import logonegro from '../../img/logos/logonegro.png';
-import '../../styles/navbar.css';
+import React, { useState, useEffect } from "react";
+import "../../styles/navbar.css";
+import '../../styles/switch.css';
 
-export const Navbar = () => {
-  return (
-    <nav className="navbar navbar-light bg-light">
-      <div className="container">
-        {/* Logo */}
-        <Link to="/">
-          <img src={logonegro} alt="logo principal en negro" style={{ width: '100px', height: 'auto' }} />
-        </Link>
-        <div className="ml-auto">
-          <Link to="/">
-            <button className="btn btn-outline-primary mx-2">Inicio</button>
-          </Link>
-          <Link to="/smokeruser">
-            <button className="btn btn-outline-primary mx-2">Fumadores</button>
-          </Link>
-          <Link to="/coaches">
-            <button className="btn btn-outline-secondary mx-2">Coaches</button>
-          </Link>
-          <Link to="/tiposconsumo">
-            <button className="btn btn-outline-success mx-2">Tipos de Consumo</button>
-          </Link>
-          {/* Nuevos botones de Registrarse e Iniciar Sesión como fumador */}
-          <Link to="/login-smoker">
-            <button className="btn btn-outline-info mx-2">Iniciar Sesión fumador</button>
-          </Link>
-          <Link to="/signup-smoker">
-            <button className="btn btn-outline-warning mx-2">Registrarse como fumador</button>
-          </Link>
-          {/* Nuevos botones de Registrarse e Iniciar Sesión como coach */}
+const Navbar = ({ toggleTheme }) => {
+    const [language, setLanguage] = useState(() => {
+        return localStorage.getItem('language') || "Spanish"; // Valor por defecto en español
+    });
 
-          <Link to="/login-coach">
-            <button className="btn btn-outline-info mx-2">Iniciar Sesión coach</button>
-          </Link>
-          <Link to="/signup-coach">
-            <button className="btn btn-outline-warning mx-2">Registrarse como coach</button>
-          </Link>
+    const icons = {
+        english: "🇬🇧",
+        spanish: "🇪🇸",
+        french: "🇫🇷",
+        german: "🇩🇪",
+        italian: "🇮🇹"
+    };
 
-           {/* Nuevos botones de formularios como seguimiento y solicitudes[JOSE] */}
+    const listItems = ["English", "Spanish", "French", "German", "Italian"];
 
-           <Link to="/seguimiento">
-            <button className="btn btn-outline-info mx-2">seguimiento</button>
-          </Link>
-          <Link to="/ejemplo">
-            <button className="btn btn-outline-warning mx-2">ejemplo</button>
-          </Link>
+    const handleItemClick = (language) => {
+        setLanguage(language);
+        localStorage.setItem('language', language); // Guardar idioma en localStorage
+    };
 
+    useEffect(() => {
+        // Establecer el idioma seleccionado basado en el estado de language
+        setLanguage(localStorage.getItem('language') || "Spanish");
+    }, []);
 
+    return (
+        <nav className="navbar">
+            <div className="navbar-controls">
+                <div className="dropdown">
+                    <button
+                        className="btn btn-secondary dropdown-toggle"
+                        type="button"
+                        id="dropdownMenuButton"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        <span className="dropdown-title-icon">{icons[language.toLowerCase()]}</span>
+                        <span className="dropdown-title">{language}</span>
+                    </button>
 
-        </div>
-      </div>
-    </nav>
-  );
+                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        {listItems.map((item) => (
+                            <li key={item}>
+                                <button
+                                    className="dropdown-item"
+                                    onClick={() => handleItemClick(item)}
+                                >
+                                    <span className="text-truncate">{icons[item.toLowerCase()]} {item}</span>
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <label className="switch" aria-label="Toggle Theme">
+                    <input type="checkbox" className="input__check" onChange={toggleTheme} />
+                    <span className="slider"></span>
+                </label>
+            </div>
+        </nav>
+    );
 };
+
+export default Navbar;

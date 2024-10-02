@@ -1,0 +1,189 @@
+/* Importa la fuente Heading Now */
+@font-face {
+    font-family: 'Heading Now'; 
+    src: url('https://fonts.vdhazel.com/headingnow/Heading-Now-Variable-Regular-trial.woff2') format('woff2'); 
+    font-weight: normal; 
+    font-style: normal; 
+}
+
+/* General */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Arial", sans-serif; /* Fuente por defecto */
+    color: white;
+    background: linear-gradient(to bottom, #0a1f36, #0b0d12); /* Fondo degradado */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 100vh; /* Altura mínima para el cuerpo */
+    flex-direction: column; /* Organiza los elementos en columna */
+}
+
+/* Estilos para el texto animado en la parte superior */
+.animated-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5vw; /* Tamaño de fuente adaptable */
+    line-height: 5vw; /* Altura de línea */
+    margin-bottom: 20px; /* Espaciado inferior */
+    font-family: 'Heading Now', sans-serif; /* Aplicar la fuente de animación */
+    color: #ffffff; /* Color del texto animado */
+    margin-top: 20px; /* Ajustado: reduce este valor para subir más */
+}
+
+/* Estilo para letras animadas */
+.letter {
+    display: inline-block; /* Cada letra en un bloque */
+    --wght: 100; /* Peso de la fuente */
+    --wdth: 85; /* Ancho de la fuente */
+    --opacity: 0.25; /* Opacidad inicial */
+    --letter-spacing: 0; /* Espaciado de letras */
+    font-variation-settings: "wght" var(--wght), "wdth" var(--wdth); /* Configuración de variaciones */
+    opacity: var(--opacity); /* Opacidad */
+    letter-spacing: var(--letter-spacing); /* Espaciado */
+    font-size: 5vw; /* Tamaño de fuente adaptable */
+    transition: 
+        font-variation-settings 1s ease-in-out,
+        opacity 1s ease-in-out,
+        letter-spacing 2s ease-in-out,
+        font-size 1s ease-in-out; /* Transiciones suaves */
+}
+
+/* Contenedor principal */
+.container {
+    padding: 50px 20px; /* Reducido el padding superior */
+    max-width: 800px; /* Ancho máximo */
+    width: 100%; /* Asegura que el contenedor no se expanda más allá del ancho máximo */
+    margin: auto; /* Centrar el contenedor */
+    background: transparent; /* Fondo transparente */
+    border-radius: 15px; /* Bordes redondeados */
+}
+
+
+/* Estilo para enlaces */
+.link {
+    color: #008cff;
+    text-decoration: none;
+    transition: color 0.3s;
+    margin: 10px 0;
+}
+
+.link:hover {
+    color: #ffffff;
+}
+
+/* Estilos específicos para el contenedor Atropos */
+.my-atropos {
+    width: 100%; /* Asegura que el contenedor sea 100% del ancho */
+    max-width: 600px; /* Ancho máximo para el efecto 3D */
+    margin: 5px auto; /* Reduce el margen superior para subir el contenedor más */
+    position: relative; /* Asegura que los elementos hijos se posicionen correctamente */
+    background: transparent; /* Asegúrate de que el fondo sea transparente */
+    border-radius: 15px; /* Borde redondeado de la imagen */
+}
+
+
+/* Estilos de la imagen Atropos */
+.atropos-image {
+    width: 100%; /* Ocupa todo el ancho del contenedor */
+    height: auto; /* Mantiene la proporción de la imagen */
+    object-fit: cover; /* Ajusta la imagen para cubrir el contenedor */
+    margin-top: 50; /* Eliminar el margen superior */
+    border-radius: 15px; /* Borde redondeado de la imagen */
+}
+
+
+
+/* Estilos generales */
+body {
+    transition: background-color 0.5s ease;
+}
+
+/* Estilos para el tema oscuro */
+body.dark {
+    background: linear-gradient(to bottom, #0a1f36, #0b0d12);
+}
+
+/* Estilos para el tema claro */
+body.light {
+    background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+}
+
+body.light .animated-text {
+    color: #000000;
+}
+
+/* Estilos de botones específicos para los botones de registro */
+.register-button {
+    position: relative;
+    padding: 10px 20px;
+    border-radius: 7px;
+    border: 1px solid rgb(61, 106, 255);
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 2px;
+    background: transparent;
+    color: #fff; /* Color por defecto (blanco) */
+    overflow: hidden;
+    box-shadow: 0 0 0 0 transparent;
+    transition: all 0.2s ease-in;
+    margin: 10px 0; /* Espaciado vertical entre botones (ajustado) */
+    margin-top: 30px;
+}
+
+body.light .register-button {
+    color: #000; /* Cambia a negro cuando el tema es claro */
+}
+
+.register-button:hover {
+    background: rgb(61, 106, 255);
+    box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
+    transition: all 0.2s ease-out;
+}
+
+.register-button:hover::before {
+    animation: sh02 0.5s 0s linear;
+}
+
+.register-button::before {
+    content: '';
+    display: block;
+    width: 0px;
+    height: 86%;
+    position: absolute;
+    top: 7%;
+    left: 0%;
+    opacity: 0;
+    background: #fff;
+    box-shadow: 0 0 50px 30px #fff;
+    transform: skewX(-20deg);
+}
+
+@keyframes sh02 {
+    from {
+        opacity: 0;
+        left: 0%;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+        left: 100%;
+    }
+}
+
+.register-button:active {
+    box-shadow: 0 0 0 0 transparent;
+    transition: box-shadow 0.2s ease-in;
+}
