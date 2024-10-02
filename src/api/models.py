@@ -102,3 +102,31 @@ class Seguimiento(db.Model):
             "numerocigarro_usuario": self.usuario.numerocigarro_usuario  # Obtienes el número desde la relación
         }
 
+class Solicitud(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    id_user = db.Column(db.Integer, db.ForeignKey('smoker_user.id'), nullable=False)
+    user = db.relationship('SmokerUser', backref='solicitudes')
+
+    id_coach = db.Column(db.Integer, db.ForeignKey('coach.id'), nullable=True)
+    coach = db.relationship('Coach', backref='solicitudes')
+
+    fecha_solicitud = db.Column(db.DateTime, nullable=False)
+    estado = db.Column(db.String(50), nullable=False)
+    fecha_respuesta = db.Column(db.DateTime, nullable=True)
+    comentarios = db.Column(db.Text, nullable=True)
+
+    def __repr__(self):
+        return f'<Solicitud {self.id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "id_user": self.id_user,
+            "name_user": self.user.nombre_usuario,  # Asegúrate que el campo es correcto en `SmokerUser`
+            "id_coach": self.id_coach,
+            "name_coach": self.coach.name_coach if self.coach else None,  # Manejo de nulos
+            "fecha_solicitud": self.fecha_solicitud.isoformat(),
+            "estado": self.estado,
+            "fecha_respuesta": self.fecha_respuesta.isoformat() if self.fecha_respuesta else None,
+            "comentarios": self.comentarios
+        }

@@ -434,6 +434,60 @@ def update_following(id):
     db.session.commit()
     return jsonify(following.serialize()), 200
 
+@api.route('/solicitudes', methods=['POST'])
+def add_solicitud():
+    data = request.get_json()
+
+    required_fields = ['id_user', 'id_coach', 'fecha_solicitud']
+    if not data or not all(field in data for field in required_fields):
+        return jsonify({"error": "Datos incompletos"}), 400
+
+    solicitud = Solicitud(
+        id_user=data['id_user'],
+        id_coach=data['id_coach'],
+        fecha_solicitud=data['fecha_solicitud'],
+        estado='pendiente',  # Estado inicial
+        comentarios=data.get('comentarios', None)
+    )
+
+    db.session.add(solicitud)
+    db.session.commit()
+
+    return jsonify(solicitud.serialize()), 201
+
+@api.route('/solicitudes/<int:id_user>', methods=['GET'])
+def get_solicitudes_by_user(id_user):
+    solicitudes = Solicitud.query.filter_by(id_user=id_user).all()
+    if not solicitudes:
+        return jsonify({"message": "No hay solicitudes"}), 404
+
+    return jsonify([solicitud.serialize() for solicitud in solicitudes]), 200
+
+@api.route('/solicitudes/<int:id>', methods=['PUT'])
+def update_solicitud(id):
+    solicitud = Solicitud.query.get(id)
+    if not solicitud:
+        return jsonify({"error": "Solicitud no encontrada"}), 404
+
+    data = request.get_json()
+    if 'estado' in data:
+        solicitud.estado = data['estado']
+    if 'fecha_respuesta' in data:
+        solicitud.fecha_respuesta = data['fecha_respuesta']
+
+    db.session.commit()
+    return jsonify(solicitud.serialize()), 200
+
+@api.route('/solicitudes/<int:id>', methods=['DELETE'])
+def delete_solicitud(id):
+    solicitud = Solicitud.query.get(id)
+    if not solicitud:
+        return jsonify({"error": "Solicitud no encontrada"}), 404
+
+    db.session.delete(solicitud)
+    db.session.commit()
+    return jsonify({"message": "Solicitud eliminada correctamente"}), 200
+
 
 # Ruta protegida
 @api.route("/protected", methods=["GET"])
