@@ -1,0 +1,45 @@
+/* Efecto de desenfoque */
+body.blur {
+    filter: blur(5px); /* Desenfoque del fondo */
+    transition: filter 0.3s; /* Transición suave */
+}
+
+/* Contenedor para los controles (solo el switch) */
+.navbar-controls {
+    display: flex; /* Usar flex para alinear horizontalmente */
+    align-items: center; /* Alinear verticalmente */
+    gap: 100px; /* Espaciado entre controles */
+    margin-left: 1500px; /* Empujar el contenedor a la derecha */
+    margin-top: 30px;
+}
+
+/* Estilos para el Dropdown */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    background-color: white; /* Color de fondo del dropdown */
+    color: #333; /* Color del texto */
+    border-radius: 0.5rem; /* Bordes redondeados */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Sombra */
+    margin-top: 0.5rem; /* Espaciado superior */
+    z-index: 1000; /* Asegurarse de que esté por encima de otros elementos */
+}
+
+.dropdown-item {
+    padding: 10px 20px; /* Espaciado dentro de cada ítem */
+    cursor: pointer; /* Cambiar el cursor al pasar sobre el ítem */
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa; /* Color de fondo al pasar el mouse */
+}
