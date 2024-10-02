@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
+import SolicitudesCoach from "../component/SolicitudesCoach";
 
 const ControlPanelCoach = () => {
     const { store } = useContext(Context); // Acceder al estado global
@@ -32,6 +33,7 @@ const ControlPanelCoach = () => {
             <button className="btn btn-danger mt-3" onClick={handleLogout}>
                 Logout
             </button> {/* Botón para cerrar sesión */}
+            <SolicitudesCoach />
         </div>
     );
 };
