@@ -76,6 +76,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             signupSmoker: async (smokerData) => {
                 try {
+                    // Primer paso: crear el nuevo usuario
                     const response = await fetch(`${process.env.BACKEND_URL}/api/signup`, {
                         method: "POST",
                         headers: {
@@ -88,7 +89,28 @@ const getState = ({ getStore, getActions, setStore }) => {
                         const newSmoker = await response.json();
                         setStore({ smokers: [...getStore().smokers, newSmoker] });
                         localStorage.setItem("token", newSmoker.token);  // Guarda el token si es parte de la respuesta
-                        return true;
+                        
+                        // Segundo paso: crear el seguimiento (si es necesario)
+                        const seguimientoData = {
+                            cantidad: smokerData.cantidad,  // Asegúrate de que estos datos están en smokerData
+                            id_usuario: newSmoker.id,  // ID del nuevo usuario
+                            id_tipo: smokerData.id_tipo,  // Asegúrate de que este dato está en smokerData
+                        };
+            
+                        const seguimientoResponse = await fetch(`${process.env.BACKEND_URL}/api/seguimiento`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(seguimientoData),
+                        });
+            
+                        if (!seguimientoResponse.ok) {
+                            const errorData = await seguimientoResponse.json();
+                            console.error("Error al registrar seguimiento:", errorData);
+                        }
+            
+                        return true;  // Registro y seguimiento exitosos
                     } else {
                         const errorData = await response.json();
                         console.error("Error en la respuesta del servidor:", errorData);
@@ -99,6 +121,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false;
                 }
             },
+            
             
             loginSmoker: async (smokerData) => {
                 try {
@@ -112,22 +135,27 @@ const getState = ({ getStore, getActions, setStore }) => {
             
                     if (response.ok) {
                         const data = await response.json();
-                        // Suponiendo que `data` contiene el ID del usuario y el token
                         setStore({
-                            isAuthenticated: true, // Marca al usuario como autenticado
-                            userId: data.user_id, // Guarda el ID del usuario en el store
-                            // Otras propiedades que necesites
+                            isAuthenticated: true,
+                            userId: data.id,
+                            nombreUsuario: data.nombre_usuario,
+                            numerocigarro_usuario: data.numerocigarro_usuario,
+                            periodicidad: data.periodicidad,
+                            tipo_consumo: data.tipo_consumo,
+                            fotoUsuario: data.foto_usuario,
                         });
-                        localStorage.setItem("token", data.token); // Guarda el token si es necesario
-                        return true; // Indica que el inicio de sesión fue exitoso
+                        localStorage.setItem("token", data.token);
+                        return true;
                     } else {
-                        return false; // Indica que el inicio de sesión falló
+                        return false;
                     }
                 } catch (error) {
                     console.error("Error during login:", error);
-                    return false; // Indica que ocurrió un error durante el inicio de sesión
+                    return false;
                 }
-            },            
+            },
+            
+            
 
             getConsuming: async () => {
                 try {
@@ -196,18 +224,21 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
                         //SEGUIMIENTO Y SOLICITUDES DE JOSE
-            getFollowing: async () => {
-                try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/seguimiento`);
-                        if (!response.ok) {
-                            throw new Error(`Error fetching seguimiento: ${response.status}`);
-                        }
-                    const data = await response.json();
-                        setStore({ seguimiento: data });
+
+                        getFollowing: async (userId) => {
+                            try {
+                                const response = await fetch(`${API_URL}/seguimiento?user_id=${userId}`);
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                const data = await response.json();
+                                console.log("Datos obtenidos:", data);
+                                setStore({ seguimiento: data });
                             } catch (error) {
-                                console.error("Error fetching seguimiento:", error);
+                                console.error("Error en la solicitud de seguimientos:", error);
                             }
-            },
+                        },        
+                             
             createFollowing: async (followingData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/seguimiento`, {
@@ -232,7 +263,53 @@ const getState = ({ getStore, getActions, setStore }) => {
                         }
             },
                         
+            getAllCoaches: async () => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+            
+                    if (response.ok) {
+                        const coaches = await response.json();
+                        setStore({
+                            coaches: coaches,  
+                        });
+                    } else {
+                        const errorText = await response.text();
+                        throw new Error(`Error fetching coaches: ${errorText}`);
+                    }
+                } catch (error) {
+                    console.error("Error fetching all coaches:", error);
+                }
+            },
 
+            getCoach: async (coachId) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/${coachId}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+            
+                    if (response.ok) {
+                        const coach = await response.json();
+                        setStore({
+                            selectedCoach: coach,  // Puedes guardar el coach seleccionado en el store
+                        });
+                        return coach;
+                    } else {
+                        const errorText = await response.text();
+                        throw new Error(`Error fetching coach: ${errorText}`);
+                    }
+                } catch (error) {
+                    console.error("Error fetching coach:", error);
+                }
+            },
+            
             // Crear un nuevo coach
             createCoach: async (coachData) => {
                 try {

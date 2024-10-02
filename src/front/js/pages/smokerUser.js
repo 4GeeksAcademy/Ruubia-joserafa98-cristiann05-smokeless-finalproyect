@@ -42,7 +42,18 @@ const SmokerUser = () => {
 
     const handleEdit = (smoker) => {
         setSmokerToEdit(smoker);
-        setFormData(smoker);
+        setFormData({
+            ...smoker,
+            email_usuario: smoker.email_usuario || "",
+            password_email: "",  // No exponemos la contraseña
+            nombre_usuario: smoker.nombre_usuario || "",
+            genero_usuario: smoker.genero_usuario || "",
+            nacimiento_usuario: smoker.nacimiento_usuario || "",
+            numerocigarro_usuario: smoker.numerocigarro_usuario || 0,
+            periodicidad: smoker.periodicidad || "",
+            tiempo_fumando: smoker.tiempo_fumando || "",
+            id_tipo: smoker.id_tipo?.toString() || "1"
+        });
     };
 
     const handleDelete = (smokerId) => {
@@ -79,7 +90,7 @@ const SmokerUser = () => {
                                     className="form-control"
                                     id="nombre_usuario"
                                     name="nombre_usuario"
-                                    value={formData.nombre_usuario}
+                                    value={formData.nombre_usuario || ""}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -91,7 +102,7 @@ const SmokerUser = () => {
                                     className="form-control"
                                     id="email_usuario"
                                     name="email_usuario"
-                                    value={formData.email_usuario}
+                                    value={formData.email_usuario || ""}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -105,7 +116,7 @@ const SmokerUser = () => {
                                     className="form-control"
                                     id="password_email"
                                     name="password_email"
-                                    value={formData.password_email}
+                                    value={formData.password_email || ""}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -117,7 +128,7 @@ const SmokerUser = () => {
                                     className="form-control"
                                     id="genero_usuario"
                                     name="genero_usuario"
-                                    value={formData.genero_usuario}
+                                    value={formData.genero_usuario || ""}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -131,7 +142,7 @@ const SmokerUser = () => {
                                     className="form-control"
                                     id="nacimiento_usuario"
                                     name="nacimiento_usuario"
-                                    value={formData.nacimiento_usuario}
+                                    value={formData.nacimiento_usuario || ""}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -143,7 +154,7 @@ const SmokerUser = () => {
                                     className="form-control"
                                     id="numerocigarro_usuario"
                                     name="numerocigarro_usuario"
-                                    value={formData.numerocigarro_usuario}
+                                    value={formData.numerocigarro_usuario || 0}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -157,7 +168,7 @@ const SmokerUser = () => {
                                     className="form-control"
                                     id="periodicidad"
                                     name="periodicidad"
-                                    value={formData.periodicidad}
+                                    value={formData.periodicidad || ""}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -169,7 +180,7 @@ const SmokerUser = () => {
                                     className="form-control"
                                     id="tiempo_fumando"
                                     name="tiempo_fumando"
-                                    value={formData.tiempo_fumando}
+                                    value={formData.tiempo_fumando || ""}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -183,7 +194,7 @@ const SmokerUser = () => {
                                 className="form-control"
                                 id="id_tipo"
                                 name="id_tipo"
-                                value={formData.id_tipo}
+                                value={formData.id_tipo || "1"}
                                 onChange={handleInputChange}
                                 required
                             >
@@ -230,10 +241,10 @@ const SmokerUser = () => {
                                 <td>{smoker.numerocigarro_usuario}</td>
                                 <td>{smoker.periodicidad}</td>
                                 <td>{smoker.tiempo_fumando}</td>
-                                <td>{smoker.id_tipo ? tiposConsumo.find(tipo => tipo.id === smoker.id_tipo)?.name : ''}</td> 
-                                <td className="text-center">
-                                    <button className="btn btn-warning" onClick={() => handleEdit(smoker)}>Editar</button>
-                                    <button className="btn btn-danger" onClick={() => handleDelete(smoker.id)}>Eliminar</button>
+                                <td>{smoker.id_tipo ? tiposConsumo.find(tipo => tipo.id === smoker.id_tipo)?.name : "N/A"}</td>
+                                <td className="d-flex justify-content-around">
+                                    <button className="btn btn-warning btn-sm" onClick={() => handleEdit(smoker)}>Editar</button>
+                                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(smoker.id)}>Eliminar</button>
                                 </td>
                             </tr>
                         ))}
@@ -245,4 +256,5 @@ const SmokerUser = () => {
 };
 
 export default SmokerUser;
+
 

@@ -94,6 +94,7 @@ class Seguimiento(db.Model):
         return {
             "id": self.id,
             "cantidad": self.cantidad,
+            "periodicidad":self.usuario.periodicidad,
             "id_usuario": self.id_usuario,
             "nombre_usuario":self.usuario.nombre_usuario,
             "id_tipo": self.id_tipo,

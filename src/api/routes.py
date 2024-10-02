@@ -122,26 +122,29 @@ def signup():
     if existing_user:
         return jsonify({"msg": "El usuario ya existe"}), 400
 
-    # Crear el nuevo usuario, aplicando hashing a la contraseña
+    # Crear el nuevo usuario
     new_user = SmokerUser(
         email_usuario=email,
-        password_email=password,
-        nombre_usuario=None,  # Opcional
-        genero_usuario=None,   # Opcional
-        nacimiento_usuario=None,  # Opcional
-        numerocigarro_usuario=None,  # Opcional
-        periodicidad=None,  # Opcional
-        tiempo_fumando=None,  # Opcional
-        id_tipo=None,  # Opcional
-        foto_usuario=None  # Opcional
+        password_email=password
     )
 
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({"msg": "Usuario creado exitosamente"}), 201
+    # Crear un seguimiento inicial (esto asume que tienes un id_tipo para el seguimiento)
+    initial_following = Seguimiento(
+        cantidad=0,  # O el valor que consideres inicial
+        id_usuario=new_user.id,
+        id_tipo=None  # O el id_tipo que quieras asignar
+    )
+    
+    db.session.add(initial_following)
+    db.session.commit()
 
-# Ruta de Login
+    return jsonify({"msg": "Usuario creado exitosamente", "user_id": new_user.id}), 201
+
+
+
 @api.route('/login', methods=['POST'])
 def login():
     email = request.json.get('email_usuario', None)
@@ -150,15 +153,23 @@ def login():
     if not email or not password:
         return jsonify({"msg": "Faltan email o password"}), 400
 
-    # Buscar el usuario en la base de datos
     user = SmokerUser.query.filter_by(email_usuario=email).first()
     if not user:
         return jsonify({"msg": "Credenciales inválidas"}), 401
-
-    # Verificar la contraseña directamente
-    if user.password_email != password:  # Aquí comparas directamente
+    if user.password_email != password:
         return jsonify({"msg": "Credenciales inválidas"}), 401    
-    return jsonify({"msg": "Login exitoso", "user_id": user.id}), 200
+
+   
+    seguimientos = Seguimiento.query.filter_by(id_usuario=user.id).all()
+
+    return jsonify({
+        "msg": "Login exitoso",
+        "user_id": user.id,
+        "nombre_usuario": user.nombre_usuario,
+        "seguimientos": [s.serialize() for s in seguimientos], 
+        "foto_usuario": user.foto_usuario
+    }), 200
+
 
 # CRUD COACHES
 # Obtener todos los coaches (GET)
@@ -355,8 +366,28 @@ def delete_consuming(id):
  # RUTAS PARA JOSE
 @api.route('/seguimiento', methods=['GET'])
 def get_all_following():
-    following = Seguimiento.query.all()
-    return jsonify([following.serialize() for following in following]), 200
+    user_id = request.args.get('user_id')  
+    print(f"Recibiendo user_id: {user_id}")  # Agregar esta línea para depuración
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400  
+
+    try:
+        user_id = int(user_id) 
+    except ValueError:
+        return jsonify({"error": "Invalid user_id format"}), 422
+
+    following = Seguimiento.query.filter_by(id_usuario=user_id).all()
+
+    print(f"Seguimientos obtenidos para user_id {user_id}: {following}") 
+
+    if not following:
+        return jsonify({"error": "No followings found"}), 404 
+
+    return jsonify([f.serialize() for f in following]), 200
+
+
+
+
 
 @api.route('/seguimiento/<int:seguimiento_id>', methods=['GET'])
 def get_following(following_id):
