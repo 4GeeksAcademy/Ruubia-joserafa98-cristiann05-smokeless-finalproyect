@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, SmokerUser, Coach, TiposConsumo, Seguimiento, Solicitud
+from api.models import db, SmokerUser, Coach, TiposConsumo, Seguimiento, Mensajes
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from datetime import datetime
@@ -496,6 +496,67 @@ def delete_solicitud(id):
     db.session.delete(solicitud)
     db.session.commit()
     return jsonify({"message": "Solicitud eliminada correctamente"}), 200
+
+# Rutas específicas para los coaches 
+@api.route('/coach/mensaje', methods=['POST'])
+def coach_enviar_mensaje():
+    body = request.get_json()
+    
+    id_coach = body.get('id_coach')  # El ID del coach es obligatorio en esta rama
+    id_usuario = body.get('id_usuario')
+    contenido = body.get('contenido')
+
+    if not contenido or not id_usuario or not id_coach:
+        return jsonify({"msg": "Faltan datos: id_usuario, id_coach y contenido son obligatorios"}), 400
+
+    nuevo_mensaje = Mensajes(
+        id_coach=id_coach,
+        id_usuario=id_usuario,
+        contenido=contenido,
+        fecha_envio=datetime.utcnow(),
+        visto=False
+    )
+    db.session.add(nuevo_mensaje)
+    db.session.commit()
+
+    return jsonify({"msg": "Mensaje enviado correctamente", "mensaje": nuevo_mensaje.serialize()}), 201
+
+# Obtener mensajes enviados por un coach
+@api.route('/coach/mensajes/<int:id_coach>', methods=['GET'])
+def obtener_mensajes_coach(id_coach):
+    mensajes = Mensajes.query.filter_by(id_coach=id_coach).all()
+    if not mensajes:
+        return jsonify({"msg": "No se encontraron mensajes para este coach"}), 404
+
+    mensajes_serializados = [mensaje.serialize() for mensaje in mensajes]
+    return jsonify(mensajes_serializados), 200
+
+# Marcar un mensaje como visto (si es del coach)
+@api.route('/coach/mensaje/<int:id_mensaje>', methods=['PUT'])
+def coach_marcar_mensaje_visto(id_mensaje):
+    mensaje = Mensajes.query.filter_by(id=id_mensaje, id_coach=request.json.get('id_coach')).first()
+
+    if not mensaje:
+        return jsonify({"msg": "Mensaje no encontrado o no pertenece al coach"}), 404
+
+    mensaje.visto = True
+    db.session.commit()
+
+    return jsonify({"msg": "Mensaje marcado como visto por el coach", "mensaje": mensaje.serialize()}), 200
+
+# Eliminar un mensaje (enviado por el coach)
+@api.route('/coach/mensaje/<int:id_mensaje>', methods=['DELETE'])
+def coach_eliminar_mensaje(id_mensaje):
+    mensaje = Mensajes.query.filter_by(id=id_mensaje, id_coach=request.json.get('id_coach')).first()
+
+    if not mensaje:
+        return jsonify({"msg": "Mensaje no encontrado o no pertenece al coach"}), 404
+
+    # Eliminar el mensaje
+    db.session.delete(mensaje)
+    db.session.commit()
+
+    return jsonify({"msg": "Mensaje eliminado correctamente por el coach"}), 200
 
 
 # Ruta protegida

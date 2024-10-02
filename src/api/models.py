@@ -131,3 +131,29 @@ class Solicitud(db.Model):
         "comentarios": self.comentarios
     }
 
+class Mensajes(db.Model):
+    __tablename__ = 'mensajes'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # Relación con el usuario que envía el mensaje
+    id_usuario = db.Column(db.Integer, db.ForeignKey('smoker_user.id'), nullable=True)  # Puede ser nulo si el coach envía el mensaje
+    usuario = db.relationship('SmokerUser', foreign_keys=[id_usuario])
+
+    # Relación con el coach que envía el mensaje
+    id_coach = db.Column(db.Integer, db.ForeignKey('coach.id'), nullable=True)  # Puede ser nulo si el usuario envía el mensaje
+    coach = db.relationship('Coach', foreign_keys=[id_coach])
+
+    contenido = db.Column(db.String, nullable=False)
+    fecha_envio = db.Column(db.DateTime, default=datetime.utcnow)
+    visto = db.Column(db.Boolean, default=False)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'id_usuario': self.id_usuario,
+            'id_coach': self.id_coach,
+            'contenido': self.contenido,
+            'fecha_envio': self.fecha_envio.strftime("%d/%m/%Y %H:%M:%S"),
+            'visto': self.visto
+        }
