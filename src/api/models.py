@@ -119,14 +119,15 @@ class Solicitud(db.Model):
         return f'<Solicitud {self.id}>'
 
     def serialize(self):
-        return {
-            "id": self.id,
-            "id_user": self.id_user,
-            "name_user": self.user.nombre_usuario,  # Asegúrate que el campo es correcto en `SmokerUser`
-            "id_coach": self.id_coach,
-            "name_coach": self.coach.name_coach if self.coach else None,  # Manejo de nulos
-            "fecha_solicitud": self.fecha_solicitud.isoformat(),
-            "estado": self.estado,
-            "fecha_respuesta": self.fecha_respuesta.isoformat() if self.fecha_respuesta else None,
-            "comentarios": self.comentarios
-        }
+     return {
+        "id": self.id,
+        "id_user": self.id_user,
+        "name_user": self.user.nombre_usuario,  
+        "id_coach": self.id_coach,
+        "nombre_coach": self.coach.nombre_coach if self.coach else None,  # Cambio aquí
+        "fecha_solicitud": self.fecha_solicitud.isoformat(),
+        "estado": self.estado,
+        "fecha_respuesta": self.fecha_respuesta.isoformat() if self.fecha_respuesta else None,
+        "comentarios": self.comentarios
+    }
+

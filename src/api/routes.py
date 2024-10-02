@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, SmokerUser, Coach, TiposConsumo, Seguimiento
+from api.models import db, SmokerUser, Coach, TiposConsumo, Seguimiento, Solicitud
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from datetime import datetime
@@ -437,23 +437,32 @@ def update_following(id):
 @api.route('/solicitudes', methods=['POST'])
 def add_solicitud():
     data = request.get_json()
-
-    required_fields = ['id_user', 'id_coach', 'fecha_solicitud']
-    if not data or not all(field in data for field in required_fields):
+    
+    required_fields = ['id_user', 'id_coach', 'fecha_solicitud', 'estado', 'comentarios']
+    if not data or not all(key in data for key in required_fields):
         return jsonify({"error": "Datos incompletos"}), 400
 
-    solicitud = Solicitud(
+    new_solicitud = Solicitud(
         id_user=data['id_user'],
         id_coach=data['id_coach'],
         fecha_solicitud=data['fecha_solicitud'],
-        estado='pendiente',  # Estado inicial
-        comentarios=data.get('comentarios', None)
+        estado=data['estado'],
+        comentarios=data['comentarios']
     )
 
-    db.session.add(solicitud)
+    db.session.add(new_solicitud)
     db.session.commit()
+    
+    return jsonify(new_solicitud.serialize()), 201
 
-    return jsonify(solicitud.serialize()), 201
+
+@api.route('/solicitudes', methods=['GET'])
+def get_all_solicitudes():
+    solicitudes = Solicitud.query.all()  # Obtiene todas las solicitudes
+    if not solicitudes:
+        return jsonify({"message": "No hay solicitudes"}), 404
+
+    return jsonify([solicitud.serialize() for solicitud in solicitudes]), 200
 
 @api.route('/solicitudes/<int:id_user>', methods=['GET'])
 def get_solicitudes_by_user(id_user):

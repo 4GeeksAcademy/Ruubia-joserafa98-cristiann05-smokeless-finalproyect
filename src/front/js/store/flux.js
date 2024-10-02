@@ -5,7 +5,8 @@ const getState = ({ getStore, getActions, setStore }) => {
             tiposConsumo: [],
             coaches: [],
             loggedInUser: null,
-            seguimiento: []
+            seguimiento: [],
+            solicitud: []
         },
         actions: {
             getSmokers: async () => {
@@ -262,6 +263,35 @@ const getState = ({ getStore, getActions, setStore }) => {
                             console.error("Error creating seguimiento:", error);
                         }
             },
+
+            addSolicitud: async (solicitudData) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/solicitudes`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(solicitudData),
+                    });
+            
+                    if (response.ok) {
+                        const newSolicitud = await response.json();
+                        // Asegúrate de que getStore().solicitudes está definido
+                        setStore({ solicitud: [...(getStore().solicitud || []), newSolicitud] });
+                        return true; 
+                    } else {
+                        const errorData = await response.json();
+                        console.error("Error al agregar solicitud:", errorData);
+                        return false;  // Manejo del error
+                    }
+                } catch (error) {
+                    console.error("Error durante la solicitud:", error);
+                    return false;  // Manejo del error
+                }
+            },
+            
+
+
                         
             getAllCoaches: async () => {
                 try {
