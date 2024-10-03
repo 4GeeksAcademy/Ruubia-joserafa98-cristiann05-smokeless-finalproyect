@@ -14,6 +14,7 @@ class Coach(db.Model):
     longitud = db.Column(db.Float)
     descripcion_coach = db.Column(db.Text)
     foto_coach = db.Column(db.String(200))
+    public_id = db.Column(db.String(200))
     precio_servicio = db.Column(db.Float)
 
     def __repr__(self):
@@ -30,6 +31,7 @@ class Coach(db.Model):
             "longitud": self.longitud,
             "descripcion_coach": self.descripcion_coach,
             "foto_coach": self.foto_coach,
+            "public_id": self.public_id,
             "precio_servicio": self.precio_servicio,
         }
 
@@ -46,6 +48,7 @@ class SmokerUser(db.Model):
     id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=True)  # Opcional
     tipo_consumo = db.relationship('TiposConsumo', backref='smokers')
     foto_usuario = db.Column(db.String(255), nullable=True)  # Opcional
+    public_id = db.Column(db.String(200))
 
     def __repr__(self):
         return f'<SmokerUser {self.email_usuario}>'
@@ -62,7 +65,8 @@ class SmokerUser(db.Model):
             "tiempo_fumando": self.tiempo_fumando,
             "id_tipo": self.id_tipo,
             "tipo_consumo": self.tipo_consumo.serialize() if self.tipo_consumo else None,
-            "foto_usuario": self.foto_usuario
+            "foto_usuario": self.foto_usuario,
+            "public_id": self.public_id
         }
     
 class TiposConsumo(db.Model):
