@@ -345,23 +345,27 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(updatedData),
                     });
-
+            
                     if (!response.ok) {
                         const errorText = await response.text();
                         throw new Error(`Error updating coach: ${errorText}`);
                     }
-
+            
                     const updatedCoach = await response.json();
                     setStore((prevStore) => ({
                         coaches: prevStore.coaches.map(coach =>
                             coach.id === coachId ? updatedCoach : coach
                         ),
                     }));
+                    
+                    // Aquí puedes agregar una notificación o un estado de éxito
+                    return updatedCoach; // Retorna el coach actualizado si es necesario
                 } catch (error) {
                     console.error("Error updating coach:", error);
+                    throw error; // Lanza el error para manejarlo en el componente
                 }
             },
-
+            
             // Eliminar un coach
             deleteCoach: async (coachId) => {
                 try {

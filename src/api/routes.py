@@ -189,7 +189,6 @@ def get_coach(coach_id):
     return jsonify(coach.serialize()), 200
 
 # Crear un nuevo coach (POST)
-# Crear un nuevo coach (POST)
 @api.route('/coaches', methods=['POST'])
 def create_coach():
     data = request.get_json()
