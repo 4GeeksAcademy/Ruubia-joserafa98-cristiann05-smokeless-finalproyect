@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+
 const getState = ({ getStore, getActions, setStore }) => {
     return {
         store: {
@@ -72,21 +74,18 @@ const getState = ({ getStore, getActions, setStore }) => {
             
                     if (response.ok) {
                         // Si el login es exitoso, almacena el token y actualiza el estado del store
-                        localStorage.setItem('token', data.token); // Almacenar el token en localStorage
+                        localStorage.setItem('token', data.token);
             
                         setStore({
                             loggedInUser: {
-                                id: data.user_id,
+                                id: data.user_id || null, // Asegúrate de que esto esté bien
                                 email: data.email_usuario || '',
                                 nombre: data.nombre_usuario || '',
                                 genero: data.genero_usuario || '',
                                 cumpleaños: data.nacimiento_usuario || '',
                             },
-                            isAuthenticated: true, // Actualizar estado de autenticación
+                            isAuthenticated: true,
                         });
-            
-                        // Redirige a la página del panel de control después de iniciar sesión
-                        navigate('/control-panel'); // Asegúrate de importar useNavigate desde react-router-dom
             
                         return true; // Login exitoso
                     } else {
@@ -97,7 +96,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error en la solicitud de login:", error);
                     return false; // Manejo de errores
                 }
-            },            
+            },  
 
             // Actualizar el perfil
             updateProfile: async (userId, updatedData) => {
@@ -142,13 +141,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error updating profile:", error);
                     return false;
                 }
-            },
-
-            // Asegúrate de que esta función se encuentre en tu store
-            getUserInfo: async (userId) => {
-            },            
+            },       
             
-            getConsuming: async () => {
+            getUserInfo: async (userId) => { // Accept userId as a parameter
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/user_info/${userId}`, {
                         method: "GET",
@@ -171,7 +166,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error fetching user info:", error);
                     return null;
                 }
-            },            
+            },
+                        
 
             updateConsumptionProfile: async (userId, updatedData) => {
                 try {
