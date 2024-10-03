@@ -9,6 +9,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             solicitud: []
         },
         actions: {
+            setStore: (newStore) => setStore((prevStore) => ({ ...prevStore, ...newStore })),
             getSmokers: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/smokers`);
@@ -136,6 +137,8 @@ const getState = ({ getStore, getActions, setStore }) => {
             
                     if (response.ok) {
                         const data = await response.json();
+                        localStorage.setItem("token", data.token); // Guardar el token en localStorage
+            
                         setStore({
                             isAuthenticated: true,
                             userId: data.id,
@@ -145,7 +148,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             tipo_consumo: data.tipo_consumo,
                             fotoUsuario: data.foto_usuario,
                         });
-                        localStorage.setItem("token", data.token);
+            
                         return true;
                     } else {
                         return false;
@@ -154,10 +157,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error during login:", error);
                     return false;
                 }
-            },
+            },            
             
-            
-
             getConsuming: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo`);
@@ -290,9 +291,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
             
-
-
-                        
+           
             getAllCoaches: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/coaches`, {
