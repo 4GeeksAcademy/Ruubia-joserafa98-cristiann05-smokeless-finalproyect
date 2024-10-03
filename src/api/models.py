@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import date
 
 db = SQLAlchemy()
 
@@ -39,12 +40,13 @@ class SmokerUser(db.Model):
     nombre_usuario = db.Column(db.String(80), nullable=True)  # Opcional
     genero_usuario = db.Column(db.String(10), nullable=True)  # Opcional
     nacimiento_usuario = db.Column(db.Date, nullable=True)  # Opcional
-    numerocigarro_usuario = db.Column(db.Integer, nullable=True)  # Opcional
-    periodicidad = db.Column(db.String(50), nullable=True)  # Opcional
     tiempo_fumando = db.Column(db.String(10), nullable=True)  # Opcional
-    id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=True)  # Opcional
+    id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=True)  # Relación con TiposConsumo
     tipo_consumo = db.relationship('TiposConsumo', backref='smokers')
     foto_usuario = db.Column(db.String(255), nullable=True)  # Opcional
+    forma_consumo = db.Column(db.String(50), default='cigarros')  # Tipo de consumo por defecto
+    numero_cigarrillos = db.Column(db.Integer, nullable=True)  # Cantidad de cigarrillos
+    periodicidad_consumo = db.Column(db.String(20), nullable=True)  # Diaria, semanal, mensual o anual
 
     def __repr__(self):
         return f'<SmokerUser {self.email_usuario}>'
@@ -56,12 +58,13 @@ class SmokerUser(db.Model):
             "nombre_usuario": self.nombre_usuario,
             "genero_usuario": self.genero_usuario,
             "nacimiento_usuario": self.nacimiento_usuario.isoformat() if self.nacimiento_usuario else None,
-            "numerocigarro_usuario": self.numerocigarro_usuario,
-            "periodicidad": self.periodicidad,
             "tiempo_fumando": self.tiempo_fumando,
             "id_tipo": self.id_tipo,
             "tipo_consumo": self.tipo_consumo.serialize() if self.tipo_consumo else None,
-            "foto_usuario": self.foto_usuario
+            "foto_usuario": self.foto_usuario,
+            "forma_consumo": self.forma_consumo,
+            "numero_cigarrillos": self.numero_cigarrillos,
+            "periodicidad_consumo": self.periodicidad_consumo,
         }
     
 class TiposConsumo(db.Model):
@@ -78,14 +81,18 @@ class TiposConsumo(db.Model):
         }
 
 class Seguimiento(db.Model):
+    __tablename__ = 'seguimiento'  # Asegúrate de que este es el nombre correcto de la tabla en la base de datos
     id = db.Column(db.Integer, primary_key=True)
     cantidad = db.Column(db.String(120), nullable=False)
     
     id_usuario = db.Column(db.Integer, db.ForeignKey('smoker_user.id'), nullable=False)  # Relación con SmokerUser
-    usuario = db.relationship('SmokerUser', backref='seguimientos')
+    usuario = db.relationship('SmokerUser', backref='seguimientos')  # Relación inversa
 
     id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=True)  # Relación con TiposConsumo
-    tipo_consumo = db.relationship('TiposConsumo', backref='seguimientos')
+    tipo_consumo = db.relationship('TiposConsumo', backref='seguimientos')  # Relación inversa
+
+    # Añadiendo fecha de inicio
+    fecha_inicio_usuario = db.Column(db.Date, nullable=False)  # Campo para almacenar la fecha
 
     def __repr__(self):
         return f'<Seguimiento {self.id}>'
@@ -95,9 +102,8 @@ class Seguimiento(db.Model):
             "id": self.id,
             "cantidad": self.cantidad,
             "id_usuario": self.id_usuario,
-            "nombre_usuario":self.usuario.nombre_usuario,
+            "nombre_usuario": self.usuario.nombre_usuario if self.usuario else None,
             "id_tipo": self.id_tipo,
-            "nombre_tipo":self.tipo_consumo.name,
-            "numerocigarro_usuario": self.usuario.numerocigarro_usuario  # Obtienes el número desde la relación
+            "nombre_tipo": self.tipo_consumo.name if self.tipo_consumo else None,
+            "fecha_inicio_usuario": self.fecha_inicio_usuario.isoformat()  # Convertir a formato ISO
         }
-

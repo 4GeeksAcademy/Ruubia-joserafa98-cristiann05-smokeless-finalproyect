@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import getState from "./flux.js";
 
 export const Context = React.createContext(null);
+
+// Asegúrate de incluir esta función para usar el contexto
+export const useStore = () => {
+    return useContext(Context);
+};
 
 const injectContext = PassedComponent => {
     const StoreWrapper = props => {

@@ -1,13 +1,12 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-from flask import Flask, request, jsonify, url_for, Blueprint
+from flask import Flask, request, session, jsonify, url_for, Blueprint
 from api.models import db, SmokerUser, Coach, TiposConsumo, Seguimiento
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-from datetime import datetime
-
-
+import datetime
+import jwt
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
@@ -36,78 +35,6 @@ def get_smoker(smoker_id):
         return jsonify({"error": "Usuario no encontrado"}), 404
     return jsonify(smoker.serialize()), 200
 
-# Crear un nuevo fumador (POST)
-@api.route('/smokers', methods=['POST'])
-def create_smoker():
-    data = request.get_json()
-    
-    required_fields = ['email_usuario', 'password_email', 'nombre_usuario', 'genero_usuario', 
-                       'nacimiento_usuario', 'numerocigarro_usuario', 'periodicidad', 
-                       'tiempo_fumando', 'id_tipo']
-    if not data or not all(key in data for key in required_fields):
-        return jsonify({"error": "Datos incompletos"}), 400
-
-    # Verifica si el email ya está en uso
-    existing_smoker = SmokerUser.query.filter_by(email_usuario=data['email_usuario']).first()
-    if existing_smoker:
-        return jsonify({"error": "El email ya está en uso"}), 400
-
-    try:
-        nacimiento = datetime.strptime(data['nacimiento_usuario'], '%Y-%m-%d').date()
-    except ValueError:
-        return jsonify({"error": "Formato de fecha incorrecto, usa YYYY-MM-DD"}), 400
-
-    new_smoker = SmokerUser(
-        email_usuario=data['email_usuario'],
-        password_email=data['password_email'],
-        nombre_usuario=data['nombre_usuario'],
-        genero_usuario=data['genero_usuario'],
-        nacimiento_usuario=nacimiento,
-        numerocigarro_usuario=data['numerocigarro_usuario'],
-        periodicidad=data['periodicidad'],
-        tiempo_fumando=data['tiempo_fumando'],
-        id_tipo=data['id_tipo'],
-        foto_usuario=data.get('foto_usuario')
-    )
-    
-    db.session.add(new_smoker)
-    db.session.commit()
-    return jsonify(new_smoker.serialize()), 201
-
-# Actualizar un fumador existente (PUT)
-@api.route('/smokers/<int:smoker_id>', methods=['PUT'])
-def update_smoker(smoker_id):
-    smoker = SmokerUser.query.get(smoker_id)
-    if smoker is None:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-
-    data = request.get_json()
-    # Actualiza los atributos del fumador con los nuevos datos
-    smoker.email_usuario = data.get('email_usuario', smoker.email_usuario)
-    smoker.password_email = data.get('password_email', smoker.password_email)
-    smoker.nombre_usuario = data.get('nombre_usuario', smoker.nombre_usuario)
-    smoker.genero_usuario = data.get('genero_usuario', smoker.genero_usuario)
-    smoker.nacimiento_usuario = datetime.strptime(data['nacimiento_usuario'], '%Y-%m-%d').date() if 'nacimiento_usuario' in data else smoker.nacimiento_usuario
-    smoker.numerocigarro_usuario = data.get('numerocigarro_usuario', smoker.numerocigarro_usuario)
-    smoker.periodicidad = data.get('periodicidad', smoker.periodicidad)
-    smoker.tiempo_fumando = data.get('tiempo_fumando', smoker.tiempo_fumando)
-    smoker.id_tipo = data.get('id_tipo', smoker.id_tipo)
-    smoker.foto_usuario = data.get('foto_usuario', smoker.foto_usuario)
-
-    db.session.commit()
-    return jsonify(smoker.serialize()), 200
-
-# Eliminar un fumador (DELETE)
-@api.route('/smokers/<int:smoker_id>', methods=['DELETE'])
-def delete_smoker(smoker_id):
-    smoker = SmokerUser.query.get(smoker_id)
-    if smoker is None:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-
-    db.session.delete(smoker)
-    db.session.commit()
-    return jsonify({"message": "Usuario eliminado correctamente"}), 200
-
 # Ruta de Sign Up
 @api.route('/signup', methods=['POST'])
 def signup():
@@ -122,15 +49,15 @@ def signup():
     if existing_user:
         return jsonify({"msg": "El usuario ya existe"}), 400
 
-    # Crear el nuevo usuario, aplicando hashing a la contraseña
+    # Crear el nuevo usuario
     new_user = SmokerUser(
         email_usuario=email,
         password_email=password,
         nombre_usuario=None,  # Opcional
         genero_usuario=None,   # Opcional
         nacimiento_usuario=None,  # Opcional
-        numerocigarro_usuario=None,  # Opcional
-        periodicidad=None,  # Opcional
+        numero_cigarrillos=None,  # Opcional
+        periodicidad_consumo=None,  # Opcional
         tiempo_fumando=None,  # Opcional
         id_tipo=None,  # Opcional
         foto_usuario=None  # Opcional
@@ -141,24 +68,90 @@ def signup():
 
     return jsonify({"msg": "Usuario creado exitosamente"}), 201
 
+
 # Ruta de Login
 @api.route('/login', methods=['POST'])
 def login():
-    email = request.json.get('email_usuario', None)
-    password = request.json.get('password_email', None)
+    email = request.json.get('email_usuario')
+    password = request.json.get('password_email')
 
     if not email or not password:
         return jsonify({"msg": "Faltan email o password"}), 400
 
-    # Buscar el usuario en la base de datos
     user = SmokerUser.query.filter_by(email_usuario=email).first()
-    if not user:
+    if user is None or user.password_email != password:
         return jsonify({"msg": "Credenciales inválidas"}), 401
 
-    # Verificar la contraseña directamente
-    if user.password_email != password:  # Aquí comparas directamente
-        return jsonify({"msg": "Credenciales inválidas"}), 401    
-    return jsonify({"msg": "Login exitoso", "user_id": user.id}), 200
+    # Generar el token JWT
+    token = create_access_token(identity=user.id)  # Usa create_access_token
+
+    return jsonify({"msg": "Login exitoso", "token": token, "user_id": user.id}), 200
+
+
+@api.route('/update_profile/<int:user_id>', methods=['PUT'])
+def update_profile(user_id):
+    # Obtener el usuario existente
+    user = SmokerUser.query.get(user_id)
+    if not user:
+        return jsonify({"msg": "Usuario no encontrado"}), 404
+
+    # Obtener los datos del formulario
+    nombre = request.json.get('nombre_usuario', None)
+    genero = request.json.get('genero_usuario', None)
+    cumpleaños = request.json.get('nacimiento_usuario', None)
+
+    # Actualizar los campos sólo si no son None
+    if nombre is not None:
+        user.nombre_usuario = nombre
+    if genero is not None:
+        user.genero_usuario = genero
+    if cumpleaños is not None:
+        user.nacimiento_usuario = cumpleaños
+
+    db.session.commit()
+
+    return jsonify({"msg": "Perfil actualizado exitosamente!", "user": {
+        "id": user.id,
+        "nombre": user.nombre_usuario,
+        "genero": user.genero_usuario,
+        "cumpleaños": user.nacimiento_usuario
+    }}), 200
+
+@api.route('/update_consumo/<int:user_id>', methods=['PUT'])
+def update_consumo(user_id):
+    # Obtener el usuario existente
+    user = SmokerUser.query.get(user_id)
+    if not user:
+        return jsonify({"msg": "Usuario no encontrado"}), 404
+
+    # Obtener los datos del formulario
+    tipo_consumo = request.json.get('tipo_consumo', None)
+    numero_cigarrillos = request.json.get('numero_cigarrillos', None)
+    periodicidad_consumo = request.json.get('periodicidad_consumo', None)
+    tiempo_fumando = request.json.get('tiempo_fumando', None)
+
+    # Actualizar los campos sólo si no son None
+    if tipo_consumo is not None:
+        user.forma_consumo = tipo_consumo
+    if numero_cigarrillos is not None:
+        user.numero_cigarrillos = numero_cigarrillos
+    if periodicidad_consumo is not None:
+        user.periodicidad_consumo = periodicidad_consumo
+    if tiempo_fumando is not None:
+        user.tiempo_fumando = tiempo_fumando
+
+    db.session.commit()
+
+    return jsonify({
+        "msg": "Datos de consumo actualizados exitosamente!",
+        "user": {
+            "id": user.id,
+            "forma_consumo": user.forma_consumo,
+            "numero_cigarrillos": user.numero_cigarrillos,
+            "periodicidad_consumo": user.periodicidad_consumo,
+            "tiempo_fumando": user.tiempo_fumando
+        }
+    }), 200
 
 # CRUD COACHES
 # Obtener todos los coaches (GET)
@@ -176,72 +169,6 @@ def get_coach(coach_id):
     if coach is None:
         return jsonify({"error": "Coach no encontrado"}), 404
     return jsonify(coach.serialize()), 200
-
-# Crear un nuevo coach (POST)
-# Crear un nuevo coach (POST)
-@api.route('/coaches', methods=['POST'])
-def create_coach():
-    data = request.get_json()
-
-    # Verifica que se reciban todos los campos obligatorios
-    required_fields = ['email_coach', 'password_coach', 'nombre_coach', 'genero_coach', 'direccion', 'latitud', 'longitud', 'descripcion_coach', 'precio_servicio']
-    if not data or not all(key in data for key in required_fields):
-        return jsonify({"error": "Datos incompletos"}), 400
-
-    # Crea un nuevo objeto Coach y lo guarda en la base de datos
-    new_coach = Coach(
-        email_coach=data['email_coach'],
-        password_coach=data['password_coach'],  # Considera usar hash para contraseñas
-        nombre_coach=data['nombre_coach'],
-        genero_coach=data['genero_coach'],
-        direccion=data['direccion'],
-        latitud=data['latitud'],
-        longitud=data['longitud'],
-        descripcion_coach=data['descripcion_coach'],
-        foto_coach=data.get('foto_coach'),  # Opcional
-        precio_servicio=data['precio_servicio']
-    )
-
-    db.session.add(new_coach)
-    db.session.commit()
-    return jsonify(new_coach.serialize()), 201
-
-
-# Actualizar un coach existente (PUT)
-@api.route('/coaches/<int:coach_id>', methods=['PUT'])
-def update_coach(coach_id):
-    coach = Coach.query.get(coach_id)
-    if coach is None:
-        return jsonify({"error": "Coach no encontrado"}), 404
-
-    data = request.get_json()
-
-    # Actualiza los atributos del coach con los nuevos datos
-    coach.email_coach = data.get('email_coach', coach.email_coach)
-    coach.password_coach = data.get('password_coach', coach.password_coach)  # Considera el hash
-    coach.nombre_coach = data.get('nombre_coach', coach.nombre_coach)
-    coach.genero_coach = data.get('genero_coach', coach.genero_coach)
-    coach.direccion = data.get('direccion', coach.direccion)
-    coach.latitud = data.get('latitud', coach.latitud)
-    coach.longitud = data.get('longitud', coach.longitud)
-    coach.descripcion_coach = data.get('descripcion_coach', coach.descripcion_coach)
-    coach.foto_coach = data.get('foto_coach', coach.foto_coach)
-    coach.precio_servicio = data.get('precio_servicio', coach.precio_servicio)
-
-    db.session.commit()
-    return jsonify(coach.serialize()), 200
-
-
-# Eliminar un coach (DELETE)
-@api.route('/coaches/<int:coach_id>', methods=['DELETE'])
-def delete_coach(coach_id):
-    coach = Coach.query.get(coach_id)
-    if coach is None:
-        return jsonify({"error": "Coach no encontrado"}), 404
-
-    db.session.delete(coach)
-    db.session.commit()
-    return jsonify({"message": "Coach eliminado correctamente"}), 200
 
 
  # signup coach
@@ -299,12 +226,11 @@ def login_coach():
     return jsonify({"msg": "Login successful", "coach_id": coach.id}), 200
 
 
-
-
 @api.route('/tiposconsumo', methods=['GET'])
 def get_all_consuming():
     tiposconsumo = TiposConsumo.query.all()
     return jsonify([tiposconsumo.serialize() for tiposconsumo in tiposconsumo]), 200
+
 
 @api.route('/tiposconsumo/<int:tiposconsumo_id>', methods=['GET'])
 def get_consuming(consuming_id):
@@ -313,104 +239,50 @@ def get_consuming(consuming_id):
         return jsonify({"error": "Usuario no encontrado"}), 404
     return jsonify(tiposconsumo.serialize()), 200
 
-@api.route('/tiposconsumo', methods=['POST'])
-def add_consuming():
-    data = request.get_json()
-
-    required_fields = ['name'] 
-    if not data or not all(key in data for key in required_fields):
-        return jsonify({"error": "Datos incompletos"}), 400
-
-    new_type = TiposConsumo(name=data['name'])
-
-    db.session.add(new_type)
-    db.session.commit()
-    
-    return jsonify(new_type.serialize()), 201
-
-@api.route('/tiposconsumo/<int:id>', methods=['PUT'])
-def update_consuming(id):
-    data = request.get_json()
-
-    tipo_consumo = TiposConsumo.query.get(id)
-    if not tipo_consumo:
-        return jsonify({"error": "Tipo de consumo no encontrado"}), 404
-
-    if 'name' in data:
-        tipo_consumo.name = data['name']
-
-    db.session.commit()
-    return jsonify(tipo_consumo.serialize()), 200
-
-@api.route('/tiposconsumo/<int:id>', methods=['DELETE'])
-def delete_consuming(id):
-    tiposconsumo = TiposConsumo.query.get(id)
-    if tiposconsumo is None:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-
-    db.session.delete(tiposconsumo)
-    db.session.commit()
-    return jsonify({"message": "consumo eliminado correctamente"}), 200
- 
- # RUTAS PARA JOSE
-@api.route('/seguimiento', methods=['GET'])
-def get_all_following():
-    following = Seguimiento.query.all()
-    return jsonify([following.serialize() for following in following]), 200
-
-@api.route('/seguimiento/<int:seguimiento_id>', methods=['GET'])
-def get_following(following_id):
-    following = Seguimiento.query.get(following_id)
-    if following is None:
-        return jsonify({"error": "Seguimiento no encontrado"}), 404
-    return jsonify(following.serialize()), 200
-
-@api.route('/seguimiento', methods=['POST'])
-def add_following():
-    data = request.get_json()
-
-    required_fields = ['cantidad', 'id_usuario', 'id_tipo']
-    if not data or not all(key in data for key in required_fields):
-        return jsonify({"error": "Datos incompletos"}), 400
-
-    new_following = Seguimiento(
-        cantidad=data['cantidad'],
-        id_usuario=data['id_usuario'],
-        id_tipo=data['id_tipo']
-    )
-
-    db.session.add(new_following)
-    db.session.commit()
-    
-    return jsonify(new_following.serialize()), 201
-
-
-@api.route('/seguimiento/<int:id>', methods=['PUT'])
-def update_following(id):
-    data = request.get_json()
-
-    following = Seguimiento.query.get(id)
-    if not following:
-        return jsonify({"error": "Seguimiento no encontrado"}), 404
-
-    if 'cantidad' in data:
-        following.cantidad = data['cantidad']
-    if 'id_usuario' in data:
-        following.id_usuario = data['id_usuario']
-    if 'id_tipo' in data:
-        following.id_tipo = data['id_tipo']
-
-    db.session.commit()
-    return jsonify(following.serialize()), 200
-
-
 # Ruta protegida
-@api.route("/protected", methods=["GET"])
+@api.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
-    # Obtenemos la identidad del usuario actual usando el token JWT
-    current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
+    current_user = get_jwt_identity()  # Obtiene el ID del usuario basado en el token JWT
+    user = SmokerUser.query.get(current_user)  # Busca al usuario en la base de datos
+
+    if user is None:
+        return jsonify({"msg": "Usuario no encontrado"}), 404
+
+    return jsonify({
+        "msg": "Acceso permitido",
+        "user": {
+            "id": user.id,
+            "nombre_usuario": user.nombre_usuario,
+            "email_usuario": user.email_usuario,
+            "genero_usuario": user.genero_usuario,
+            # Incluye otros campos que desees retornar
+        }
+    }), 200
+
+
+# Endpoint para obtener la información del usuario (GET)
+@api.route('/user_info/<int:user_id>', methods=['GET'])
+def get_user_info(user_id):
+    user = SmokerUser.query.get(user_id)
+    
+    if user is None:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    cumpleaños_usuario = user.nacimiento_usuario.strftime('%Y-%m-%d') if user.nacimiento_usuario else None
+
+    return jsonify({
+        "id": user.id,
+        "nombre_usuario": user.nombre_usuario,
+        "genero_usuario": user.genero_usuario,
+        "cumpleaños_usuario": cumpleaños_usuario,
+        "forma_consumo": user.forma_consumo,  
+        "numero_cigarrillos": user.numero_cigarrillos,  # Asegúrate de que este es el nuevo nombre
+        "periodicidad_consumo": user.periodicidad_consumo,
+        "tiempo_fumando": user.tiempo_fumando
+    }), 200
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
