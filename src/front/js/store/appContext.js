@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from "react";
-import getState from "./flux.js";
+import React, { useState, useEffect, useContext } from "react";
+import getState from "../store/flux";
 
 export const Context = React.createContext(null);
+
+// Hook personalizado para usar el contexto
+export const useStore = () => {
+    return useContext(Context);
+};
 
 const injectContext = (PassedComponent) => {
     const StoreWrapper = (props) => {
@@ -10,20 +15,28 @@ const injectContext = (PassedComponent) => {
                 getStore: () => state.store,
                 getActions: () => state.actions,
                 setStore: (updatedStore) =>
-                    setState({
-                        store: { ...state.store, ...updatedStore }, // Asegúrate de combinar correctamente los estados
-                        actions: { ...state.actions },
-                    }),
+                    setState((prevState) => ({
+                        store: { ...prevState.store, ...updatedStore },
+                        actions: { ...prevState.actions },
+                    })),
             })
         );
 
         useEffect(() => {
-            state.actions.getSmokers(); // Obtener la lista de fumadores al cargar
-            const coachId = state.store.coachId; // Asumiendo que tienes el ID del coach en tu estado
-            if (coachId) {
-                state.actions.getCoach(coachId); // Obtener información del coach si el ID está disponible
-            }
-        }, [state.actions, state.store.coachId]);
+            const fetchData = async () => {
+                try {
+                    await state.actions.getSmokers(); // Obtener la lista de fumadores
+                    const coachId = state.store.coachId;
+                    if (coachId) {
+                        await state.actions.getCoach(coachId); // Obtener información del coach
+                    }
+                } catch (error) {
+                    console.error("Error al obtener datos:", error); // Manejo de errores
+                }
+            };
+
+            fetchData();
+        }, [state.actions, state.store.coachId]); // Dependencias
 
         return (
             <Context.Provider value={state}>

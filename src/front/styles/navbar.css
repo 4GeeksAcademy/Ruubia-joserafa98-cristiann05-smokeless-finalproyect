@@ -1,15 +1,10 @@
-/* Efecto de desenfoque */
-body.blur {
-    filter: blur(5px); /* Desenfoque del fondo */
-    transition: filter 0.3s; /* Transición suave */
-}
 
 /* Contenedor para los controles (solo el switch) */
 .navbar-controls {
     display: flex; /* Usar flex para alinear horizontalmente */
     align-items: center; /* Alinear verticalmente */
     gap: 100px; /* Espaciado entre controles */
-    margin-left: 1500px; /* Empujar el contenedor a la derecha */
+    margin-left: 1100px; /* Empujar el contenedor a la derecha */
     margin-top: 30px;
 }
 
@@ -42,4 +37,30 @@ body.blur {
 
 .dropdown-item:hover {
     background-color: #f8f9fa; /* Color de fondo al pasar el mouse */
+}
+
+/* navbar.css */
+.navbar {
+    display: flex;
+    align-items: center;
+    padding: 1rem 50px; /* Añade 20px de padding a la izquierda y derecha */
+    position: fixed; /* Fija el navbar en la parte superior */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+
+.logo-container {
+    transition: transform 0.3s ease; /* Transición suave */
+}
+
+.logo-container:hover {
+    transform: scale(1.1) rotate(5deg); /* Aumenta y rota el logo */
+}
+
+.logo {
+    height: 100px; /* Ajusta según tus necesidades */
+    width: auto; /* Mantiene la proporción */
 }

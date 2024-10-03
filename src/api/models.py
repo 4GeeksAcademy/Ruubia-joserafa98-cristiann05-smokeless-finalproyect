@@ -1,4 +1,4 @@
-from datetime import datetime 
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -42,13 +42,14 @@ class SmokerUser(db.Model):
     nombre_usuario = db.Column(db.String(80), nullable=True)  # Opcional
     genero_usuario = db.Column(db.String(10), nullable=True)  # Opcional
     nacimiento_usuario = db.Column(db.Date, nullable=True)  # Opcional
-    numerocigarro_usuario = db.Column(db.Integer, nullable=True)  # Opcional
-    periodicidad = db.Column(db.String(50), nullable=True)  # Opcional
     tiempo_fumando = db.Column(db.String(10), nullable=True)  # Opcional
-    id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=True)  # Opcional
+    id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=True)  # Relación con TiposConsumo
     tipo_consumo = db.relationship('TiposConsumo', backref='smokers')
     foto_usuario = db.Column(db.String(255), nullable=True)  # Opcional
-    public_id = db.Column(db.String(200))
+    forma_consumo = db.Column(db.String(50), default='cigarros')  # Tipo de consumo por defecto
+    numero_cigarrillos = db.Column(db.Integer, nullable=True)  # Cantidad de cigarrillos
+    periodicidad_consumo = db.Column(db.String(20), nullable=True)  # Diaria, semanal, mensual o anual
+    public_id = db.Column(db.String(200), nullable=True)  # Opcional
 
     def __repr__(self):
         return f'<SmokerUser {self.email_usuario}>'
@@ -60,12 +61,13 @@ class SmokerUser(db.Model):
             "nombre_usuario": self.nombre_usuario,
             "genero_usuario": self.genero_usuario,
             "nacimiento_usuario": self.nacimiento_usuario.isoformat() if self.nacimiento_usuario else None,
-            "numerocigarro_usuario": self.numerocigarro_usuario,
-            "periodicidad": self.periodicidad,
             "tiempo_fumando": self.tiempo_fumando,
             "id_tipo": self.id_tipo,
             "tipo_consumo": self.tipo_consumo.serialize() if self.tipo_consumo else None,
             "foto_usuario": self.foto_usuario,
+            "forma_consumo": self.forma_consumo,
+            "numero_cigarrillos": self.numero_cigarrillos,
+            "periodicidad_consumo": self.periodicidad_consumo,
             "public_id": self.public_id
         }
     
@@ -80,31 +82,6 @@ class TiposConsumo(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-        }
-
-class Seguimiento(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    cantidad = db.Column(db.String(120), nullable=False)
-    
-    id_usuario = db.Column(db.Integer, db.ForeignKey('smoker_user.id'), nullable=False)  # Relación con SmokerUser
-    usuario = db.relationship('SmokerUser', backref='seguimientos')
-
-    id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=True)  # Relación con TiposConsumo
-    tipo_consumo = db.relationship('TiposConsumo', backref='seguimientos')
-
-    def __repr__(self):
-        return f'<Seguimiento {self.id}>'
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "cantidad": self.cantidad,
-            "periodicidad":self.usuario.periodicidad,
-            "id_usuario": self.id_usuario,
-            "nombre_usuario":self.usuario.nombre_usuario,
-            "id_tipo": self.id_tipo,
-            "nombre_tipo":self.tipo_consumo.name,
-            "numerocigarro_usuario": self.usuario.numerocigarro_usuario  # Obtienes el número desde la relación
         }
 
 class Solicitud(db.Model):
@@ -124,17 +101,17 @@ class Solicitud(db.Model):
         return f'<Solicitud {self.id}>'
 
     def serialize(self):
-     return {
-        "id": self.id,
-        "id_user": self.id_user,
-        "name_user": self.user.nombre_usuario,  
-        "id_coach": self.id_coach,
-        "nombre_coach": self.coach.nombre_coach if self.coach else None,  # Cambio aquí
-        "fecha_solicitud": self.fecha_solicitud.isoformat(),
-        "estado": self.estado,
-        "fecha_respuesta": self.fecha_respuesta.isoformat() if self.fecha_respuesta else None,
-        "comentarios": self.comentarios
-    }
+        return {
+            "id": self.id,
+            "id_user": self.id_user,
+            "name_user": self.user.nombre_usuario,  
+            "id_coach": self.id_coach,
+            "nombre_coach": self.coach.nombre_coach if self.coach else None,  # Cambio aquí
+            "fecha_solicitud": self.fecha_solicitud.isoformat(),
+            "estado": self.estado,
+            "fecha_respuesta": self.fecha_respuesta.isoformat() if self.fecha_respuesta else None,
+            "comentarios": self.comentarios
+        }
 
 class Mensajes(db.Model):
     __tablename__ = 'mensajes'

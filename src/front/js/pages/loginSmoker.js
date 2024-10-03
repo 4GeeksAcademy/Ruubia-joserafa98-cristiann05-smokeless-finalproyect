@@ -1,67 +1,87 @@
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { Context } from "../store/appContext";
+import React, { useEffect, useState } from 'react';
+import { useStore } from '../store/appContext';
+import { useNavigate } from 'react-router-dom';
 
-const LoginSmoker = () => {
-  const { actions } = useContext(Context);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const navigate = useNavigate();
+// Componente que maneja el login
+const LoginComponent = () => {
+    const { actions, store } = useStore();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
+    const handleLogin = async (e) => {
+        e.preventDefault();
 
-    const smokerData = { email_usuario: email, password_email: password };
-    
-    try {
-      const success = await actions.loginSmoker(smokerData);
-      if (success) {
-        setSuccess(true);
-        setTimeout(() => {
-          navigate("/control-panel-smoker");
-        }, 2000);
-      } else {
-        setError(true);
-      }
-    } catch (error) {
-      setError(true);
-    }
-  };
+        const smokerData = {
+            email_usuario: email,
+            password_email: password,
+        };
+
+        // Llama a la acción de login y maneja la respuesta
+        const loginSuccess = await actions.loginSmoker(smokerData);
+
+        if (loginSuccess) {
+            console.log("Login exitoso, usuario ID:", store.loggedInUser.id); // Verifica ID aquí
+        } else {
+            console.error("Error en el login");
+        }
+    };
+
+    useEffect(() => {
+        // Verificar si loggedInUser se actualiza
+        if (store.loggedInUser) {
+            console.log("Usuario logueado:", store.loggedInUser); // Log para verificar
+            const userId = store.loggedInUser.id; // Accede a id solo si loggedInUser no es null
+            
+            if (userId) {
+                // Llama a getUserInfo para obtener información del usuario
+                actions.getUserInfo(userId);
+            } else {
+                console.error("ID de usuario no disponible después de login");
+            }
+        }
+    }, [store.loggedInUser, actions]); // Reacciona a los cambios en loggedInUser
+
+    useEffect(() => {
+        // Verifica si userInfo está completo
+        if (store.userInfo) {
+            console.log("userInfo actual:", store.userInfo); // Log para verificar
+            const userInfoComplete = store.userInfo.nombre_usuario && 
+                store.userInfo.genero_usuario && 
+                store.userInfo.nacimiento_usuario &&
+                store.userInfo.tiempo_fumando &&
+                store.userInfo.periodicidad_consumo && 
+                store.userInfo.numero_cigarrillos;
+
+            if (userInfoComplete) {
+                // Redirigir al panel de control
+                navigate("/control-panel-smoker");
+            } else {
+                // Redirigir a los formularios
+                navigate("/question-profile-smoker");
+            }
+        }
+    }, [store.userInfo, navigate]); // Verifica cuando userInfo cambia
 
     return (
-        <div className="container mt-5">
-            <h1>Login for Smokers</h1>
-            {error && <div className="alert alert-danger" role="alert">Error: Credenciales inválidas. Por favor, inténtalo de nuevo.</div>} {/* Muestra el mensaje de error */}
-            {success && <div className="alert alert-success" role="alert">Inicio de sesión exitoso. Redirigiendo al panel de control...</div>} {/* Muestra el mensaje de éxito */}
-            <form onSubmit={handleLogin}>
-                <div className="form-group">
-                    <label>Email</label>
-                    <input
-                        type="email"
-                        className="form-control"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Password</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary mt-3">
-                    Log In
-                </button>
-            </form>
-        </div>
+        <form onSubmit={handleLogin}>
+            <input 
+                type="email" 
+                placeholder="Email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                required 
+            />
+            <input 
+                type="password" 
+                placeholder="Contraseña" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                required 
+            />
+            <button type="submit">Iniciar sesión</button>
+        </form>
     );
 };
 
-export default LoginSmoker;
+export default LoginComponent;

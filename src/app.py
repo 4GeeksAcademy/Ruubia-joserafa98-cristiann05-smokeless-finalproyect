@@ -4,7 +4,6 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 import os
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
-from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
 from api.models import db
 from api.routes import api
@@ -46,7 +45,7 @@ setup_commands(app)
 app.register_blueprint(api, url_prefix='/api')
 
 # Setup the Flask-JWT-Extended extension
-app.config["JWT_SECRET_KEY"] = "ehfuiwfh78923gh4f98ch9423hd204dh9fv2hf29cj20i84hv298vh0v2089h29hv02vf442"  # Change this!
+app.config["JWT_SECRET_KEY"] = "ehfuiwfh78923gh4f98ch9423hd204dh9fv2hf29cj20i84hv298vh0v2089h29hv02vf442"
 jwt = JWTManager(app)
 
 # Handle/serialize errors like a JSON object

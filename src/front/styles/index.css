@@ -3,14 +3,33 @@
 body {
     margin: 0;
     padding: 0;
-    min-height: 100vh; /* Cambia height a min-height para permitir más contenido */
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: flex-start; /* Cambia a flex-start para alinear el contenido desde la parte superior */
+    flex-direction: column; /* Cambia a column para apilar el navbar y el contenido */
+    justify-content: flex-start;
     font-family: 'Arial', sans-serif;
     transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
     background-color: #0b0d12; /* Color de fondo oscuro como respaldo */
     background-image: linear-gradient(to bottom, #0a1f36, #0b0d12); /* Gradiente azul a negro */
+}
+
+/* Navbar */
+.navbar {
+    position: fixed; /* Fija el navbar en la parte superior */
+    top: 0;
+    left: 0;
+    right: 0; /* Ocupa todo el ancho */
+    padding: 1rem; /* Espaciado interno */
+    z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
+}
+
+/* Estilos para los elementos del navbar */
+.navbar .nav-item {
+    color: white; /* Color de texto por defecto */
+}
+
+body.light .navbar .nav-item {
+    color: #333; /* Cambia a color oscuro en modo claro */
 }
 
 /* Estilos para el tema oscuro */
@@ -22,6 +41,27 @@ body.dark {
 body.light {
     background-color: #f7f9fc; /* Fondo blanco suave */
     color: #333; /* Color de texto oscuro */
+}
+
+/* Estilos de los idiomas */
+.language-selector {
+    display: flex;
+    justify-content: center; /* Centra el contenido */
+    margin-top: 0.5rem; /* Espacio en la parte superior */
+}
+
+.language-selector .language {
+    margin: 0 0.5rem; /* Espaciado entre los elementos */
+    cursor: pointer; /* Cambia el cursor para indicar que es clickeable */
+}
+
+/* Colores según el tema */
+body.dark .language {
+    color: rgba(243, 244, 246, 1); /* Color claro en modo oscuro */
+}
+
+body.light .language {
+    color: rgba(0, 0, 0, 1); /* Color oscuro en modo claro */
 }
 
 /* Estilos adicionales según sea necesario */

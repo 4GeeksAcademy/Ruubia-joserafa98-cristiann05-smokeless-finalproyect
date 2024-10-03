@@ -6,9 +6,14 @@ const getState = ({ getStore, getActions, setStore }) => {
             coaches: [],
             loggedInUser: null,
             seguimiento: [],
+            perfilCreado: false,
+            isAuthenticated: false,
+            userId: null,
+            userInfo: null,
             solicitud: []
         },
         actions: {
+            
             setStore: (newStore) => setStore((prevStore) => ({ ...prevStore, ...newStore })),
             getSmokers: async () => {
                 try {
@@ -20,123 +25,101 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            createSmoker: async (smokerData) => {
+            signupSmoker: async (smokerData) => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/smokers`, {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/signup-smoker`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify(smokerData),
                     });
-
+            
+                    console.log("Response:", response); // Muestra la respuesta completa
+            
                     if (response.ok) {
                         const newSmoker = await response.json();
-                        setStore({ smokers: [...getStore().smokers, newSmoker] }); // Añadimos el nuevo fumador a la lista
+                        console.log("Nuevo usuario creado:", newSmoker); // Muestra los datos del nuevo usuario
+                        
+                        // No almacenar el token aquí
+                        setStore({ smokers: [...getStore().smokers, newSmoker] }); // Actualiza el estado
+                        
+                        return true; // Retorna verdadero si la operación es exitosa
+                    } else {
+                        const errorData = await response.json();
+                        console.error("Error en la respuesta del servidor:", errorData); // Muestra el error del servidor
+                        return false; // Retorna falso si hay un error
                     }
                 } catch (error) {
-                    console.error("Error creating smoker:", error);
+                    console.error("Error durante el registro del fumador:", error); // Muestra el error de la solicitud
+                    return false; // Retorna falso si hay un error
                 }
             },
+            
 
-            updateSmoker: async (smokerId, updatedData) => {
+            // Login de Smoker
+            loginSmoker: async (smokerData) => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/smokers/${smokerId}`, {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/login-smoker`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(smokerData),
+                    });
+            
+                    const data = await response.json();
+            
+                    if (response.ok) {
+                        // Si el login es exitoso, almacena el token y actualiza el estado del store
+                        localStorage.setItem('token', data.token); // Almacenar el token en localStorage
+            
+                        setStore({
+                            loggedInUser: {
+                                id: data.user_id,
+                                email: data.email_usuario || '',
+                                nombre: data.nombre_usuario || '',
+                                genero: data.genero_usuario || '',
+                                cumpleaños: data.nacimiento_usuario || '',
+                            },
+                            isAuthenticated: true, // Actualizar estado de autenticación
+                        });
+            
+                        // Redirige a la página del panel de control después de iniciar sesión
+                        navigate('/control-panel'); // Asegúrate de importar useNavigate desde react-router-dom
+            
+                        return true; // Login exitoso
+                    } else {
+                        console.error("Error en el login:", data.msg);
+                        return false; // Login fallido
+                    }
+                } catch (error) {
+                    console.error("Error en la solicitud de login:", error);
+                    return false; // Manejo de errores
+                }
+            },            
+
+            // Actualizar el perfil
+            updateProfile: async (userId, updatedData) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/create_profile/${userId}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem("token")}`,
                         },
                         body: JSON.stringify(updatedData),
-                    });
-
-                    if (response.ok) {
-                        const updatedSmoker = await response.json();
-                        const smokers = getStore().smokers.map(smoker =>
-                            smoker.id === smokerId ? updatedSmoker : smoker
-                        );
-                        setStore({ smokers }); // Actualizamos la lista de fumadores
-                    }
-                } catch (error) {
-                    console.error("Error updating smoker:", error);
-                }
-            },
-
-            deleteSmoker: async (smokerId) => {
-                try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/smokers/${smokerId}`, {
-                        method: "DELETE",
-                    });
-
-                    if (response.ok) {
-                        const smokers = getStore().smokers.filter(smoker => smoker.id !== smokerId);
-                        setStore({ smokers }); // Actualizamos la lista de fumadores
-                    }
-                } catch (error) {
-                    console.error("Error deleting smoker:", error);
-                }
-            },
-
-            signupSmoker: async (smokerData) => {
-                try {
-                    // Primer paso: crear el nuevo usuario
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/signup`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(smokerData),
-                    });
-            
-                    if (response.ok) {
-                        const newSmoker = await response.json();
-                        setStore({ smokers: [...getStore().smokers, newSmoker] });
-                        localStorage.setItem("token", newSmoker.token);  // Guarda el token si es parte de la respuesta
-                        
-                        // Segundo paso: crear el seguimiento (si es necesario)
-                        const seguimientoData = {
-                            cantidad: smokerData.cantidad,  // Asegúrate de que estos datos están en smokerData
-                            id_usuario: newSmoker.id,  // ID del nuevo usuario
-                            id_tipo: smokerData.id_tipo,  // Asegúrate de que este dato está en smokerData
-                        };
-            
-                        const seguimientoResponse = await fetch(`${process.env.BACKEND_URL}/api/seguimiento`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(seguimientoData),
-                        });
-            
-                        if (!seguimientoResponse.ok) {
-                            const errorData = await seguimientoResponse.json();
-                            console.error("Error al registrar seguimiento:", errorData);
-                        }
-            
-                        return true;  // Registro y seguimiento exitosos
-                    } else {
-                        const errorData = await response.json();
-                        console.error("Error en la respuesta del servidor:", errorData);
-                        return false;
-                    }
-                } catch (error) {
-                    console.error("Error durante el registro del fumador:", error);
-                    return false;
-                }
-            },
-            
-            
-            loginSmoker: async (smokerData) => {
-                try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/login`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(smokerData),
                     });
             
                     if (response.ok) {
                         const data = await response.json();
+                        setStore((prevStore) => ({
+                            ...prevStore,
+                            loggedInUser: {
+                                ...prevStore.loggedInUser,
+                                ...data.user
+                            }
+                        }));
                         localStorage.setItem("token", data.token); // Guardar el token en localStorage
             
                         setStore({
@@ -151,198 +134,133 @@ const getState = ({ getStore, getActions, setStore }) => {
             
                         return true;
                     } else {
+                        const errorData = await response.json();
+                        console.error("Error actualizando perfil:", errorData.msg);
                         return false;
                     }
                 } catch (error) {
-                    console.error("Error during login:", error);
+                    console.error("Error updating profile:", error);
                     return false;
                 }
+            },
+
+            // Asegúrate de que esta función se encuentre en tu store
+            getUserInfo: async (userId) => {
             },            
             
             getConsuming: async () => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo`);
-                    const data = await response.json();
-                    setStore({ tiposConsumo: data });
-                } catch (error) {
-                    console.error("Error fetching tiposconsumo:", error);
-                }
-            },
-
-            createConsuming: async (consumingData) => {
-                try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo`, {
-                        method: "POST",
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/user_info/${userId}`, {
+                        method: "GET",
                         headers: {
                             "Content-Type": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem("token")}`,
                         },
-                        body: JSON.stringify(consumingData),
                     });
-
+            
                     if (response.ok) {
-                        const newConsuming = await response.json();
-                        setStore({ tiposConsumo: [...getStore().tiposConsumo, newConsuming] });
+                        const data = await response.json();
+                        console.log("Información del usuario:", data);
+                        setStore({ userInfo: data }); // Actualiza el store con la información del usuario
+                        return data; 
+                    } else {
+                        console.error("Error fetching user info:", response.statusText);
+                        return null;
                     }
                 } catch (error) {
-                    console.error("Error creating consuming:", error);
+                    console.error("Error fetching user info:", error);
+                    return null;
                 }
-            },
+            },            
 
-            updateConsuming: async (consumingId, updatedData) => {
+            updateConsumptionProfile: async (userId, updatedData) => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo/${consumingId}`, {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/create_config_profile/${userId}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem("token")}`,
                         },
                         body: JSON.stringify(updatedData),
                     });
-
-                    if (response.ok) {
-                        const updatedConsuming = await response.json();
-                        const updatedTiposConsumo = getStore().tiposConsumo.map(consuming =>
-                            consuming.id === consumingId ? updatedConsuming : consuming
-                        );
-                        setStore({ tiposConsumo: updatedTiposConsumo });
-                    }
-                } catch (error) {
-                    console.error("Error updating consuming:", error);
-                }
-            },
-
-            deleteConsuming: async (consumingId) => {
-                try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo/${consumingId}`, {
-                        method: "DELETE",
-                    });
-
-                    if (response.ok) {
-                        const updatedTiposConsumo = getStore().tiposConsumo.filter(consuming => consuming.id !== consumingId);
-                        setStore({ tiposConsumo: updatedTiposConsumo });
-                    }
-                } catch (error) {
-                    console.error("Error deleting consuming:", error);
-                }
-            },
-
-                        //SEGUIMIENTO Y SOLICITUDES DE JOSE
-
-            getFollowing: async (userId) => {
-                try {
-                    const response = await fetch(`${API_URL}/seguimiento?user_id=${userId}`);
-                     if (!response.ok) {
-                         throw new Error('Network response was not ok');
-                     }
-                    const data = await response.json();
-                    console.log("Datos obtenidos:", data);
-                    setStore({ seguimiento: data });
-                } catch (error) {
-                    console.error("Error en la solicitud de seguimientos:", error);
-                }
-            },
-                        
-            createFollowing: async (followingData) => {
-                try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/seguimiento`, {
-                        method: "POST",
-                        headers: {
-                                "Content-Type": "application/json",
-                        },
-                                body: JSON.stringify(followingData),
-                         });
-                        
-                        if (!response.ok) {
-                            const errorText = await response.text();
-                            throw new Error(`Error creating seguimiento: ${errorText}`);
-                        }
-                        
-                    const newFollowing = await response.json();
-                        setStore((prevStore) => ({
-                            seguimiento: [...prevStore.seguimiento, newFollowing], 
-                            }));
-                        } catch (error) {
-                            console.error("Error creating seguimiento:", error);
-                        }
-            },
-
-            addSolicitud: async (solicitudData) => {
-                try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/solicitudes`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(solicitudData),
-                    });
             
                     if (response.ok) {
-                        const newSolicitud = await response.json();
-                        // Asegúrate de que getStore().solicitudes está definido
-                        setStore({ solicitud: [...(getStore().solicitud || []), newSolicitud] });
-                        return true; 
+                        const data = await response.json();
+                        setStore((prevStore) => ({
+                            ...prevStore,
+                            loggedInUser: {
+                                ...prevStore.loggedInUser,
+                                ...data.user
+                            }
+                        }));
+                        return true;
                     } else {
                         const errorData = await response.json();
-                        console.error("Error al agregar solicitud:", errorData);
-                        return false;  // Manejo del error
+                        console.error("Error actualizando consumo:", errorData.msg);
+                        return false;
                     }
                 } catch (error) {
-                    console.error("Error durante la solicitud:", error);
-                    return false;  // Manejo del error
-                }
-            },
-            
-           
-            getAllCoaches: async () => {
-                try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches`, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    });
-            
-                    if (response.ok) {
-                        const coaches = await response.json();
-                        setStore({
-                            coaches: coaches,  
-                        });
-                    } else {
-                        const errorText = await response.text();
-                        throw new Error(`Error fetching coaches: ${errorText}`);
-                    }
-                } catch (error) {
-                    console.error("Error fetching all coaches:", error);
+                    console.error("Error updating consumption profile:", error);
+                    return false;
                 }
             },
 
-            getCoach: async (coachId) => {
+            checkAuth: async () => {
+                const token = localStorage.getItem('token'); // Obtener el token
+                if (!token) {
+                    console.error("No token found"); // Log para depuración
+                    setStore({ isAuthenticated: false });
+                    return false; // Retorna false si no hay token
+                }
+
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/${coachId}`, {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/protected`, {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`,
                         },
                     });
-            
-                    if (response.ok) {
-                        const coach = await response.json();
-                        setStore({
-                            selectedCoach: coach,  // Puedes guardar el coach seleccionado en el store
-                        });
-                        return coach;
-                    } else {
-                        const errorText = await response.text();
-                        throw new Error(`Error fetching coach: ${errorText}`);
+
+                    if (!response.ok) {
+                        console.error("Error en checkAuth:", response.statusText);
+                        setStore({ isAuthenticated: false }); // Actualiza el store si la verificación falla
+                        return false; // Retorna false si la verificación falla
                     }
+
+                    const userData = await response.json(); // Obtener información del usuario
+                    setStore({
+                        isAuthenticated: true,
+                        loggedInUser: userData, // Guardar la información del usuario
+                    });
+
+                    return true; // Retorna true si el token es válido
                 } catch (error) {
-                    console.error("Error fetching coach:", error);
+                    console.error("Error en checkAuth:", error); // Log para depuración
+                    setStore({ isAuthenticated: false });
+                    return false; // Retorna false en caso de error
                 }
             },
-            
-            // Crear un nuevo coach
-            createCoach: async (coachData) => {
+
+            logout: () => {
+                localStorage.removeItem('token'); // Eliminar el token
+                setStore({ loggedInUser: null, isAuthenticated: false }); // Actualizar el store
+            },
+
+            getAllCoaches: async () => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches`, {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches`); // Ajusta la ruta según sea necesario
+                    const data = await response.json();
+                    setStore({ coaches: data }); // Actualiza el estado del store con los coaches obtenidos
+                } catch (error) {
+                    console.error("Error fetching coaches:", error); // Manejo de errores
+                }
+            },
+
+            //SIGNUP COACH
+            signupCoach: async (coachData) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/signup-coach`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -350,100 +268,22 @@ const getState = ({ getStore, getActions, setStore }) => {
                         body: JSON.stringify(coachData),
                     });
 
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`Error creating coach: ${errorText}`);
+                    if (response.ok) {
+                        const newCoach = await response.json();
+                        setStore({ coaches: [...getStore().coaches, newCoach] });
+                        localStorage.setItem("token", newCoach.token);
+                        return true;
+                    } else {
+                        const errorData = await response.json();
+                        console.error("Error en la respuesta del servidor:", errorData);
+                        return false;
                     }
-
-                    const newCoach = await response.json();
-                    setStore((prevStore) => ({
-                        coaches: [...prevStore.coaches, newCoach], // Agregar el nuevo coach al estado
-                    }));
                 } catch (error) {
-                    console.error("Error creating coach:", error);
-                }
-            },
-
-            // Actualizar un coach existente
-            updateCoach: async (coachId, updatedData) => {
-                try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/${coachId}`, {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(updatedData),
-                    });
-            
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`Error updating coach: ${errorText}`);
-                    }
-            
-                    const updatedCoach = await response.json();
-                    setStore((prevStore) => ({
-                        coaches: prevStore.coaches.map(coach =>
-                            coach.id === coachId ? updatedCoach : coach
-                        ),
-                    }));
-                    
-                    // Aquí puedes agregar una notificación o un estado de éxito
-                    return updatedCoach; // Retorna el coach actualizado si es necesario
-                } catch (error) {
-                    console.error("Error updating coach:", error);
-                    throw error; // Lanza el error para manejarlo en el componente
-                }
-            },
-            
-            // Eliminar un coach
-            deleteCoach: async (coachId) => {
-                try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/${coachId}`, {
-                        method: "DELETE",
-                    });
-
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`Error deleting coach: ${errorText}`);
-                    }
-
-                    setStore((prevStore) => ({
-                        coaches: prevStore.coaches.filter(coach => coach.id !== coachId),
-                    }));
-                } catch (error) {
-                    console.error("Error deleting coach:", error);
-                }
-            },
-                        //SIGNUP Y LOGIN DE BEA
-           // Método para registrar un nuevo coach
-           signupCoach: async (coachData) => {
-            try {
-                // Aquí ya no se sube la imagen, simplemente se prepara el dataWithImage
-                const response = await fetch(`${process.env.BACKEND_URL}/api/signup-coach`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(coachData), // Usar coachData directamente
-                });
-        
-                if (response.ok) {
-                    const newCoach = await response.json();
-                    setStore({ coaches: [...getStore().coaches, newCoach] });
-                    localStorage.setItem("token", newCoach.token); // Guarda el token si es parte de la respuesta
-                    return true;
-                } else {
-                    const errorData = await response.json();
-                    console.error("Error en la respuesta del servidor:", errorData);
+                    console.error("Error durante el registro del coach:", error);
                     return false;
                 }
-            } catch (error) {
-                console.error("Error durante el registro del coach:", error);
-                return false;
-            }
-        },
-        
-            
+            },
+
             //login coach
             loginCoach: async (coachData) => {
                 try {
@@ -454,7 +294,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(coachData),
                     });
-            
+
                     if (response.ok) {
                         const data = await response.json();
                         setStore({

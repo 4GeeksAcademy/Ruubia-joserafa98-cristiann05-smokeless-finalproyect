@@ -1,93 +1,94 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext } from "react"; 
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
+import '../../styles/signupSmoker.css';
 
 const SignupSmoker = () => {
     const { actions } = useContext(Context);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState(""); // Estado para la confirmación
-    const [error, setError] = useState(""); // Para manejar errores
-    const [successMessage, setSuccessMessage] = useState(""); // Para manejar mensajes de éxito
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [error, setError] = useState("");
     const navigate = useNavigate();
 
     const handleSignup = async (event) => {
         event.preventDefault();
-
-        // Limpiar los mensajes de error y éxito
         setError("");
-        setSuccessMessage("");
 
-        // Validar que las contraseñas coincidan
+        // Verificar si las contraseñas coinciden
         if (password !== confirmPassword) {
             setError("Las contraseñas no coinciden. Por favor, inténtalo de nuevo.");
             return;
         }
 
+        // Crear el objeto de datos del fumador
         const smokerData = { email_usuario: email, password_email: password };
+        console.log("Datos del fumador que se envían:", smokerData); // Muestra los datos del fumador que se envían
 
-        try {
-            const success = await actions.signupSmoker(smokerData);
-            if (success) {
-                // Mostrar un mensaje de éxito y redirigir al login
-                setSuccessMessage("Registro exitoso. Redirigiendo al login...");
-                setTimeout(() => {
-                    navigate("/login-smoker"); // Cambia la ruta al login
-                }, 2000); // Redirige después de 2 segundos
-            } else {
-                // Manejo de error en caso de que el registro falle
-                setError("Error: El registro no se pudo completar. Intenta de nuevo.");
-            }
-        } catch (error) {
-            // Muestra un mensaje de error más específico
-            if (error.message === "User already exists") {
-                setError("Este email ya está en uso. Por favor, usa otro.");
-            } else {
-                setError("Error durante el proceso de registro: " + error.message);
-            }
+        // Llamar a la acción de registro
+        const success = await actions.signupSmoker(smokerData);
+        if (success) {
+            console.log("Registro exitoso, redirigiendo a login."); // Indica que el registro fue exitoso
+            navigate("/login-smoker"); // Redirigir a login si es exitoso
+        } else {
+            setError("Error durante el registro. Por favor, intenta de nuevo.");
+            console.log("Error en el registro."); // Indica que hubo un error en el registro
         }
     };
 
     return (
-        <div className="container mt-5">
-            <h1>Signup for Smokers</h1>
-            {error && <div className="alert alert-danger">{error}</div>} {/* Muestra el mensaje de error */}
-            {successMessage && <div className="alert alert-success">{successMessage}</div>} {/* Muestra el mensaje de éxito */}
-            <form onSubmit={handleSignup}>
-                <div className="form-group">
-                    <label>Email</label>
+        <div className="form-container">
+            <p className="title">Registrarse</p>
+            {error && <div className="alert alert-danger">{error}</div>}
+            <form className="form" onSubmit={handleSignup}>
+                <div className="input-group">
+                    <label htmlFor="email">Correo electrónico</label>
                     <input
                         type="email"
-                        className="form-control"
+                        name="email"
+                        id="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                     />
                 </div>
-                <div className="form-group">
-                    <label>Password</label>
+                <div className="input-group">
+                    <label htmlFor="password">Contraseña</label>
                     <input
                         type="password"
-                        className="form-control"
+                        name="password"
+                        id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
                 </div>
-                <div className="form-group">
-                    <label>Confirm Password</label> {/* Campo de confirmación */}
+                <div className="input-group">
+                    <label htmlFor="confirmPassword">Confirmar contraseña</label>
                     <input
                         type="password"
-                        className="form-control"
+                        name="confirmPassword"
+                        id="confirmPassword"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
                     />
                 </div>
-                <button type="submit" className="btn btn-primary mt-3">
-                    Sign Up
-                </button>
+                <button className="sign" type="submit">Registrarse</button>
             </form>
+
+            <div className="social-message">
+                <div className="line"></div>
+                <p className="message">O regístrate con cuentas sociales</p>
+                <div className="line"></div>
+            </div>
+            <div className="social-icons">
+                {/* Aquí tus botones de redes sociales */}
+            </div>
+
+            <p className="signup">¿Ya tienes una cuenta?
+                <a rel="noopener noreferrer" href="/login-smoker" className=" "> Iniciar sesión</a>
+            </p>
         </div>
     );
 };

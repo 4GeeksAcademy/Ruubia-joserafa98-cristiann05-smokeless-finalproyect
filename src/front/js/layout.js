@@ -1,5 +1,3 @@
-// src/front/js/layout.js
-
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
@@ -12,19 +10,22 @@ import ControlPanelSmoker from "./pages/controlPanelSmoker";
 import TiposConsumo from "./pages/tiposConsumo";
 import CoachUser from "./pages/CoachUser"; 
 import SignupCoach from "./pages/signupCoach";
-import LoginCoach from "./pages/loginCoach"
+import LoginCoach from "./pages/loginCoach";
 import ControlPanelCoach from "./pages/controlPanelCoach";
 import injectContext from "./store/appContext";
+import CreateProfileUser from "./pages/createProfile-user";
+import CreateConsumProfile from "./pages/ConfiguracionConsumo";
 import FollowingList from "./pages/seguimiento";
 import CoachProfile from "./pages/CoachProfile";
 import SmokerProfile from "./pages/SmokerProfile";
 
 import Navbar from "./component/navbar"; 
 import Footer from "./component/footer";
+import { NotificationProvider } from './component/NotificationContext';
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
-    const [theme, setTheme] = useState("dark"); // Cambia a "dark" como valor por defecto
+    const [theme, setTheme] = useState("dark");
     const [language, setLanguage] = useState("es");
 
     const handleLanguageChange = (e) => {
@@ -34,12 +35,11 @@ const Layout = () => {
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
         setTheme(newTheme);
-        document.body.className = newTheme; // Cambia la clase del body
+        document.body.className = newTheme;
     };
 
-    // Cambia el fondo del body al cargar
     useEffect(() => {
-        document.body.className = theme; // Aplica el tema al cargar
+        document.body.className = theme;
     }, [theme]);
 
     if (!process.env.BACKEND_URL || process.env.BACKEND_URL === "") return <BackendURL />;
@@ -68,8 +68,10 @@ const Layout = () => {
                         <Route element={<FollowingList />} path="/seguimiento" />
                         <Route element={<CoachProfile />} path="/coach-profile" />
                         <Route element={<SmokerProfile />} path="/smoker-profile" />
+                        <Route element={<CreateProfileUser />} path="/question-profile-smoker" />
+                        <Route element={<CreateConsumProfile />} path="/question-config-smoker" />
                         <Route element={<h1>Not found!</h1>} />
-                    </Routes>
+                        </Routes>
                     <Footer />
                 </ScrollToTop>
             </BrowserRouter>

@@ -6,6 +6,7 @@ import 'atropos/css'; // Importa los estilos de Atropos
 import foto from '../../img/logos/imagenesweb/prueba.png';
 import CustomButton from '../component/button'; // Importa tu botón personalizado
 
+
 export const Home = ({ toggleTheme }) => {
     // Estado para controlar el tema
     const [isLightTheme, setIsLightTheme] = useState(false);

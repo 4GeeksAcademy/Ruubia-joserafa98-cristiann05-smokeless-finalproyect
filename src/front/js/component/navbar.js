@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import logoDark from '../../img/logos/logoblanco.png'; // Asegúrate de que la ruta es correcta
+import logoLight from '../../img/logos/logonegro.png'; // Ajusta según sea necesario
+import { Link } from 'react-router-dom'; // Asegúrate de importar Link
 import "../../styles/navbar.css";
 import '../../styles/switch.css';
 
-const Navbar = ({ toggleTheme }) => {
+const Navbar = ({ toggleTheme, theme }) => {
     const [language, setLanguage] = useState(() => {
-        return localStorage.getItem('language') || "Spanish"; // Valor por defecto en español
+        return localStorage.getItem('language') || "Spanish";
     });
 
     const icons = {
@@ -19,16 +22,24 @@ const Navbar = ({ toggleTheme }) => {
 
     const handleItemClick = (language) => {
         setLanguage(language);
-        localStorage.setItem('language', language); // Guardar idioma en localStorage
+        localStorage.setItem('language', language);
     };
 
     useEffect(() => {
-        // Establecer el idioma seleccionado basado en el estado de language
         setLanguage(localStorage.getItem('language') || "Spanish");
     }, []);
 
     return (
         <nav className="navbar">
+            <div className="logo-container">
+                <Link to="/"> {/* Enlace al logo */}
+                    <img 
+                        src={theme === 'dark' ? logoDark : logoLight} 
+                        alt="Logo" 
+                        className="logo" 
+                    />
+                </Link>
+            </div>
             <div className="navbar-controls">
                 <div className="dropdown">
                     <button
