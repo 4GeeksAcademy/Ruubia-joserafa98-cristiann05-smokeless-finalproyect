@@ -46,7 +46,7 @@ class SmokerUser(db.Model):
     id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=True)  # Relación con TiposConsumo
     tipo_consumo = db.relationship('TiposConsumo', backref='smokers')
     foto_usuario = db.Column(db.String(255), nullable=True)  # Opcional
-    forma_consumo = db.Column(db.String(50), default='cigarros')  # Tipo de consumo por defecto
+    forma_consumo = db.Column(db.String(50), nullable=True)  # Tipo de consumo por defecto
     numero_cigarrillos = db.Column(db.Integer, nullable=True)  # Cantidad de cigarrillos
     periodicidad_consumo = db.Column(db.String(20), nullable=True)  # Diaria, semanal, mensual o anual
     public_id = db.Column(db.String(200), nullable=True)  # Opcional

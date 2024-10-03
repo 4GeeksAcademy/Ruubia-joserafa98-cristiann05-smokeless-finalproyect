@@ -15,13 +15,11 @@ import ControlPanelCoach from "./pages/controlPanelCoach";
 import injectContext from "./store/appContext";
 import CreateProfileUser from "./pages/createProfile-user";
 import CreateConsumProfile from "./pages/ConfiguracionConsumo";
-import FollowingList from "./pages/seguimiento";
 import CoachProfile from "./pages/CoachProfile";
 import SmokerProfile from "./pages/SmokerProfile";
 
 import Navbar from "./component/navbar"; 
 import Footer from "./component/footer";
-import { NotificationProvider } from './component/NotificationContext';
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
@@ -65,7 +63,6 @@ const Layout = () => {
                         <Route element={<SignupCoach />} path="/signup-coach" />
                         <Route element={<LoginCoach />} path="/login-coach" />
                         <Route element={<ControlPanelCoach />} path="/control-panel-coach" />
-                        <Route element={<FollowingList />} path="/seguimiento" />
                         <Route element={<CoachProfile />} path="/coach-profile" />
                         <Route element={<SmokerProfile />} path="/smoker-profile" />
                         <Route element={<CreateProfileUser />} path="/question-profile-smoker" />
