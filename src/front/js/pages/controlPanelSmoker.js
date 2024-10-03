@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
+import FollowingList from "./seguimiento";
+import CoachCard from "../component/CoachCards";
 
 const ControlPanelSmoker = () => {
     const { actions } = useContext(Context);
@@ -36,6 +38,8 @@ const ControlPanelSmoker = () => {
             <button className="btn btn-danger" onClick={handleLogout}>
                 Logout
             </button>
+            <FollowingList />
+            <CoachCard />
         </div>
     );
 };

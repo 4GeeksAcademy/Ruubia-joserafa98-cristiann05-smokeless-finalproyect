@@ -1,5 +1,5 @@
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-from datetime import date
 
 db = SQLAlchemy()
 
@@ -14,6 +14,7 @@ class Coach(db.Model):
     longitud = db.Column(db.Float)
     descripcion_coach = db.Column(db.Text)
     foto_coach = db.Column(db.String(200))
+    public_id = db.Column(db.String(200))
     precio_servicio = db.Column(db.Float)
 
     def __repr__(self):
@@ -30,6 +31,7 @@ class Coach(db.Model):
             "longitud": self.longitud,
             "descripcion_coach": self.descripcion_coach,
             "foto_coach": self.foto_coach,
+            "public_id": self.public_id,
             "precio_servicio": self.precio_servicio,
         }
 
@@ -47,6 +49,7 @@ class SmokerUser(db.Model):
     forma_consumo = db.Column(db.String(50), default='cigarros')  # Tipo de consumo por defecto
     numero_cigarrillos = db.Column(db.Integer, nullable=True)  # Cantidad de cigarrillos
     periodicidad_consumo = db.Column(db.String(20), nullable=True)  # Diaria, semanal, mensual o anual
+    public_id = db.Column(db.String(200), nullable=True)  # Opcional
 
     def __repr__(self):
         return f'<SmokerUser {self.email_usuario}>'
@@ -65,6 +68,7 @@ class SmokerUser(db.Model):
             "forma_consumo": self.forma_consumo,
             "numero_cigarrillos": self.numero_cigarrillos,
             "periodicidad_consumo": self.periodicidad_consumo,
+            "public_id": self.public_id
         }
     
 class TiposConsumo(db.Model):
@@ -80,30 +84,58 @@ class TiposConsumo(db.Model):
             "name": self.name,
         }
 
-class Seguimiento(db.Model):
-    __tablename__ = 'seguimiento'  # Asegúrate de que este es el nombre correcto de la tabla en la base de datos
+class Solicitud(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    cantidad = db.Column(db.String(120), nullable=False)
-    
-    id_usuario = db.Column(db.Integer, db.ForeignKey('smoker_user.id'), nullable=False)  # Relación con SmokerUser
-    usuario = db.relationship('SmokerUser', backref='seguimientos')  # Relación inversa
+    id_user = db.Column(db.Integer, db.ForeignKey('smoker_user.id'), nullable=False)
+    user = db.relationship('SmokerUser', backref='solicitudes')
 
-    id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=True)  # Relación con TiposConsumo
-    tipo_consumo = db.relationship('TiposConsumo', backref='seguimientos')  # Relación inversa
+    id_coach = db.Column(db.Integer, db.ForeignKey('coach.id'), nullable=True)
+    coach = db.relationship('Coach', backref='solicitudes')
 
-    # Añadiendo fecha de inicio
-    fecha_inicio_usuario = db.Column(db.Date, nullable=False)  # Campo para almacenar la fecha
+    fecha_solicitud = db.Column(db.DateTime, nullable=False)
+    estado = db.Column(db.String(50), nullable=False)
+    fecha_respuesta = db.Column(db.DateTime, nullable=True)
+    comentarios = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
-        return f'<Seguimiento {self.id}>'
+        return f'<Solicitud {self.id}>'
 
     def serialize(self):
         return {
             "id": self.id,
-            "cantidad": self.cantidad,
-            "id_usuario": self.id_usuario,
-            "nombre_usuario": self.usuario.nombre_usuario if self.usuario else None,
-            "id_tipo": self.id_tipo,
-            "nombre_tipo": self.tipo_consumo.name if self.tipo_consumo else None,
-            "fecha_inicio_usuario": self.fecha_inicio_usuario.isoformat()  # Convertir a formato ISO
+            "id_user": self.id_user,
+            "name_user": self.user.nombre_usuario,  
+            "id_coach": self.id_coach,
+            "nombre_coach": self.coach.nombre_coach if self.coach else None,  # Cambio aquí
+            "fecha_solicitud": self.fecha_solicitud.isoformat(),
+            "estado": self.estado,
+            "fecha_respuesta": self.fecha_respuesta.isoformat() if self.fecha_respuesta else None,
+            "comentarios": self.comentarios
+        }
+
+class Mensajes(db.Model):
+    __tablename__ = 'mensajes'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # Relación con el usuario que envía el mensaje
+    id_usuario = db.Column(db.Integer, db.ForeignKey('smoker_user.id'), nullable=True)  # Puede ser nulo si el coach envía el mensaje
+    usuario = db.relationship('SmokerUser', foreign_keys=[id_usuario])
+
+    # Relación con el coach que envía el mensaje
+    id_coach = db.Column(db.Integer, db.ForeignKey('coach.id'), nullable=True)  # Puede ser nulo si el usuario envía el mensaje
+    coach = db.relationship('Coach', foreign_keys=[id_coach])
+
+    contenido = db.Column(db.String, nullable=False)
+    fecha_envio = db.Column(db.DateTime, default=datetime.utcnow)
+    visto = db.Column(db.Boolean, default=False)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'id_usuario': self.id_usuario,
+            'id_coach': self.id_coach,
+            'contenido': self.contenido,
+            'fecha_envio': self.fecha_envio.strftime("%d/%m/%Y %H:%M:%S"),
+            'visto': self.visto
         }

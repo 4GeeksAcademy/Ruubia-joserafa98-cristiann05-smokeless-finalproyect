@@ -39,7 +39,7 @@ const CreateProfileUser = () => {
         const success = await actions.updateProfile(store.loggedInUser.id, updatedData);
         if (success) {
             alert("Perfil actualizado con éxito");
-            navigate('/question-config-smoker'); // Asegúrate de que esta ruta sea correcta
+            navigate('/question-config-smoker');
         } else {
             alert("Error al actualizar el perfil");
         }
