@@ -417,42 +417,33 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
                         //SIGNUP Y LOGIN DE BEA
            // Método para registrar un nuevo coach
-           signupCoach: async (coachData, imageFile) => {
-                try {
-                    // Subir la imagen y obtener la URL
-                    const imageUrl = await getActions().uploadCoachImage(imageFile);
-
-                    if (imageUrl) {
-                    // Agregar la URL de la imagen a coachData
-                        const dataWithImage = { ...coachData, foto_coach: imageUrl };
-
-                        const response = await fetch(`${process.env.BACKEND_URL}/api/signup-coach`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(dataWithImage),
-                        });
-
-                    if (response.ok) {
-                        const newCoach = await response.json();
-                        setStore({ coaches: [...getStore().coaches, newCoach] });
-                        localStorage.setItem("token", newCoach.token); // Guarda el token si es parte de la respuesta
-                        return true;
-                    } else {
-                        const errorData = await response.json();
-                        console.error("Error en la respuesta del servidor:", errorData);
-                        return false;
-                    }
-                    } else {
-                        console.error("No se pudo subir la imagen");
-                        return false;
-                    }
-                } catch (error) {
-                    console.error("Error durante el registro del coach:", error);
+           signupCoach: async (coachData) => {
+            try {
+                // Aquí ya no se sube la imagen, simplemente se prepara el dataWithImage
+                const response = await fetch(`${process.env.BACKEND_URL}/api/signup-coach`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(coachData), // Usar coachData directamente
+                });
+        
+                if (response.ok) {
+                    const newCoach = await response.json();
+                    setStore({ coaches: [...getStore().coaches, newCoach] });
+                    localStorage.setItem("token", newCoach.token); // Guarda el token si es parte de la respuesta
+                    return true;
+                } else {
+                    const errorData = await response.json();
+                    console.error("Error en la respuesta del servidor:", errorData);
                     return false;
                 }
-            },
+            } catch (error) {
+                console.error("Error durante el registro del coach:", error);
+                return false;
+            }
+        },
+        
             
             //login coach
             loginCoach: async (coachData) => {
