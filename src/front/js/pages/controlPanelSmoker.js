@@ -1,18 +1,26 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 import FollowingList from "./seguimiento";
 import CoachCard from "../component/CoachCards";
 
 const ControlPanelSmoker = () => {
-    const { store } = useContext(Context);
+
     const navigate = useNavigate();
+    const { store, actions } = useContext(Context);
+    const { setStore } = actions; // Asegúrate de obtener setStore desde actions
+
 
     useEffect(() => {
-        if (!store.isAuthenticated) {
+        const token = localStorage.getItem("token");
+        if (token) {
+            setStore({ isAuthenticated: true });
+        } else {
             navigate("/signup-smoker");
         }
-    }, [store.isAuthenticated, navigate]);
+    }, [navigate, setStore]);
+    
+    
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -33,3 +41,4 @@ const ControlPanelSmoker = () => {
 };
 
 export default ControlPanelSmoker;
+
