@@ -45,3 +45,4 @@ const ControlPanelSmoker = () => {
 };
 
 export default ControlPanelSmoker;
+

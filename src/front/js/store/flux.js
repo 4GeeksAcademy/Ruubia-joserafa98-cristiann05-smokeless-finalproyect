@@ -13,7 +13,8 @@ const getState = ({ getStore, getActions, setStore }) => {
             solicitud: []
         },
         actions: {
-
+            
+            setStore: (newStore) => setStore((prevStore) => ({ ...prevStore, ...newStore })),
             getSmokers: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/smokers`);
@@ -119,6 +120,18 @@ const getState = ({ getStore, getActions, setStore }) => {
                                 ...data.user
                             }
                         }));
+                        localStorage.setItem("token", data.token); // Guardar el token en localStorage
+            
+                        setStore({
+                            isAuthenticated: true,
+                            userId: data.id,
+                            nombreUsuario: data.nombre_usuario,
+                            numerocigarro_usuario: data.numerocigarro_usuario,
+                            periodicidad: data.periodicidad,
+                            tipo_consumo: data.tipo_consumo,
+                            fotoUsuario: data.foto_usuario,
+                        });
+            
                         return true;
                     } else {
                         const errorData = await response.json();
@@ -133,6 +146,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             // Asegúrate de que esta función se encuentre en tu store
             getUserInfo: async (userId) => {
+            },            
+            
+            getConsuming: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/user_info/${userId}`, {
                         method: "GET",
