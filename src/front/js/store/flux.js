@@ -225,20 +225,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 
                         //SEGUIMIENTO Y SOLICITUDES DE JOSE
 
-                        getFollowing: async (userId) => {
-                            try {
-                                const response = await fetch(`${API_URL}/seguimiento?user_id=${userId}`);
-                                if (!response.ok) {
-                                    throw new Error('Network response was not ok');
-                                }
-                                const data = await response.json();
-                                console.log("Datos obtenidos:", data);
-                                setStore({ seguimiento: data });
-                            } catch (error) {
-                                console.error("Error en la solicitud de seguimientos:", error);
-                            }
-                        },        
-                             
+            getFollowing: async (userId) => {
+                try {
+                    const response = await fetch(`${API_URL}/seguimiento?user_id=${userId}`);
+                     if (!response.ok) {
+                         throw new Error('Network response was not ok');
+                     }
+                    const data = await response.json();
+                    console.log("Datos obtenidos:", data);
+                    setStore({ seguimiento: data });
+                } catch (error) {
+                    console.error("Error en la solicitud de seguimientos:", error);
+                }
+            },
+                        
             createFollowing: async (followingData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/seguimiento`, {
@@ -382,25 +382,36 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
                         //SIGNUP Y LOGIN DE BEA
-            //SIGNUP COACH
-            signupCoach: async (coachData) => {
+           // Método para registrar un nuevo coach
+           signupCoach: async (coachData, imageFile) => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/signup-coach`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(coachData),
-                    });
-            
+                    // Subir la imagen y obtener la URL
+                    const imageUrl = await getActions().uploadCoachImage(imageFile);
+
+                    if (imageUrl) {
+                    // Agregar la URL de la imagen a coachData
+                        const dataWithImage = { ...coachData, foto_coach: imageUrl };
+
+                        const response = await fetch(`${process.env.BACKEND_URL}/api/signup-coach`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(dataWithImage),
+                        });
+
                     if (response.ok) {
                         const newCoach = await response.json();
                         setStore({ coaches: [...getStore().coaches, newCoach] });
-                        localStorage.setItem("token", newCoach.token);  // Guarda el token si es parte de la respuesta
+                        localStorage.setItem("token", newCoach.token); // Guarda el token si es parte de la respuesta
                         return true;
                     } else {
                         const errorData = await response.json();
                         console.error("Error en la respuesta del servidor:", errorData);
+                        return false;
+                    }
+                    } else {
+                        console.error("No se pudo subir la imagen");
                         return false;
                     }
                 } catch (error) {
@@ -412,7 +423,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             //login coach
             loginCoach: async (coachData) => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/login`, {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/login-coach`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -422,24 +433,48 @@ const getState = ({ getStore, getActions, setStore }) => {
             
                     if (response.ok) {
                         const data = await response.json();
-                        
                         setStore({
-                            isAuthenticated: true, 
-                            coachId: data.coach_id, 
-
+                            isAuthenticated: true,
+                            coachId: data.coach_id,
+                            nombre_coach: data.nombre_coach, // Nuevo campo
+                            genero_coach: data.genero_coach, // Nuevo campo
+                            foto_coach: data.foto_coach, // Nuevo campo
                         });
-                        localStorage.setItem("token", data.token); 
-                        return true; 
+                        localStorage.setItem("token", data.token); // Guarda el token en localStorage
+                        return true; // Indica que el login fue exitoso
                     } else {
-                        return false; 
+                        const errorData = await response.json();
+                        console.error("Error en el login del coach:", errorData);
+                        return false; // Indica que el login falló
                     }
                 } catch (error) {
-                    console.error("Error during login:", error);
-                    return false; 
+                    console.error("Error durante el login del coach:", error);
+                    return false; // Indica que hubo un error durante el proceso
+                }
+            },  
+              // Método para subir la imagen del coach a Cloudinary
+            uploadCoachImage: async (file) => {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("upload_preset", "your_upload_preset"); // Reemplaza con tu preset de subida
+
+                try {
+                    const response = await fetch(`https://api.cloudinary.com/v1_1/your_cloud_name/image/upload`, {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Error al subir la imagen");
+                    }
+
+                    const data = await response.json();
+                    return data.secure_url; // Retorna la URL de la imagen subida
+                } catch (error) {
+                    console.error("Error uploading image:", error);
+                    return null; // Retorna null si hay un error
                 }
             },
-            
-            
         },
     };
 };

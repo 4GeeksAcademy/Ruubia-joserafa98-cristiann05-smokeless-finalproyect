@@ -6,7 +6,7 @@ from api.models import db, SmokerUser, Coach, TiposConsumo, Seguimiento, Mensaje
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from datetime import datetime
-
+from cloudinary_config import cloudinary
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
@@ -14,7 +14,7 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 
 api = Blueprint('api', __name__)
-
+coaches_bp = Blueprint('coaches', __name__)
 
 # Allow CORS requests to this API
 CORS(api)
@@ -256,7 +256,7 @@ def delete_coach(coach_id):
 
 
  # signup coach
-@api.route('/signup', methods=['POST'])
+@api.route('/signup/coach', methods=['POST'])
 def signup_coach():
     email = request.json.get('email_coach', None)
     password = request.json.get('password_coach', None)
@@ -290,7 +290,7 @@ def signup_coach():
 
  # login coach
 
-@api.route('/login', methods=['POST'])
+@api.route('/login/coach', methods=['POST'])
 def login_coach():
     email = request.json.get('email_coach', None)
     password = request.json.get('password_coach', None)
@@ -495,6 +495,98 @@ def coach_eliminar_mensaje(id_mensaje):
 
     return jsonify({"msg": "Mensaje eliminado correctamente por el coach"}), 200
 
+# Endpoint para subir imágenes
+@coaches_bp.route('/coaches/upload_image', methods=['POST'])
+def upload_image():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    try:
+        # Sube la imagen a Cloudinary
+        response = cloudinary.uploader.upload(file)
+        image_url = response['secure_url']  # URL de la imagen subida
+
+        # Aquí podrías guardar la URL en la base de datos si es necesario
+        # Ejemplo: save_image_url_to_db(coach_id, image_url)
+
+        return jsonify({'message': 'Image uploaded successfully', 'url': image_url}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Endpoint para obtener la imagen de un coach
+@coaches_bp.route('/coaches/image/<int:coach_id>', methods=['GET'])
+def get_image(coach_id):
+    # Aquí deberías buscar la URL de la imagen en tu base de datos usando coach_id
+    # Ejemplo: image_url = get_image_url_from_db(coach_id)
+    
+    image_url = 'url_de_imagen_ejemplo'  # Reemplaza esto con tu lógica de obtención de imagen
+    
+    if image_url:
+        return jsonify({'image_url': image_url}), 200
+    else:
+        return jsonify({'error': 'Image not found'}), 404
+
+# Endpoint para actualizar la imagen de un coach
+@coaches_bp.route('/coaches/update_image/<int:coach_id>', methods=['PUT'])
+def update_image(coach_id):
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    try:
+        # Sube la nueva imagen a Cloudinary
+        response = cloudinary.uploader.upload(file)
+        image_url = response['secure_url']  # URL de la nueva imagen
+
+        # Aquí deberías actualizar la URL en tu base de datos usando coach_id
+        # Ejemplo: update_image_url_in_db(coach_id, image_url)
+
+        return jsonify({'message': 'Image updated successfully', 'url': image_url}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Endpoint para eliminar la imagen de un coach
+@coaches_bp.route('/coaches/delete_image/<int:coach_id>', methods=['DELETE'])
+def delete_image(coach_id):
+    try:
+        # Aquí deberías eliminar la URL de la imagen de tu base de datos usando coach_id
+        # Ejemplo: delete_image_url_from_db(coach_id)
+
+        # Si es necesario, también puedes eliminar la imagen de Cloudinary usando el public_id
+        # cloudinary.uploader.destroy(public_id)
+
+        return jsonify({'message': 'Image deleted successfully'}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+# Inicializa la aplicación Flask
+def create_app():
+    app = Flask(__name__)
+    
+    # Configuraciones de la aplicación
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'  # Cambia esto a una clave secreta real
+
+    db.init_app(app)
+    jwt.init_app(app)  # Inicializa JWT
+
+    # Registra los blueprints
+    app.register_blueprint(api, url_prefix='/api')
+    
+    return app
 
 # Ruta protegida
 @api.route("/protected", methods=["GET"])
@@ -505,4 +597,7 @@ def protected():
     return jsonify(logged_in_as=current_user), 200
 
 if __name__ == '__main__':
+    app = create_app()
+    with app.app_context():
+        db.create_all()  # Crea las tablas de la base de datos
     app.run(debug=True)

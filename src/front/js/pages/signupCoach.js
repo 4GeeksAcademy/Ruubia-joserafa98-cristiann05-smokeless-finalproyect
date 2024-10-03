@@ -22,7 +22,7 @@ const SignupCoach = () => {
         const coachData = { email_coach: email, password_coach: password };
 
         try {
-            const success = await actions.signupCoach(coachData);
+            const success = await actions.signupCoach(coachData); // No se pasa la imagen
             if (success) {
                 // Redirige al control panel si el registro fue exitoso
                 navigate("/control-panel-coach");
@@ -84,4 +84,3 @@ const SignupCoach = () => {
 };
 
 export default SignupCoach;
-
