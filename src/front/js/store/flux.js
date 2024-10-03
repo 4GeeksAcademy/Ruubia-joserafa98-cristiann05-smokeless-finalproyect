@@ -510,6 +510,29 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
                 
             },
+            // Método para subir la imagen del smoker a Cloudinary
+            uploadSmokerImage: async (file) => {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("upload_preset", "your_upload_preset"); // Reemplaza con tu preset de subida
+
+                try {
+                    const response = await fetch(`https://api.cloudinary.com/v1_1/your_cloud_name/image/upload`, {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Error al subir la imagen");
+                    }
+
+                    const data = await response.json();
+                    return data.secure_url; // Retorna la URL de la imagen subida
+                } catch (error) {
+                    console.error("Error uploading image:", error);
+                    return null; // Retorna null si hay un error
+                }
+            },
         },
     };
 };

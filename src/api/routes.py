@@ -558,8 +558,8 @@ def coach_eliminar_mensaje(id_mensaje):
     return jsonify({"msg": "Mensaje eliminado correctamente por el coach"}), 200
 
 # Endpoint para subir imágenes
-@coaches_bp.route('/coaches/upload_image', methods=['POST'])
-def upload_image():
+@coaches_bp.route('/coaches/upload_image/<int:coach_id>', methods=['POST'])
+def upload_image(coach_id):  # Añadir coach_id como parámetro
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
 
@@ -573,8 +573,11 @@ def upload_image():
         response = cloudinary.uploader.upload(file)
         image_url = response['secure_url']  # URL de la imagen subida
 
-        # Aquí podrías guardar la URL en la base de datos si es necesario
-        # Ejemplo: save_image_url_to_db(coach_id, image_url)
+        # Aquí podrías guardar la URL en la base de datos
+        coach = Coach.query.get(coach_id)  # Busca el coach en la base de datos
+        if coach:
+            coach.foto_coach = image_url  # Actualiza el campo de la foto
+            db.session.commit()  # Guarda los cambios en la base de datos
 
         return jsonify({'message': 'Image uploaded successfully', 'url': image_url}), 200
 
@@ -584,34 +587,41 @@ def upload_image():
 # Endpoint para obtener la imagen de un coach
 @coaches_bp.route('/coaches/image/<int:coach_id>', methods=['GET'])
 def get_image(coach_id):
-    # Aquí deberías buscar la URL de la imagen en tu base de datos usando coach_id
-    # Ejemplo: image_url = get_image_url_from_db(coach_id)
-    
-    image_url = 'url_de_imagen_ejemplo'  # Reemplaza esto con tu lógica de obtención de imagen
-    
-    if image_url:
-        return jsonify({'image_url': image_url}), 200
+    coach = Coach.query.get(coach_id)  # Busca el coach por ID
+    if coach and coach.foto_coach:  # Verifica si existe la foto
+        return jsonify({'image_url': coach.foto_coach}), 200
     else:
         return jsonify({'error': 'Image not found'}), 404
 
-# Endpoint para actualizar la imagen de un coach
 @coaches_bp.route('/coaches/update_image/<int:coach_id>', methods=['PUT'])
 def update_image(coach_id):
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
 
     file = request.files['file']
-
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
 
     try:
+        # Busca el coach en la base de datos
+        coach = Coach.query.get(coach_id)
+        if not coach:
+            return jsonify({'error': 'Coach not found'}), 404
+
         # Sube la nueva imagen a Cloudinary
         response = cloudinary.uploader.upload(file)
         image_url = response['secure_url']  # URL de la nueva imagen
+        new_public_id = response['public_id']  # Obtiene el public_id de la nueva imagen
 
-        # Aquí deberías actualizar la URL en tu base de datos usando coach_id
-        # Ejemplo: update_image_url_in_db(coach_id, image_url)
+        # Si hay una imagen anterior, se puede eliminar
+        if coach.public_id:
+            # Elimina la imagen anterior de Cloudinary
+            cloudinary.uploader.destroy(coach.public_id)
+
+        # Actualiza la URL y el public_id en la base de datos
+        coach.foto_coach = image_url  # Actualiza el campo de la foto
+        coach.public_id = new_public_id  # Guarda el nuevo public_id
+        db.session.commit()  # Guarda los cambios
 
         return jsonify({'message': 'Image updated successfully', 'url': image_url}), 200
 
@@ -622,13 +632,114 @@ def update_image(coach_id):
 @coaches_bp.route('/coaches/delete_image/<int:coach_id>', methods=['DELETE'])
 def delete_image(coach_id):
     try:
-        # Aquí deberías eliminar la URL de la imagen de tu base de datos usando coach_id
-        # Ejemplo: delete_image_url_from_db(coach_id)
+        coach = Coach.query.get(coach_id)  # Busca el coach en la base de datos
+        if coach:
+            # Elimina la imagen de Cloudinary usando el public_id
+            if coach.public_id:
+                cloudinary.uploader.destroy(coach.public_id)
 
-        # Si es necesario, también puedes eliminar la imagen de Cloudinary usando el public_id
-        # cloudinary.uploader.destroy(public_id)
+            coach.foto_coach = None  # Elimina la referencia de la imagen
+            coach.public_id = None    # Elimina la referencia del public ID
+            db.session.commit()  # Guarda los cambios
 
-        return jsonify({'message': 'Image deleted successfully'}), 200
+            return jsonify({'message': 'Image deleted successfully'}), 200
+        else:
+            return jsonify({'error': 'Coach not found'}), 404
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    
+@api.route('/smokers/upload_image/<int:smoker_id>', methods=['POST'])
+def upload_smoker_image(smoker_id):  # Corrige "somker_id" a "smoker_id"
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    try:
+        # Sube la imagen a Cloudinary
+        response = cloudinary.uploader.upload(file)
+        image_url = response['secure_url']  # URL de la imagen subida
+        
+        # Actualiza el campo foto_usuario en la base de datos
+        smoker = SmokerUser.query.get(smoker_id)  # Usa el smoker_id que viene de la ruta
+        if smoker:
+            smoker.foto_usuario = image_url
+            db.session.commit()
+            return jsonify({'message': 'Image uploaded successfully', 'url': image_url}), 200
+        else:
+            return jsonify({'error': 'Smoker not found'}), 404
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Endpoint para obtener la imagen de un smoker
+@api.route('/smokers/image/<int:smoker_id>', methods=['GET'])
+def get_smoker_image(smoker_id):
+    smoker = SmokerUser.query.get(smoker_id)
+    if smoker and smoker.foto_usuario:
+        return jsonify({'image_url': smoker.foto_usuario}), 200
+    else:
+        return jsonify({'error': 'Image not found'}), 404
+
+# Endpoint para actualizar la imagen de un smoker
+@api.route('/smokers/update_image/<int:smoker_id>', methods=['PUT'])
+def update_smoker_image(smoker_id):
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    try:
+        # Busca el smoker en la base de datos
+        smoker = SmokerUser.query.get(smoker_id)
+        if not smoker:
+            return jsonify({'error': 'Smoker not found'}), 404
+
+        # Sube la nueva imagen a Cloudinary
+        response = cloudinary.uploader.upload(file)
+        image_url = response['secure_url']  # URL de la nueva imagen
+        new_public_id = response['public_id']  # Obtiene el public_id de la nueva imagen
+
+        # Si hay una imagen anterior, se puede eliminar
+        if smoker.public_id:
+            # Elimina la imagen anterior de Cloudinary
+            cloudinary.uploader.destroy(smoker.public_id)
+
+        # Actualiza la URL y el public_id en la base de datos
+        smoker.foto_usuario = image_url  # Actualiza el campo de la foto
+        smoker.public_id = new_public_id  # Guarda el nuevo public_id
+        db.session.commit()  # Guarda los cambios
+
+        return jsonify({'message': 'Image updated successfully', 'url': image_url}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Endpoint para eliminar la imagen de un smoker
+@api.route('/smokers/delete_image/<int:smoker_id>', methods=['DELETE'])
+def delete_smoker_image(smoker_id):
+    try:
+        smoker = SmokerUser.query.get(smoker_id)
+        if smoker:
+            if smoker.public_id:
+                # Elimina la imagen de Cloudinary
+                cloudinary.uploader.destroy(smoker.public_id)
+
+            smoker.foto_usuario = None  # Borra la URL de la imagen
+            smoker.public_id = None  # Borra el public_id
+            db.session.commit()
+
+            return jsonify({'message': 'Image deleted successfully'}), 200
+        else:
+            return jsonify({'error': 'Smoker not found'}), 404
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
