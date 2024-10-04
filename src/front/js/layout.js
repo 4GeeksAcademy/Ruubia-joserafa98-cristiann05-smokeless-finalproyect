@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
+import Map from './component/Map';
 import { BackendURL } from "./component/backendURL";
 import { Home } from "./pages/homePage";
 import SmokerUser from "./pages/smokerUser";
@@ -17,6 +18,7 @@ import CreateProfileUser from "./pages/createProfile-user";
 import CreateConsumProfile from "./pages/ConfiguracionConsumo";
 import CoachProfile from "./pages/CoachProfile";
 import SmokerProfile from "./pages/SmokerProfile";
+import CoachMapPage from "./pages/CoachMapPage";
 
 import Navbar from "./component/navbar"; 
 import Footer from "./component/footer";
@@ -67,6 +69,8 @@ const Layout = () => {
                         <Route element={<SmokerProfile />} path="/smoker-profile" />
                         <Route element={<CreateProfileUser />} path="/question-profile-smoker" />
                         <Route element={<CreateConsumProfile />} path="/question-config-smoker" />
+                        <Route element={<CoachMapPage />} path="/control-panel-coach/map" />
+                        <Route element={<Map />} path="/map" />
                         <Route element={<h1>Not found!</h1>} />
                         </Routes>
                     <Footer />
