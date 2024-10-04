@@ -17,19 +17,28 @@ const CoachCard = () => {
     }, [actions]);
     
     const handleAddCoach = (coachId) => {
+        const userId = store.loggedInUser.id; // Obtener el ID del usuario autenticado
+    
+        if (!userId) {
+            setAlertMessage("Error: Usuario no autenticado.");
+            return; // Salir de la función si no hay un usuario autenticado
+        }
+    
         const solicitudData = {
-            id_user: 1, 
-            id_coach: coachId, 
-            fecha_solicitud: new Date().toISOString(),
-            estado: 'pendiente', 
-            fecha_respuesta: null, 
-            comentarios: 'Estoy interesado en el coaching', 
+            id_usuario: userId, // Usar el ID del usuario
+            id_coach: coachId,
+            fecha_solicitud: new Date().toISOString().split('T')[0], // Formato de fecha ISO
+            estado: false, // Cambia a false si el estado es un booleano
+            fecha_respuesta: null,
+            comentarios: 'Estoy interesado en el coaching',
         };
-
+    
         actions.addSolicitud(solicitudData)
             .then(() => setAlertMessage("Solicitud enviada exitosamente!"))
             .catch(() => setAlertMessage("Hubo un fallo al enviar la solicitud."));
     };
+    
+    
 
     // Función para redirigir al perfil del coach
     const handleViewProfile = async (coachId) => {
