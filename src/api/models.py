@@ -82,33 +82,34 @@ class TiposConsumo(db.Model):
         }
 
 class Solicitud(db.Model):
+    __tablename__ = 'solicitudes'
+
     id = db.Column(db.Integer, primary_key=True)
-    id_user = db.Column(db.Integer, db.ForeignKey('smoker_user.id'), nullable=False)
-    user = db.relationship('SmokerUser', backref='solicitudes')
+    id_usuario = db.Column(db.Integer, db.ForeignKey('smoker_user.id'), nullable=False)
+    user = db.relationship('SmokerUser', backref='solicitudes', lazy=True)
 
     id_coach = db.Column(db.Integer, db.ForeignKey('coach.id'), nullable=True)
-    coach = db.relationship('Coach', backref='solicitudes')
+    coach = db.relationship('Coach', backref='solicitudes', lazy=True)
 
-    fecha_solicitud = db.Column(db.DateTime, nullable=False)
-    estado = db.Column(db.String(50), nullable=False)
-    fecha_respuesta = db.Column(db.DateTime, nullable=True)
-    comentarios = db.Column(db.Text, nullable=True)
+    fecha_solicitud = db.Column(db.Date, nullable=False)  # Cambiado a Date
+    estado = db.Column(db.Boolean, nullable=False)  # Cambiado a Boolean
+    fecha_respuesta = db.Column(db.Date, nullable=True)  # Cambiado a Date
+    comentarios = db.Column(db.String, nullable=True)  # Cambiado a String
 
     def __repr__(self):
-        return f'<Solicitud {self.id}>'
+        return f'<Solicitud {self.id}, Usuario: {self.id_usuario}, Coach: {self.id_coach}>'
 
     def serialize(self):
         return {
             "id": self.id,
-            "id_user": self.id_user,
-            "name_user": self.user.nombre_usuario,  
+            "id_usuario": self.id_usuario,
             "id_coach": self.id_coach,
-            "nombre_coach": self.coach.nombre_coach if self.coach else None,  # Cambio aquí
-            "fecha_solicitud": self.fecha_solicitud.isoformat(),
+            "fecha_solicitud": self.fecha_solicitud.strftime("%d/%m/%Y") if self.fecha_solicitud else None,
             "estado": self.estado,
-            "fecha_respuesta": self.fecha_respuesta.isoformat() if self.fecha_respuesta else None,
+            "fecha_respuesta": self.fecha_respuesta.strftime("%d/%m/%Y") if self.fecha_respuesta else None,
             "comentarios": self.comentarios
         }
+
 
 class Mensajes(db.Model):
     __tablename__ = 'mensajes'

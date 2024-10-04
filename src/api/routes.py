@@ -493,6 +493,87 @@ def create_app():
     
     return app
 
+# Obtener todas las solicitudes
+@api.route('/solicitudes', methods=['GET'])
+def get_all_solicitudes():
+    solicitudes = Solicitud.query.all()  # Obtiene todas las solicitudes
+    if not solicitudes:
+        return jsonify({"message": "No hay solicitudes"}), 404
+
+    return jsonify([solicitud.serialize() for solicitud in solicitudes]), 200
+
+# Obtener solicitudes por usuario específico
+@api.route('/solicitudes/usuario/<int:id_usuario>', methods=['GET'])
+def get_solicitudes_by_user(id_usuario):
+    solicitudes = Solicitud.query.filter_by(id_usuario=id_usuario).all()
+    if not solicitudes:
+        return jsonify({"message": "No hay solicitudes para este usuario"}), 404
+
+    return jsonify([solicitud.serialize() for solicitud in solicitudes]), 200
+
+# Crear una nueva solicitud
+@api.route('/solicitudes', methods=['POST'])
+def add_solicitud():
+    data = request.get_json()
+
+    required_fields = ['id_usuario', 'id_coach', 'fecha_solicitud', 'estado', 'comentarios']
+    if not data or not all(key in data for key in required_fields):
+        return jsonify({"error": "Datos incompletos"}), 400
+
+    try:
+        nueva_fecha_solicitud = datetime.strptime(data['fecha_solicitud'], "%d/%m/%Y").date()
+        nueva_fecha_respuesta = datetime.strptime(data['fecha_respuesta'], "%d/%m/%Y").date() if data.get('fecha_respuesta') else None
+        
+        new_solicitud = Solicitud(
+            id_usuario=data['id_usuario'],
+            id_coach=data['id_coach'],
+            fecha_solicitud=nueva_fecha_solicitud,
+            estado=data['estado'] in ['true', 'True', '1'],  # Convertir a booleano
+            fecha_respuesta=nueva_fecha_respuesta,
+            comentarios=data['comentarios']
+        )
+
+        db.session.add(new_solicitud)
+        db.session.commit()
+
+        return jsonify(new_solicitud.serialize()), 201
+
+    except ValueError:
+        return jsonify({"error": "Formato de fecha inválido"}), 400
+
+# Actualizar una solicitud específica
+@api.route('/solicitudes/<int:id>', methods=['PUT'])
+def update_solicitud(id):
+    solicitud = Solicitud.query.get(id)
+    if not solicitud:
+        return jsonify({"error": "Solicitud no encontrada"}), 404
+
+    data = request.get_json()
+    
+    if 'estado' in data:
+        solicitud.estado = data['estado'] in ['true', 'True', '1']  # Convertir a booleano
+    if 'fecha_respuesta' in data:
+        try:
+            solicitud.fecha_respuesta = datetime.strptime(data['fecha_respuesta'], "%d/%m/%Y").date()
+        except ValueError:
+            return jsonify({"error": "Formato de fecha de respuesta inválido"}), 400
+    if 'comentarios' in data:
+        solicitud.comentarios = data['comentarios']
+
+    db.session.commit()
+    return jsonify(solicitud.serialize()), 200
+
+# Eliminar una solicitud específica
+@api.route('/solicitudes/<int:id>', methods=['DELETE'])
+def delete_solicitud(id):
+    solicitud = Solicitud.query.get(id)
+    if not solicitud:
+        return jsonify({"error": "Solicitud no encontrada"}), 404
+
+    db.session.delete(solicitud)
+    db.session.commit()
+    return jsonify({"message": "Solicitud eliminada exitosamente"}), 200
+
 # Ruta protegida con JWT
 @api.route('/protected', methods=['GET'])
 @jwt_required()
