@@ -1,84 +1,94 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext } from "react"; 
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
+import '../../styles/signupCoach.css'; // Asegúrate de tener un CSS correspondiente
 
 const SignupCoach = () => {
     const { actions } = useContext(Context);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState(""); // Para la confirmación de contraseña
-    const [error, setError] = useState(""); // Para manejar errores
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [error, setError] = useState("");
     const navigate = useNavigate();
 
     const handleSignup = async (event) => {
         event.preventDefault();
+        setError("");
 
-        // Verificar que las contraseñas coincidan
+        // Verificar si las contraseñas coinciden
         if (password !== confirmPassword) {
-            setError("Las contraseñas no coinciden. Por favor, intenta de nuevo.");
+            setError("Las contraseñas no coinciden. Por favor, inténtalo de nuevo.");
             return;
         }
 
+        // Crear el objeto de datos del coach
         const coachData = { email_coach: email, password_coach: password };
+        console.log("Datos del coach que se envían:", coachData); // Muestra los datos del coach que se envían
 
-        try {
-            const success = await actions.signupCoach(coachData); // No se pasa la imagen
-            if (success) {
-                // Redirige al control panel si el registro fue exitoso
-                navigate("/control-panel-coach");
-            } else {
-                // Manejo de error en caso de que el registro falle
-                setError("Error: El registro no se pudo completar. Intenta de nuevo.");
-            }
-        } catch (error) {
-            // Muestra un mensaje de error más específico
-            if (error.message === "User already exists") {
-                setError("Este email ya está en uso. Por favor, usa otro.");
-            } else {
-                setError("Error durante el proceso de registro: " + error.message);
-            }
+        // Llamar a la acción de registro
+        const success = await actions.signupCoach(coachData);
+        if (success) {
+            console.log("Registro exitoso, redirigiendo a login."); // Indica que el registro fue exitoso
+            navigate("/login-coach"); // Redirigir a login si es exitoso
+        } else {
+            setError("Error durante el registro. Por favor, intenta de nuevo.");
+            console.log("Error en el registro."); // Indica que hubo un error en el registro
         }
     };
 
     return (
-        <div className="container mt-5">
-            <h1>Registro para Coaches</h1>
-            {error && <div className="alert alert-danger">{error}</div>} {/* Muestra el mensaje de error */}
-            <form onSubmit={handleSignup}>
-                <div className="form-group">
-                    <label>Email</label>
+        <div className="form-container">
+            <p className="title">Registrarse como Coach</p>
+            {error && <div className="alert alert-danger">{error}</div>}
+            <form className="form" onSubmit={handleSignup}>
+                <div className="input-group">
+                    <label htmlFor="email">Correo electrónico</label>
                     <input
                         type="email"
-                        className="form-control"
+                        name="email"
+                        id="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                     />
                 </div>
-                <div className="form-group">
-                    <label>Password</label>
+                <div className="input-group">
+                    <label htmlFor="password">Contraseña</label>
                     <input
                         type="password"
-                        className="form-control"
+                        name="password"
+                        id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
                 </div>
-                <div className="form-group">
-                    <label>Confirm Password</label>
+                <div className="input-group">
+                    <label htmlFor="confirmPassword">Confirmar contraseña</label>
                     <input
                         type="password"
-                        className="form-control"
+                        name="confirmPassword"
+                        id="confirmPassword"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
                     />
                 </div>
-                <button type="submit" className="btn btn-primary mt-3">
-                    Sign Up
-                </button>
+                <button className="sign" type="submit">Registrarse</button>
             </form>
+
+            <div className="social-message">
+                <div className="line"></div>
+                <p className="message">O regístrate con cuentas sociales</p>
+                <div className="line"></div>
+            </div>
+            <div className="social-icons">
+                {/* Aquí tus botones de redes sociales */}
+            </div>
+
+            <p className="signup">¿Ya tienes una cuenta?
+                <a rel="noopener noreferrer" href="/login-coach" className=""> Iniciar sesión</a>
+            </p>
         </div>
     );
 };

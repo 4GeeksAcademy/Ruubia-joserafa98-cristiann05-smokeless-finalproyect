@@ -128,6 +128,30 @@ def update_consumo_profile(user_id):
 
     return jsonify({"msg": "Datos de consumo actualizados exitosamente!", "user": user.serialize()}), 200
 
+@api.route('/create_profile/coach/<int:coach_id>', methods=['PUT'])
+def create_profile_coach(coach_id):
+    coach = Coach.query.get(coach_id)
+    if not coach:
+        return jsonify({"msg": "Coach no encontrado"}), 404
+
+    nombre = request.json.get('nombre_coach', None)
+    genero = request.json.get('genero_coach', None)
+    cumpleaños = request.json.get('nacimiento_coach', None)
+
+    if nombre:
+        coach.nombre_coach = nombre
+    if genero:
+        coach.genero_coach = genero
+    if cumpleaños:
+        try:
+            coach.nacimiento_coach = datetime.strptime(cumpleaños, '%Y-%m-%d').date()
+        except ValueError:
+            return jsonify({"msg": "Fecha de nacimiento inválida. Debe estar en el formato YYYY-MM-DD."}), 400
+
+    db.session.commit()
+
+    return jsonify({"msg": "Perfil del coach actualizado exitosamente", "coach": coach.serialize()}), 200
+
 # Obtener todos los coaches (GET)
 @api.route('/coaches', methods=['GET'])
 def get_all_coaches():
@@ -143,7 +167,7 @@ def get_coach(coach_id):
     return jsonify(coach.serialize()), 200
 
 # Ruta de Sign Up para coach
-@api.route('/signup/coach', methods=['POST'])
+@api.route('/signup-coach', methods=['POST'])
 def signup_coach():
     email = request.json.get('email_coach', None)
     password = request.json.get('password_coach', None)
@@ -174,7 +198,7 @@ def signup_coach():
     return jsonify({"msg": "Coach creado exitosamente", "coach_id": new_coach.id}), 201
 
 # Ruta de Login para coach
-@api.route('/login/coach', methods=['POST'])
+@api.route('/login-coach', methods=['POST'])
 def login_coach():
     email = request.json.get('email_coach', None)
     password = request.json.get('password_coach', None)
@@ -495,6 +519,17 @@ def get_user_info(user_id):
         return jsonify(user.serialize()), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@api.route('/coach_info/<int:coach_id>', methods=['GET'])
+def get_coach_info(coach_id):
+    try:
+        coach = Coach.query.get(coach_id)  # Obtiene el coach por ID
+        if not coach:
+            return jsonify({"error": "Coach no encontrado"}), 404  # Maneja el caso de no encontrado
+
+        return jsonify(coach.serialize()), 200  # Retorna la información del coach
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500  # Maneja cualquier excepción
     
 if __name__ == '__main__':
     app = create_app()
