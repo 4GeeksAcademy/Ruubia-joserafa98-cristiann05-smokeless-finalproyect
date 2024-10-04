@@ -1,9 +1,10 @@
 // src/pages/MapPage.js
 import React, { useEffect } from 'react';
-import Map from '../components/Map'; // Asegúrate de que la ruta sea correcta
-import { useStore } from '../store/flux'; // Asegúrate de importar el contexto
+import Map from './component/Map'; // Asegúrate de que la ruta sea correcta
+import { useStore }  from '../store/flux'; // Asegúrate de importar el contexto
 
-const MapPage = () => {
+
+const CoachMapPage = () => {
   const { store, actions } = useStore();
 
   useEffect(() => {
@@ -19,4 +20,4 @@ const MapPage = () => {
   );
 };
 
-export default MapPage;
+export default CoachMapPage;
