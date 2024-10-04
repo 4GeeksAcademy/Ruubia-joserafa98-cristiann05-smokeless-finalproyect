@@ -6,13 +6,21 @@ const getState = ({ getStore, getActions, setStore }) => {
             smokers: [],
             tiposConsumo: [],
             coaches: [],
-            loggedInUser: null,
+            loggedInUser: { 
+                id: null,
+                email: '',
+                nombre: '',
+                genero: '',
+                cumpleaños: '',
+                foto_coach: '', 
+                foto_usuario: ''                
+            },
             seguimiento: [],
             perfilCreado: false,
             isAuthenticated: false,
             userId: null,
             userInfo: null,
-            solicitud: []
+            solicitud: [],
         },
         actions: {
             
@@ -312,53 +320,141 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false; // Indica que hubo un error durante el proceso
                 }
             },  
-              // Método para subir la imagen del coach a Cloudinary
+            // Método para subir la imagen del coach a Cloudinary
             uploadCoachImage: async (file) => {
+                if (!file || !file.type.startsWith('image/')) {
+                    console.error("El archivo no es una imagen válida.");
+                    return null; // Retorna null si el archivo no es válido
+                }
+
                 const formData = new FormData();
                 formData.append("file", file);
-                formData.append("upload_preset", "your_upload_preset"); // Reemplaza con tu preset de subida
+                formData.append("upload_preset", "ml_default"); // Tu preset de subida
 
                 try {
-                    const response = await fetch(`https://api.cloudinary.com/v1_1/your_cloud_name/image/upload`, {
+                    const response = await fetch(`https://api.cloudinary.com/v1_1/dsnmmg3kl/image/upload`, {
                         method: "POST",
                         body: formData,
                     });
 
                     if (!response.ok) {
-                        throw new Error("Error al subir la imagen");
+                        const errorData = await response.json();
+                        throw new Error(`Error al subir la imagen: ${errorData.message}`);
                     }
 
                     const data = await response.json();
+                    // Actualiza el store con la nueva URL
+                    setStore((prevStore) => ({
+                        ...prevStore,
+                        loggedInUser: {
+                            ...prevStore.loggedInUser,
+                            foto_coach: data.secure_url, // Asegúrate de que esto sea el campo correcto en el store
+                        }
+                    }));
+        
                     return data.secure_url; // Retorna la URL de la imagen subida
                 } catch (error) {
                     console.error("Error uploading image:", error);
                     return null; // Retorna null si hay un error
                 }
-                
             },
+
             // Método para subir la imagen del smoker a Cloudinary
             uploadSmokerImage: async (file) => {
+                if (!file || !file.type.startsWith('image/')) {
+                    console.error("El archivo no es una imagen válida.");
+                    return null; // Retorna null si el archivo no es válido
+                }
+
                 const formData = new FormData();
                 formData.append("file", file);
-                formData.append("upload_preset", "your_upload_preset"); // Reemplaza con tu preset de subida
+                formData.append("upload_preset", "ml_default"); // Tu preset de subida
 
                 try {
-                    const response = await fetch(`https://api.cloudinary.com/v1_1/your_cloud_name/image/upload`, {
+                    const response = await fetch(`https://api.cloudinary.com/v1_1/dsnmmg3kl/image/upload`, {
                         method: "POST",
                         body: formData,
                     });
 
                     if (!response.ok) {
-                        throw new Error("Error al subir la imagen");
+                        const errorData = await response.json();
+                        throw new Error(`Error al subir la imagen: ${errorData.message}`);
                     }
 
                     const data = await response.json();
+                    // Actualiza el store con la nueva URL
+                    setStore((prevStore) => ({
+                        ...prevStore,
+                        loggedInUser: {
+                            ...prevStore.loggedInUser,
+                            foto_usuario: data.secure_url, // Asegúrate de que esto sea el campo correcto en el store
+                        }
+                    }));
+
                     return data.secure_url; // Retorna la URL de la imagen subida
                 } catch (error) {
                     console.error("Error uploading image:", error);
                     return null; // Retorna null si hay un error
                 }
             },
+
+            getCoachesLocations: async () => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/ubicaciones`); // Ajusta la ruta según sea necesario
+                    const data = await response.json();
+                    setStore({ coachesLocations: data }); // Actualiza el estado del store con las ubicaciones obtenidas
+                } catch (error) {
+                    console.error("Error fetching coaches locations:", error);
+                }
+            },
+            addCoachLocation: async (coachId, locationData) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/ubicaciones`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                        },
+                        body: JSON.stringify({ coach_id: coachId, ...locationData }),
+                    });
+            
+                    if (response.ok) {
+                        const newLocation = await response.json();
+                        setStore({ coachesLocations: [...getStore().coachesLocations, newLocation] }); // Actualiza el estado
+                        return true; // Retorna verdadero si la operación es exitosa
+                    } else {
+                        const errorData = await response.json();
+                        console.error("Error al agregar ubicación:", errorData); // Muestra el error del servidor
+                        return false; // Retorna falso si hay un error
+                    }
+                } catch (error) {
+                    console.error("Error durante la adición de ubicación:", error); // Muestra el error de la solicitud
+                    return false; // Retorna falso si hay un error
+                }
+            },
+            deleteCoachLocation: async (locationId) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/ubicaciones/${locationId}`, {
+                        method: "DELETE",
+                        headers: {
+                            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                        },
+                    });
+            
+                    if (response.ok) {
+                        setStore({ coachesLocations: getStore().coachesLocations.filter(location => location.id !== locationId) }); // Actualiza el estado
+                        return true; // Retorna verdadero si la operación es exitosa
+                    } else {
+                        const errorData = await response.json();
+                        console.error("Error al eliminar ubicación:", errorData); // Muestra el error del servidor
+                        return false; // Retorna falso si hay un error
+                    }
+                } catch (error) {
+                    console.error("Error durante la eliminación de ubicación:", error); // Muestra el error de la solicitud
+                    return false; // Retorna falso si hay un error
+                }
+            },
+            
         },
     };
 };
