@@ -32,10 +32,16 @@ const CoachCard = () => {
     };
 
     // Función para redirigir al perfil del coach
-    const handleViewProfile = (coachId) => {
-        navigate(`/CoachProfile
-            /${coachId}`); 
+    const handleViewProfile = async (coachId) => {
+        const coachInfo = await actions.getCoachInfo(coachId); // Llama a la función getCoachInfo del flux
+    
+        if (coachInfo) {
+            navigate(`/CoachProfile/${coachId}`); // Navega al perfil si la información se obtuvo correctamente
+        } else {
+            console.error("No se pudo obtener la información del coach."); // Manejo del error
+        }
     };
+    
 
     return (
         <div className="container mt-5">

@@ -327,7 +327,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false; // Indica que hubo un error durante el proceso
                 }
             },
-            // Método para subir la imagen del coach a Cloudinary
+            logoutsmoker: () => {
+                localStorage.removeItem("token");
+        
+                setStore({ user: null, token: null });
+        
+            },
+           
             uploadCoachImage: async (file) => {
                 if (!file || !file.type.startsWith('image/')) {
                     console.error("El archivo no es una imagen válida.");
@@ -493,29 +499,23 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            // Agregar una nueva solicitud
+            
             addSolicitud: async (newSolicitud) => {
+                console.log("Datos a enviar:", newSolicitud); // Agrega esta línea para depurar
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/solicitudes`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify(newSolicitud), // Enviar el objeto de solicitud
+                        body: JSON.stringify(newSolicitud),
                     });
-                    if (!response.ok) {
-                        throw new Error("Error al agregar la solicitud");
-                    }
-
-                    const data = await response.json();
-                    setStore((prevStore) => ({
-                        ...prevStore,
-                        solicitudes: [...prevStore.solicitudes, data], // Añade la nueva solicitud al store
-                    }));
+                    // Resto del código...
                 } catch (error) {
                     console.error("Error adding solicitud:", error);
                 }
             },
+            
 
             // Actualizar una solicitud específica
             updateSolicitud: async (solicitudId, updatedData) => {
