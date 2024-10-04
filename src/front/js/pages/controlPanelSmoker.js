@@ -23,7 +23,7 @@ const ControlPanelSmoker = () => {
     }, [navigate]);
 
     const handleLogout = () => {
-        actions.logout(); // Llama a la acción de cierre de sesión
+        actions.logoutsmoker(); // Llama a la acción de cierre de sesión
         navigate('/'); // Redirige a la página principal después de cerrar sesión
     };
 

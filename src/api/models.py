@@ -7,15 +7,15 @@ class Coach(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email_coach = db.Column(db.String(120), unique=True, nullable=False)
     password_coach = db.Column(db.String(128), nullable=False)
-    nombre_coach = db.Column(db.String(50), nullable=False)
-    genero_coach = db.Column(db.String(10), nullable=False)
-    direccion = db.Column(db.String(200))
-    latitud = db.Column(db.Float)
-    longitud = db.Column(db.Float)
-    descripcion_coach = db.Column(db.Text)
-    foto_coach = db.Column(db.String(200))
-    public_id = db.Column(db.String(200))
-    precio_servicio = db.Column(db.Float)
+    nombre_coach = db.Column(db.String(50), nullable=True)  # Cambiado a opcional
+    genero_coach = db.Column(db.String(10), nullable=True)  # Cambiado a opcional
+    direccion = db.Column(db.String(200), nullable=True)  # Cambiado a opcional
+    latitud = db.Column(db.Float, nullable=True)  # Cambiado a opcional
+    longitud = db.Column(db.Float, nullable=True)  # Cambiado a opcional
+    descripcion_coach = db.Column(db.Text, nullable=True)  # Cambiado a opcional
+    foto_coach = db.Column(db.String(200), nullable=True)  # Cambiado a opcional
+    public_id = db.Column(db.String(200), nullable=True)  # Cambiado a opcional
+    precio_servicio = db.Column(db.Float, nullable=True)  # Cambiado a opcional
 
     def __repr__(self):
         return f'<Coach {self.email_coach}>'

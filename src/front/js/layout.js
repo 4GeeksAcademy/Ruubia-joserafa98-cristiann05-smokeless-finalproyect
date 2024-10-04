@@ -4,12 +4,9 @@ import ScrollToTop from "./component/scrollToTop";
 import Map from './component/Map';
 import { BackendURL } from "./component/backendURL";
 import { Home } from "./pages/homePage";
-import SmokerUser from "./pages/smokerUser";
 import SignupSmoker from "./pages/signupSmoker";
 import LoginSmoker from "./pages/loginSmoker"; 
 import ControlPanelSmoker from "./pages/controlPanelSmoker";
-import TiposConsumo from "./pages/tiposConsumo";
-import CoachUser from "./pages/CoachUser"; 
 import SignupCoach from "./pages/signupCoach";
 import LoginCoach from "./pages/loginCoach";
 import ControlPanelCoach from "./pages/controlPanelCoach";
@@ -19,6 +16,7 @@ import CreateConsumProfile from "./pages/ConfiguracionConsumo";
 import CoachProfile from "./pages/CoachProfile";
 import SmokerProfile from "./pages/SmokerProfile";
 import CoachMapPage from "./pages/CoachMapPage";
+import CreateProfileCoach from "./pages/createProfile-coach"
 
 import Navbar from "./component/navbar"; 
 import Footer from "./component/footer";
@@ -56,12 +54,9 @@ const Layout = () => {
                     />
                     <Routes>
                         <Route element={<Home toggleTheme={toggleTheme} />} path="/" />
-                        <Route element={<SmokerUser />} path="/smokeruser" />
                         <Route element={<SignupSmoker />} path="/signup-smoker" />
                         <Route element={<LoginSmoker />} path="/login-smoker" />
                         <Route element={<ControlPanelSmoker />} path="/control-panel-smoker" />
-                        <Route element={<TiposConsumo />} path="/tiposconsumo" />
-                        <Route element={<CoachUser />} path="/coaches" />
                         <Route element={<SignupCoach />} path="/signup-coach" />
                         <Route element={<LoginCoach />} path="/login-coach" />
                         <Route element={<ControlPanelCoach />} path="/control-panel-coach" />
@@ -69,6 +64,7 @@ const Layout = () => {
                         <Route element={<SmokerProfile />} path="/smoker-profile" />
                         <Route element={<CreateProfileUser />} path="/question-profile-smoker" />
                         <Route element={<CreateConsumProfile />} path="/question-config-smoker" />
+                        <Route element={<CreateProfileCoach />} path="/question-profile-coach" />
                         <Route element={<CoachMapPage />} path="/control-panel-coach/map" />
                         <Route element={<Map />} path="/map" />
                         <Route element={<h1>Not found!</h1>} />
