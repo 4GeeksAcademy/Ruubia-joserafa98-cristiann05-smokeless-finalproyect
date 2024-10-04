@@ -6,28 +6,29 @@ import CoachCard from "../component/CoachCards";
 const ControlPanelSmoker = () => {
     const { actions } = useContext(Context);
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(true); // Para mostrar algo mientras se verifica el token
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const verifyToken = async () => {
-            const success = await actions.checkAuth(); // Llama a checkAuth
-
-            if (!success) {
-                navigate('/'); // Redirige a la página principal si el token no es válido
+        const checkToken = () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                // Redirige a la página principal si no hay token
+                navigate('/');
+            } else {
+                setLoading(false); // Deja de cargar si el token es válido
             }
-            setLoading(false); // Deja de cargar una vez verificado
         };
 
-        verifyToken();
-    }, [actions, navigate]);
+        checkToken();
+    }, [navigate]);
 
     const handleLogout = () => {
-        actions.logout(); // Llama a la función de logout desde el contexto
+        actions.logout(); // Llama a la acción de cierre de sesión
         navigate('/'); // Redirige a la página principal después de cerrar sesión
     };
 
     if (loading) {
-        return <div>Loading...</div>; // Mostrar mientras se verifica el token
+        return <div>Loading...</div>; // Mensaje mientras se verifica el token
     }
 
     return (
@@ -43,4 +44,3 @@ const ControlPanelSmoker = () => {
 };
 
 export default ControlPanelSmoker;
-
