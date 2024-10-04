@@ -1,7 +1,7 @@
 // src/pages/MapPage.js
 import React, { useEffect } from 'react';
 import Map from './component/Map'; // Asegúrate de que la ruta sea correcta
-import { useStore }  from '../store/flux'; // Asegúrate de importar el contexto
+import { useStore }  from '../store/appContext'; // Asegúrate de importar el contexto
 
 
 const CoachMapPage = () => {
