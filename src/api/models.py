@@ -36,6 +36,7 @@ class Coach(db.Model):
         }
 
 class SmokerUser(db.Model):
+    __tablename__ = 'smoker_user'
     id = db.Column(db.Integer, primary_key=True)
     email_usuario = db.Column(db.String(120), unique=True, nullable=False)
     password_email = db.Column(db.String(80), nullable=False)
@@ -43,10 +44,8 @@ class SmokerUser(db.Model):
     genero_usuario = db.Column(db.String(10), nullable=True)  # Opcional
     nacimiento_usuario = db.Column(db.Date, nullable=True)  # Opcional
     tiempo_fumando = db.Column(db.String(10), nullable=True)  # Opcional
-    id_tipo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=True)  # Relación con TiposConsumo
-    tipo_consumo = db.relationship('TiposConsumo', backref='smokers')
+    forma_consumo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=True)  # ID del tipo de consumo
     foto_usuario = db.Column(db.String(255), nullable=True)  # Opcional
-    forma_consumo = db.Column(db.String(50), nullable=True)  # Tipo de consumo por defecto
     numero_cigarrillos = db.Column(db.Integer, nullable=True)  # Cantidad de cigarrillos
     periodicidad_consumo = db.Column(db.String(20), nullable=True)  # Diaria, semanal, mensual o anual
     public_id = db.Column(db.String(200), nullable=True)  # Opcional
@@ -62,10 +61,8 @@ class SmokerUser(db.Model):
             "genero_usuario": self.genero_usuario,
             "nacimiento_usuario": self.nacimiento_usuario.isoformat() if self.nacimiento_usuario else None,
             "tiempo_fumando": self.tiempo_fumando,
-            "id_tipo": self.id_tipo,
-            "tipo_consumo": self.tipo_consumo.serialize() if self.tipo_consumo else None,
+            "forma_consumo": self.forma_consumo,  # ID del tipo de consumo
             "foto_usuario": self.foto_usuario,
-            "forma_consumo": self.forma_consumo,
             "numero_cigarrillos": self.numero_cigarrillos,
             "periodicidad_consumo": self.periodicidad_consumo,
             "public_id": self.public_id

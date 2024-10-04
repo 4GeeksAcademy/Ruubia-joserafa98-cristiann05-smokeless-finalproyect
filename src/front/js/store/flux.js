@@ -25,15 +25,20 @@ const getState = ({ getStore, getActions, setStore }) => {
         actions: {
             
             setStore: (newStore) => setStore((prevStore) => ({ ...prevStore, ...newStore })),
+
             getSmokers: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/smokers`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
                     const data = await response.json();
                     setStore({ smokers: data });
                 } catch (error) {
                     console.error("Error fetching smokers:", error);
                 }
             },
+            
 
             signupSmoker: async (smokerData) => {
                 try {
@@ -70,41 +75,54 @@ const getState = ({ getStore, getActions, setStore }) => {
             // Login de Smoker
             loginSmoker: async (smokerData) => {
                 try {
+                    // Llamada a la API para el login del fumador
                     const response = await fetch(`${process.env.BACKEND_URL}/api/login-smoker`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                         },
-                        body: JSON.stringify(smokerData),
+                        body: JSON.stringify(smokerData), // Enviar los datos del smoker
                     });
             
+                    // Obtener los datos de la respuesta
                     const data = await response.json();
             
+                    // Log para verificar la respuesta
+                    console.log("Datos recibidos en loginSmoker:", data);
+            
+                    // Verificar si la respuesta es exitosa
                     if (response.ok) {
-                        // Si el login es exitoso, almacena el token y actualiza el estado del store
+                        // Almacenar el token en localStorage
                         localStorage.setItem('token', data.token);
             
+                        // Actualizar el store con los datos del usuario y marcar como autenticado
                         setStore({
                             loggedInUser: {
-                                id: data.user_id || null, // Asegúrate de que esto esté bien
-                                email: data.email_usuario || '',
-                                nombre: data.nombre_usuario || '',
-                                genero: data.genero_usuario || '',
-                                cumpleaños: data.nacimiento_usuario || '',
+                                id: data.user_id || null,  // Asignar el ID del usuario si existe
+                                email: data.email_usuario || '',  // Asignar el email del usuario
+                                nombre: data.nombre_usuario || '',  // Asignar el nombre del usuario
+                                genero: data.genero_usuario || '',  // Asignar el género del usuario
+                                cumpleaños: data.nacimiento_usuario || '',  // Asignar la fecha de nacimiento del usuario
                             },
-                            isAuthenticated: true,
+                            isAuthenticated: true,  // Marcar como autenticado
                         });
             
-                        return true; // Login exitoso
+                        return true;  // Retorna true si la autenticación es exitosa
                     } else {
+                        // Si la respuesta no es exitosa, log de error y retorna false
                         console.error("Error en el login:", data.msg);
-                        return false; // Login fallido
+                        setStore({ isAuthenticated: false, loggedInUser: null });  // Limpia el estado si falla
+                        return false;
                     }
                 } catch (error) {
-                    console.error("Error en la solicitud de login:", error);
-                    return false; // Manejo de errores
+                    // Manejo de errores en la solicitud
+                    console.error("Error en la solicitud de loginSmoker:", error);
+                    setStore({ isAuthenticated: false, loggedInUser: null });  // Limpia el estado en caso de error
+                    return false;
                 }
-            },  
+            },
+            
+            
 
             // Actualizar el perfil
             updateProfile: async (userId, updatedData) => {
@@ -209,46 +227,25 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            checkAuth: async () => {
-                const token = localStorage.getItem('token'); // Obtener el token
-                if (!token) {
-                    console.error("No token found"); // Log para depuración
-                    setStore({ isAuthenticated: false });
-                    return false; // Retorna false si no hay token
-                }
+            checkAuth: () => {
+                const token = localStorage.getItem('token');
 
-                try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/protected`, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`,
-                        },
-                    });
-
-                    if (!response.ok) {
-                        console.error("Error en checkAuth:", response.statusText);
-                        setStore({ isAuthenticated: false }); // Actualiza el store si la verificación falla
-                        return false; // Retorna false si la verificación falla
-                    }
-
-                    const userData = await response.json(); // Obtener información del usuario
+                if (token) {
                     setStore({
-                        isAuthenticated: true,
-                        loggedInUser: userData, // Guardar la información del usuario
+                        user: { token },
                     });
-
-                    return true; // Retorna true si el token es válido
-                } catch (error) {
-                    console.error("Error en checkAuth:", error); // Log para depuración
-                    setStore({ isAuthenticated: false });
-                    return false; // Retorna false en caso de error
                 }
             },
 
+              // Logout
             logout: () => {
-                localStorage.removeItem('token'); // Eliminar el token
-                setStore({ loggedInUser: null, isAuthenticated: false }); // Actualizar el store
+                localStorage.removeItem('token');
+                setStore({
+                    loggedInUser: null,
+                    isAuthenticated: false,
+                    userId: null,
+                    userInfo: null,
+                });
             },
 
             getAllCoaches: async () => {
@@ -454,10 +451,21 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false; // Retorna falso si hay un error
                 }
             },
-            
+
+            getTiposConsumo: async () => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo`);
+                    if (!response.ok) {
+                        throw new Error("Error en la respuesta del servidor");
+                    }
+                    const data = await response.json();
+                    setStore({ tiposConsumo: data });
+                } catch (error) {
+                    console.error("Error fetching tipos de consumo:", error);
+                }
+            },
         },
     };
 };
 
 export default getState;
-

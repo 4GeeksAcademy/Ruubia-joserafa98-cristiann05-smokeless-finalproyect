@@ -4,7 +4,6 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from datetime import datetime
 from cloudinary_config import cloudinary
-import jwt
 from datetime import date
 
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
@@ -52,7 +51,7 @@ def signup():
         numero_cigarrillos=None,
         periodicidad_consumo=None,
         tiempo_fumando=None,
-        id_tipo=None,
+        forma_consumo=None,
         foto_usuario=None
     )
 
@@ -100,21 +99,25 @@ def create_profile(user_id):
 
     return jsonify({"msg": "Perfil actualizado exitosamente", "user": user.serialize()}), 200
 
-# Actualización del consumo de tabaco del usuario
 @api.route('/create_config_profile/<int:user_id>', methods=['PUT'])
-def update_consumo(user_id):
+def update_consumo_profile(user_id):
     user = SmokerUser.query.get(user_id)
     if not user:
         return jsonify({"msg": "Usuario no encontrado"}), 404
 
-    tipo_consumo = request.json.get('tipo_consumo', None)
+    forma_consumo_str = request.json.get('forma_consumo', None)
     numero_cigarrillos = request.json.get('numero_cigarrillos', None)
     periodicidad_consumo = request.json.get('periodicidad_consumo', None)
     tiempo_fumando = request.json.get('tiempo_fumando', None)
 
-    if tipo_consumo:
-        user.forma_consumo = tipo_consumo
-    if numero_cigarrillos:
+    if forma_consumo_str:
+        tipo_consumo = TiposConsumo.query.filter_by(name=forma_consumo_str).first()
+        if tipo_consumo:
+            user.forma_consumo = tipo_consumo.id
+        else:
+            return jsonify({"msg": "Tipo de consumo no encontrado"}), 404
+
+    if numero_cigarrillos is not None:
         user.numero_cigarrillos = numero_cigarrillos
     if periodicidad_consumo:
         user.periodicidad_consumo = periodicidad_consumo

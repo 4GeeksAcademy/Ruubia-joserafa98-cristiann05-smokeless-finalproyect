@@ -5,32 +5,40 @@ import "../../styles/CreateProfileUser.css"; // Importar el CSS específico
 
 const CreateConsumProfile = () => {
     const { store, actions } = useStore();
-    const [formaConsumo, setFormaConsumo] = useState("cigarros");
-    const [numeroCigarrillos, setNumeroCigarrillos] = useState("");
-    const [periodicidadConsumo, setPeriodicidadConsumo] = useState("diaria");
-    const [tiempoFumando, setTiempoFumando] = useState("");
-    const [error, setError] = useState("");
-    const navigate = useNavigate();
+    const [formaConsumo, setFormaConsumo] = useState("cigarros"); // Valor por defecto
+    const [numeroCigarrillos, setNumeroCigarrillos] = useState(""); // Valor por defecto
+    const [periodicidadConsumo, setPeriodicidadConsumo] = useState("diaria"); // Valor por defecto
+    const [tiempoFumando, setTiempoFumando] = useState(""); // Valor por defecto
+    const [error, setError] = useState(""); // Estado para manejar errores
+    const navigate = useNavigate(); // Hook para la navegación
 
+    // Cargar información del usuario logueado al montar el componente
     useEffect(() => {
         if (store.loggedInUser) {
+            console.log("Usuario logueado en CreateConsumProfile:", store.loggedInUser); // Log de usuario logueado
             setFormaConsumo(store.loggedInUser.forma_consumo || "cigarros");
             setNumeroCigarrillos(store.loggedInUser.numero_cigarrillos || "");
             setPeriodicidadConsumo(store.loggedInUser.periodicidad_consumo || "diaria");
             setTiempoFumando(store.loggedInUser.tiempo_fumando || "");
         }
-    }, [store.loggedInUser]);    
+    }, [store.loggedInUser]);
 
+    // Cargar tipos de consumo desde el store al montar el componente
+    useEffect(() => {
+        actions.getTiposConsumo(); // Cargar tipos de consumo desde el store
+    }, [actions]);
+
+    // Manejo del envío del formulario
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError("");
+        e.preventDefault(); // Previene el comportamiento por defecto del formulario
+        setError(""); // Reinicia el estado de error
 
         if (!store.loggedInUser) {
             setError("No hay usuario logueado. Por favor, inicia sesión.");
-            return;
+            return; // Sale de la función si no hay usuario logueado
         }
 
-        // Asegúrate de enviar los datos correctos
+        // Datos a actualizar
         const updatedData = {
             forma_consumo: formaConsumo,
             numero_cigarrillos: numeroCigarrillos !== "" ? parseInt(numeroCigarrillos) : null, // Asegúrate de que sea un número o null
@@ -38,6 +46,9 @@ const CreateConsumProfile = () => {
             tiempo_fumando: tiempoFumando,
         };
 
+        console.log("Datos enviados en el consumo:", updatedData); // Log de datos enviados
+
+        // Intenta actualizar el perfil de consumo
         const success = await actions.updateConsumptionProfile(store.loggedInUser.id, updatedData);
         if (success) {
             alert("Información de consumo actualizada con éxito");
@@ -47,10 +58,15 @@ const CreateConsumProfile = () => {
         }
     };
 
+    // Muestra un mensaje si no hay usuario logueado
     if (!store.loggedInUser) {
         return <div>No hay usuario logueado. Por favor, inicia sesión.</div>;
     }
 
+    // Obtiene los tipos de consumo desde el store
+    const tiposConsumo = store.tiposConsumo || []; // Asegúrate de que se esté almacenando en el store
+
+    // Renderiza el formulario
     return (
         <div className="consumption-form">
             <h2 className="form-title">Actualizar Información de Consumo</h2>
@@ -61,11 +77,9 @@ const CreateConsumProfile = () => {
                         value={formaConsumo}
                         onChange={(e) => setFormaConsumo(e.target.value)}
                     >
-                        <option value="cigarros">Cigarros</option>
-                        <option value="vaper">Vaper</option>
-                        <option value="puros">Puros</option>
-                        <option value="pipas">Pipas</option>
-                        <option value="tabaco de liar">Tabaco de liar</option>
+                        {tiposConsumo.map(tipo => (
+                            <option key={tipo.id} value={tipo.name}>{tipo.name}</option>
+                        ))}
                     </select>
                 </div>
                 <div className="form-group">
@@ -74,7 +88,6 @@ const CreateConsumProfile = () => {
                         type="number"
                         value={numeroCigarrillos || ""}
                         onChange={(e) => setNumeroCigarrillos(e.target.value)}
-                        // Eliminé el `required`, así se permite que sea opcional
                     />
                 </div>
                 <div className="form-group">
@@ -98,7 +111,7 @@ const CreateConsumProfile = () => {
                         required
                     />
                 </div>
-                {error && <p className="error-message">{error}</p>}
+                {error && <p className="error-message">{error}</p>} {/* Muestra mensaje de error si existe */}
                 <button type="submit" className="submit-button">Actualizar Información de Consumo</button>
             </form>
         </div>
