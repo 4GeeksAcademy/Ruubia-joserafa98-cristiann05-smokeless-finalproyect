@@ -197,7 +197,6 @@ def signup_coach():
 
     return jsonify({"msg": "Coach creado exitosamente", "coach_id": new_coach.id}), 201
 
-# Ruta de Login para coach
 @api.route('/login-coach', methods=['POST'])
 def login_coach():
     email = request.json.get('email_coach', None)
@@ -210,7 +209,16 @@ def login_coach():
     if not coach or coach.password_coach != password:
         return jsonify({"msg": "Credenciales inválidas"}), 401
     
-    return jsonify({"msg": "Login exitoso", "coach_id": coach.id}), 200
+    # Generar un token
+    token = create_access_token(identity=coach.id)
+
+    return jsonify({
+        "msg": "Login exitoso",
+        "coach_id": coach.id,
+        "email_coach": coach.email_coach,
+        "token": token  # Se eliminó nombre_coach
+    }), 200
+
 
 # Obtener tipos de consumo (GET)
 @api.route('/tiposconsumo', methods=['GET'])

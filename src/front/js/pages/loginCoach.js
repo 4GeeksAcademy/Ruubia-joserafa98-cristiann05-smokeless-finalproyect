@@ -1,66 +1,61 @@
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { Context } from "../store/appContext";
+import React, { useEffect, useState } from 'react';
+import { useStore } from '../store/appContext';
+import { useNavigate } from 'react-router-dom';
 
 const LoginCoach = () => {
-    const { actions } = useContext(Context);
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState(false); // To handle errors
-    const [success, setSuccess] = useState(false); // To handle success messages
+    const { actions, store } = useStore();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleLogin = async (event) => {
-        event.preventDefault();
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setError('');  // Limpiar cualquier mensaje de error previo
 
-        const coachData = { email_coach: email, password_coach: password };
+        const coachData = {
+            email_coach: email,
+            password_coach: password,
+        };
 
-        try {
-            const success = await actions.loginCoach(coachData);
-            if (success) {
-                setSuccess(true); // Success message
-                setTimeout(() => {
-                    navigate("/control-panel-coach"); // Redirect to control panel
-                }, 2000); // Wait 2 seconds before redirecting
-            } else {
-                setError(true); // Error message
-            }
-        } catch (error) {
-            setError(true); // Error message
+        const loginSuccess = await actions.loginCoach(coachData);
+
+        if (loginSuccess) {
+            console.log("Login exitoso, coach ID:", store.loggedInCoach.id);
+            navigate('/question-profile-coach');  // Redirigir después de un login exitoso
+        } else {
+            setError("Error en el login: Credenciales incorrectas.");
         }
     };
 
+    useEffect(() => {
+        if (store.loggedInCoach && store.loggedInCoach.id) {
+            console.log("Coach logueado:", store.loggedInCoach);
+            actions.getCoachInfo(store.loggedInCoach.id);
+        } else if (store.loggedInCoach === null) {
+            console.error("ID de coach no disponible después de login");
+        }
+    }, [store.loggedInCoach, actions]);
+
     return (
-        <div className="container mt-5">
-            <h1>Login for Coaches</h1>
-            {error && <div className="alert alert-danger" role="alert">Error: Invalid credentials. Please try again.</div>} {/* Show error message */}
-            {success && <div className="alert alert-success" role="alert">Login successful. Redirecting to control panel...</div>} {/* Show success message */}
-            <form onSubmit={handleLogin}>
-                <div className="form-group">
-                    <label>Email</label>
-                    <input
-                        type="email"
-                        className="form-control"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Password</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary mt-3">
-                    Log In
-                </button>
-            </form>
-        </div>
+        <form onSubmit={handleLogin}>
+            <input 
+                type="email" 
+                placeholder="Email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                required 
+            />
+            <input 
+                type="password" 
+                placeholder="Contraseña" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                required 
+            />
+            <button type="submit">Iniciar sesión</button>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+        </form>
     );
 };
 
