@@ -17,6 +17,7 @@ import CreateProfileUser from "./pages/createProfile-user";
 import CreateConsumProfile from "./pages/ConfiguracionConsumo";
 import CoachProfile from "./pages/CoachProfile";
 import SmokerProfile from "./pages/SmokerProfile";
+import CoachMapPage from "./pages/CoachMapPage";
 
 import Navbar from "./component/navbar"; 
 import Footer from "./component/footer";
@@ -67,6 +68,7 @@ const Layout = () => {
                         <Route element={<SmokerProfile />} path="/smoker-profile" />
                         <Route element={<CreateProfileUser />} path="/question-profile-smoker" />
                         <Route element={<CreateConsumProfile />} path="/question-config-smoker" />
+                        <Route element={<CoachMapPage />} path="/control-panel-coach/map" />
                         <Route element={<h1>Not found!</h1>} />
                         </Routes>
                     <Footer />

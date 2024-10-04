@@ -30,6 +30,12 @@ const ControlPanelCoach = () => {
             <p>Here you will be able to manage your profile, track your clients' progress, and much more.</p>
             <button className="btn btn-primary">Manage Profile</button>
             <button className="btn btn-secondary ml-3">Track Clients</button>
+            <button className="btn btn-info mt-3" onClick={() => navigate("/control-panel-coach/map")}>
+                View Coach Map
+            </button>
+            <button className="btn btn-info mt-3" onClick={() => navigate("/coach-profile")}>
+                View Coach Profile
+            </button>
             <button className="btn btn-danger mt-3" onClick={handleLogout}>
                 Logout
             </button> {/* Botón para cerrar sesión */}
