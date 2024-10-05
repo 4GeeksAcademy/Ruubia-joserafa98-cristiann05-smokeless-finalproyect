@@ -150,7 +150,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         setStore({
                             isAuthenticated: true,
                             userId: data.id,
-                            nombreUsuario: data.nombre_usuario,
+                            nombre_usuario: data.nombre_usuario,
                             numerocigarro_usuario: data.numerocigarro_usuario,
                             periodicidad: data.periodicidad,
                             tipo_consumo: data.tipo_consumo,
@@ -348,6 +348,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     if (response.ok) {
                         localStorage.setItem('token', data.token);
 
+                        // Almacenar la información del coach en el estado global/store
                         setStore({
                             loggedInCoach: {
                                 id: data.coach_id || null, // Asegúrate de que este valor sea correcto
@@ -358,7 +359,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             isAuthenticated: true,
                         });
 
-                        return true;
+                        return true;  // Devolver true si el login fue exitoso
                     } else {
                         console.error("Error en el login:", data.msg);
                         setStore({ isAuthenticated: false, loggedInCoach: null });
@@ -370,7 +371,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false;
                 }
             },
-
 
             getCoachInfo: async (coachId) => {
                 try {

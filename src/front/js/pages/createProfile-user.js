@@ -5,28 +5,28 @@ import "../../styles/CreateProfileUser.css"; // Importar el CSS específico
 
 const CreateProfileUser = () => {
     const { store, actions } = useStore(); // Acceso al store y acciones
-    const [nombreUsuario, setNombreUsuario] = useState("");
+    const [nombre_usuario, setnombre_usuario] = useState("");
     const [genero, setGenero] = useState("masculino");
     const [cumpleaños, setCumpleaños] = useState("");
-    const [fotoUsuario, setFotoUsuario] = useState(null); // Estado para la imagen
+    const [foto_usuario, setfoto_usuario] = useState(null); // Estado para la imagen
     const [error, setError] = useState(""); // Manejo de errores
     const navigate = useNavigate(); // Hook de navegación
 
     // Efecto para cargar los datos del usuario logueado
     useEffect(() => {
         if (store.loggedInUser) {
-            setNombreUsuario(store.loggedInUser.nombre || ""); // Cargar nombre
+            setnombre_usuario(store.loggedInUser.nombre || ""); // Cargar nombre
             setGenero(store.loggedInUser.genero || "masculino"); // Cargar género
             if (store.loggedInUser.cumpleaños && typeof store.loggedInUser.cumpleaños === 'string') {
                 setCumpleaños(store.loggedInUser.cumpleaños.split("T")[0]); // Cargar cumpleaños
             }
-            setFotoUsuario(store.loggedInUser.foto_usuario || null); // Cargar la imagen si existe
+            setfoto_usuario(store.loggedInUser.foto_usuario || null); // Cargar la imagen si existe
         }
     }, [store.loggedInUser]); // Efecto depende de los cambios en `loggedInUser`
 
     // Manejar la selección de la imagen
     const handleImageUpload = (e) => {
-        setFotoUsuario(e.target.files[0]); // Guardar la imagen seleccionada
+        setfoto_usuario(e.target.files[0]); // Guardar la imagen seleccionada
     };
 
     // Manejar el envío del formulario
@@ -42,8 +42,8 @@ const CreateProfileUser = () => {
 
         // Subir la imagen a Cloudinary si se seleccionó una
         let imageUrl = store.loggedInUser.foto_usuario; // Si ya tiene una imagen, se conserva
-        if (fotoUsuario) {
-            const uploadResult = await actions.uploadImageToCloudinary(fotoUsuario); // Subir imagen
+        if (foto_usuario) {
+            const uploadResult = await actions.uploadSmokerImage(foto_usuario); // Subir imagen
             if (uploadResult) {
                 imageUrl = uploadResult.secure_url; // Guardar URL de la imagen subida
             } else {
@@ -54,7 +54,7 @@ const CreateProfileUser = () => {
 
         // Datos a enviar al actualizar perfil
         const updatedData = {
-            nombre_usuario: nombreUsuario,
+            nombre_usuario: nombre_usuario,
             genero_usuario: genero,
             nacimiento_usuario: cumpleaños,
             foto_usuario: imageUrl, // Guardar la URL de la imagen en la base de datos
@@ -85,8 +85,8 @@ const CreateProfileUser = () => {
                     <label>Nombre de Usuario:</label>
                     <input
                         type="text"
-                        value={nombreUsuario}
-                        onChange={(e) => setNombreUsuario(e.target.value)}
+                        value={nombre_usuario}
+                        onChange={(e) => setnombre_usuario(e.target.value)}
                         required
                     />
                 </div>
