@@ -1,86 +1,77 @@
 import React, { useState, useEffect } from "react";
 import { useStore } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
-import "../../styles/CreateProfileCoach.css"; // Importar el CSS específico
 
 const CreateProfileCoach = () => {
-    const { store, actions } = useStore(); // Acceso al store y acciones
-    const [nombreUsuario, setNombreUsuario] = useState("");
+    const { store, actions } = useStore();
+    const [nombreCoach, setNombreCoach] = useState("");
     const [genero, setGenero] = useState("masculino");
     const [cumpleaños, setCumpleaños] = useState("");
-    const [error, setError] = useState(""); // Manejo de errores
-    const navigate = useNavigate(); // Hook de navegación
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
 
-    // Efecto para cargar los datos del coach logueado
     useEffect(() => {
-        const fetchCoachInfo = async () => {
-            if (store.loggedInUser) {
-                const coachId = store.loggedInUser.id; // Asumiendo que el id del coach está en loggedInUser
-                const coachInfo = await actions.getCoachInfo(coachId);
-                if (coachInfo) {
-                    setNombreUsuario(coachInfo.nombre || ""); // Cargar nombre
-                    setGenero(coachInfo.genero || "masculino"); // Cargar género
-                    if (coachInfo.cumpleaños && typeof coachInfo.cumpleaños === 'string') {
-                        setCumpleaños(coachInfo.cumpleaños.split("T")[0]); // Cargar cumpleaños
-                    }
-                } else {
-                    setError("No se pudo cargar la información del coach.");
-                }
+        if (store.loggedInCoach) {
+            console.log("Coach logueado en CreateProfileCoach:", store.loggedInCoach);
+            setNombreCoach(store.loggedInCoach.nombre || "");
+            setGenero(store.loggedInCoach.genero || "masculino");
+            // Asegúrate de que el cumpleaños esté en el formato correcto
+            if (store.loggedInCoach.cumpleaños) {
+                setCumpleaños(new Date(store.loggedInCoach.cumpleaños).toISOString().split("T")[0]);
             }
-        };
+        }
+    }, [store.loggedInCoach]);
 
-        fetchCoachInfo(); // Llamar a la función para obtener la información del coach
-    }, [store.loggedInUser, actions]); // Efecto depende de los cambios en `loggedInUser` y `actions`
-
-    // Manejar el envío del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(""); // Limpiar errores previos
+        setError("");
 
-        // Validación de que el usuario esté logueado
-        if (!store.loggedInUser) {
-            setError("No hay usuario logueado. Por favor, inicia sesión.");
+        if (!store.loggedInCoach) {
+            setError("No hay coach logueado. Por favor, inicia sesión.");
             return;
         }
 
-        // Datos a enviar al actualizar perfil
+        // Validar que el cumpleaños no esté vacío
+        if (!cumpleaños) {
+            setError("La fecha de cumpleaños es requerida.");
+            return;
+        }
+
         const updatedData = {
-            nombre_usuario: nombreUsuario,
-            genero_usuario: genero,
-            nacimiento_usuario: cumpleaños,
+            nombre_coach: nombreCoach,
+            genero_coach: genero,
+            cumpleaños_coach: cumpleaños, // Aquí se asegura que el campo esté bien definido
         };
 
-        console.log("Datos enviados en el perfil del coach:", updatedData);
+        console.log("Datos enviados en el perfil:", updatedData);
 
-        // Llamada a la acción para actualizar el perfil
-        const success = await actions.updateProfileCoach(store.loggedInUser.id, updatedData);
+        const success = await actions.updateProfileCoach(store.loggedInCoach.id, updatedData);
         if (success) {
-            alert("Perfil de coach actualizado con éxito");
-            navigate('/control-panel-coach'); // Navegar a la siguiente pantalla
+            alert("Perfil actualizado con éxito");
+            navigate('/control-panel-coach'); // Redirige a la página deseada
         } else {
-            alert("Error al actualizar el perfil del coach");
+            alert("Error al actualizar el perfil");
         }
     };
 
-    // Si no hay usuario logueado, muestra un mensaje
-    if (!store.loggedInUser) {
-        return <div>No hay usuario logueado. Por favor, inicia sesión.</div>;
+    if (!store.loggedInCoach) {
+        return <div>No hay coach logueado. Por favor, inicia sesión.</div>;
     }
 
     return (
         <div className="profile-form">
-            <h2 className="form-title">Actualizar Perfil del Coach</h2>
+            <h2>Actualizar Perfil de Coach</h2>
             <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>Nombre de Usuario:</label>
+                <div>
+                    <label>Nombre de Coach:</label>
                     <input
                         type="text"
-                        value={nombreUsuario}
-                        onChange={(e) => setNombreUsuario(e.target.value)}
+                        value={nombreCoach}
+                        onChange={(e) => setNombreCoach(e.target.value)}
                         required
                     />
                 </div>
-                <div className="form-group">
+                <div>
                     <label>Género:</label>
                     <select
                         value={genero}
@@ -91,7 +82,7 @@ const CreateProfileCoach = () => {
                         <option value="femenino">Femenino</option>
                     </select>
                 </div>
-                <div className="form-group">
+                <div>
                     <label>Cumpleaños:</label>
                     <input
                         type="date"
@@ -100,8 +91,8 @@ const CreateProfileCoach = () => {
                         required
                     />
                 </div>
-                {error && <p className="error-message">{error}</p>}
-                <button type="submit" className="submit-button">Actualizar Perfil</button>
+                {error && <p>{error}</p>}
+                <button type="submit">Actualizar Perfil</button>
             </form>
         </div>
     );

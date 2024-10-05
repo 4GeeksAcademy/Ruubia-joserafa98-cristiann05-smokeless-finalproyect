@@ -9,6 +9,7 @@ class Coach(db.Model):
     password_coach = db.Column(db.String(128), nullable=False)
     nombre_coach = db.Column(db.String(50), nullable=True)  # Cambiado a opcional
     genero_coach = db.Column(db.String(10), nullable=True)  # Cambiado a opcional
+    nacimiento_coach = db.Column(db.Date, nullable=True)  # Opcional
     direccion = db.Column(db.String(200), nullable=True)  # Cambiado a opcional
     latitud = db.Column(db.Float, nullable=True)  # Cambiado a opcional
     longitud = db.Column(db.Float, nullable=True)  # Cambiado a opcional
@@ -22,18 +23,20 @@ class Coach(db.Model):
     
     def serialize(self):
         return {
-            "id": self.id,
-            "email_coach": self.email_coach,
-            "nombre_coach": self.nombre_coach,
-            "genero_coach": self.genero_coach,
-            "direccion": self.direccion,
-            "latitud": self.latitud,
-            "longitud": self.longitud,
-            "descripcion_coach": self.descripcion_coach,
-            "foto_coach": self.foto_coach,
-            "public_id": self.public_id,
-            "precio_servicio": self.precio_servicio,
-        }
+        "id": self.id,
+        "email_coach": self.email_coach,
+        "nombre_coach": self.nombre_coach,
+        "genero_coach": self.genero_coach,
+        "nacimiento_coach": self.nacimiento_coach.isoformat() if self.nacimiento_coach else None,  # Asegúrate de serializarlo correctamente
+        "direccion": self.direccion,
+        "latitud": self.latitud,
+        "longitud": self.longitud,
+        "descripcion_coach": self.descripcion_coach,
+        "foto_coach": self.foto_coach,
+        "public_id": self.public_id,
+        "precio_servicio": self.precio_servicio,
+    }
+
 
 class SmokerUser(db.Model):
     __tablename__ = 'smoker_user'

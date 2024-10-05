@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
-import Map from './component/Map';
 import { BackendURL } from "./component/backendURL";
 import { Home } from "./pages/homePage";
 import SignupSmoker from "./pages/signupSmoker";
@@ -14,10 +13,10 @@ import injectContext from "./store/appContext";
 import CreateProfileUser from "./pages/createProfile-user";
 import CreateConsumProfile from "./pages/ConfiguracionConsumo";
 import CoachProfile from "./pages/CoachProfile";
-import SmokerProfile from "./pages/SmokerProfile";
+import SmokerMapPage from "./pages/SmokerMapPage";
 import CoachMapPage from "./pages/CoachMapPage";
-import CreateProfileCoach from "./pages/createProfile-coach"
-
+import CreateProfileCoach from "./pages/createProfile-coach";
+import LoginSelection from "./pages/LoginSelection";
 import Navbar from "./component/navbar"; 
 import Footer from "./component/footer";
 
@@ -42,16 +41,22 @@ const Layout = () => {
 
     if (!process.env.BACKEND_URL || process.env.BACKEND_URL === "") return <BackendURL />;
 
+    // Rutas donde no queremos mostrar el Navbar
+    const hiddenRoutes = ['/control-panel-coach', '/control-panel-smoker'];
+
     return (
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                    <Navbar 
-                        toggleTheme={toggleTheme} 
-                        language={language} 
-                        handleLanguageChange={handleLanguageChange} 
-                        theme={theme} // Pasa el tema al Navbar
-                    />
+                    {/* Renderiza el Navbar solo si la ruta no está en hiddenRoutes */}
+                    {!hiddenRoutes.includes(window.location.pathname) && (
+                        <Navbar 
+                            toggleTheme={toggleTheme} 
+                            language={language} 
+                            handleLanguageChange={handleLanguageChange} 
+                            theme={theme} 
+                        />
+                    )}
                     <Routes>
                         <Route element={<Home toggleTheme={toggleTheme} />} path="/" />
                         <Route element={<SignupSmoker />} path="/signup-smoker" />
@@ -61,14 +66,14 @@ const Layout = () => {
                         <Route element={<LoginCoach />} path="/login-coach" />
                         <Route element={<ControlPanelCoach />} path="/control-panel-coach" />
                         <Route element={<CoachProfile />} path="/coach-profile" />
-                        <Route element={<SmokerProfile />} path="/smoker-profile" />
                         <Route element={<CreateProfileUser />} path="/question-profile-smoker" />
                         <Route element={<CreateConsumProfile />} path="/question-config-smoker" />
                         <Route element={<CreateProfileCoach />} path="/question-profile-coach" />
                         <Route element={<CoachMapPage />} path="/control-panel-coach/map" />
-                        <Route element={<Map />} path="/map" />
+                        <Route element={<SmokerMapPage />} path="/control-panel-smoker/map" />
+                        <Route element={<LoginSelection />} path="/login-selection" />
                         <Route element={<h1>Not found!</h1>} />
-                        </Routes>
+                    </Routes>
                     <Footer />
                 </ScrollToTop>
             </BrowserRouter>
