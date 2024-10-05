@@ -90,13 +90,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(smokerData),
                     });
-            
+
                     const data = await response.json();
                     console.log("Datos recibidos en loginSmoker:", data);
-            
+
                     if (response.ok) {
                         localStorage.setItem('token', data.token);
-            
+
                         setStore({
                             loggedInUser: {
                                 id: data.user_id || null, // Asegúrate de que este valor sea correcto
@@ -108,8 +108,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                             },
                             isAuthenticated: true,
                         });
-            
-                        return true; 
+
+                        return true;
                     } else {
                         console.error("Error en el login:", data.msg);
                         setStore({ isAuthenticated: false, loggedInUser: null });
@@ -121,7 +121,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false;
                 }
             },
-            
+
 
 
 
@@ -151,7 +151,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         setStore({
                             isAuthenticated: true,
                             userId: data.id,
-                            nombreUsuario: data.nombre_usuario,
+                            nombre_usuario: data.nombre_usuario,
                             numerocigarro_usuario: data.numerocigarro_usuario,
                             periodicidad: data.periodicidad,
                             tipo_consumo: data.tipo_consumo,
@@ -206,7 +206,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(updatedData),
                     });
-        
+
                     if (response.ok) {
                         const data = await response.json();
                         setStore((prevStore) => ({
@@ -279,10 +279,10 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(coachData),
                     });
-            
+
                     const data = await response.json();
                     console.log('Datos recibidos en updateProfile:', data);
-            
+
                     if (response.ok) {
                         // Actualizar el store con la información del perfil actualizado
                         setStore({
@@ -303,7 +303,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false;
                 }
             },
-            
+
 
             //SIGNUP COACH
             signupCoach: async (coachData) => {
@@ -343,16 +343,16 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(coachData),
                     });
-            
+
                     // Obtener los datos devueltos por el backend
                     const data = await response.json();
                     console.log('Datos recibidos en loginCoach:', data);
-            
+
                     // Verificar si la respuesta es exitosa
                     if (response.ok) {
                         // Guardar el token en el localStorage
                         localStorage.setItem('token', data.token);
-            
+
                         // Almacenar la información del coach en el estado global/store
                         setStore({
                             loggedInCoach: {
@@ -364,7 +364,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             },
                             isAuthenticated: true,  // Marcar que el usuario está autenticado
                         });
-            
+
                         return true;  // Devolver true si el login fue exitoso
                     } else {
                         // Manejar casos de error en el login
@@ -379,7 +379,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false;  // Devolver false si ocurrió un error
                 }
             },
-            
+
 
 
             getCoachInfo: async (coachId) => { // Accept coachId as a parameter
