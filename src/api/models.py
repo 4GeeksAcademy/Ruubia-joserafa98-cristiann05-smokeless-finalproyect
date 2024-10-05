@@ -9,6 +9,7 @@ class Coach(db.Model):
     password_coach = db.Column(db.String(128), nullable=False)
     nombre_coach = db.Column(db.String(50), nullable=True)  # Cambiado a opcional
     genero_coach = db.Column(db.String(10), nullable=True)  # Cambiado a opcional
+    nacimiento_coach = db.Column(db.Date, nullable=True)  # Opcional
     direccion = db.Column(db.String(200), nullable=True)  # Cambiado a opcional
     latitud = db.Column(db.Float, nullable=True)  # Cambiado a opcional
     longitud = db.Column(db.Float, nullable=True)  # Cambiado a opcional

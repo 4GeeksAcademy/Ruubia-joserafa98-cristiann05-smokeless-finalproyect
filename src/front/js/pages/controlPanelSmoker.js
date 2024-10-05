@@ -11,11 +11,11 @@ const ControlPanelSmoker = () => {
     useEffect(() => {
         const checkToken = () => {
             const token = localStorage.getItem("token");
+            console.log("Token actual:", token); // Log para verificar el token
             if (!token) {
-                // Redirige a la página principal si no hay token
-                navigate('/');
+                navigate('/'); // Redirige a la página principal si no hay token
             } else {
-                setLoading(false); // Deja de cargar si el token es válido
+                setLoading(false);
             }
         };
 
@@ -24,7 +24,9 @@ const ControlPanelSmoker = () => {
 
     const handleLogout = () => {
         actions.logoutsmoker(); // Llama a la acción de cierre de sesión
-        navigate('/'); // Redirige a la página principal después de cerrar sesión
+        setTimeout(() => {
+            navigate('/'); // Redirige a la página principal después de un breve retraso
+        }, 100); // Puedes ajustar el tiempo según sea necesario
     };
 
     if (loading) {

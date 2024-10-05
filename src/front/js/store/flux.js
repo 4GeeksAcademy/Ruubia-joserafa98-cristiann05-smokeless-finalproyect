@@ -15,11 +15,19 @@ const getState = ({ getStore, getActions, setStore }) => {
                 foto_coach: '',
                 foto_usuario: ''
             },
+            loggedInCoach: {
+                id: null,
+                email: '',
+                nombre: '',
+                genero: '',
+                cumpleaños: '',
+            },
             seguimiento: [],
             perfilCreado: false,
             isAuthenticated: false,
             userId: null,
             userInfo: null,
+            coachInfo: null,
             solicitud: [],
         },
         actions: {
@@ -75,52 +83,45 @@ const getState = ({ getStore, getActions, setStore }) => {
             // Login de Smoker
             loginSmoker: async (smokerData) => {
                 try {
-                    // Llamada a la API para el login del fumador
                     const response = await fetch(`${process.env.BACKEND_URL}/api/login-smoker`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                         },
-                        body: JSON.stringify(smokerData), // Enviar los datos del smoker
+                        body: JSON.stringify(smokerData),
                     });
 
-                    // Obtener los datos de la respuesta
                     const data = await response.json();
-
-                    // Log para verificar la respuesta
                     console.log("Datos recibidos en loginSmoker:", data);
 
-                    // Verificar si la respuesta es exitosa
                     if (response.ok) {
-                        // Almacenar el token en localStorage
                         localStorage.setItem('token', data.token);
 
-                        // Actualizar el store con los datos del usuario y marcar como autenticado
                         setStore({
                             loggedInUser: {
-                                id: data.user_id || null,  // Asignar el ID del usuario si existe
-                                email: data.email_usuario || '',  // Asignar el email del usuario
-                                nombre: data.nombre_usuario || '',  // Asignar el nombre del usuario
-                                genero: data.genero_usuario || '',  // Asignar el género del usuario
-                                cumpleaños: data.nacimiento_usuario || '',  // Asignar la fecha de nacimiento del usuario
+                                id: data.user_id || null, // Asegúrate de que este valor sea correcto
+                                email: data.email_usuario || '',
+                                nombre: data.nombre_usuario || '',
+                                genero: data.genero_usuario || '',
+                                cumpleaños: data.nacimiento_usuario || '',
+                                foto_usuario: data.foto_usuario || '',
                             },
-                            isAuthenticated: true,  // Marcar como autenticado
+                            isAuthenticated: true,
                         });
 
-                        return true;  // Retorna true si la autenticación es exitosa
+                        return true;
                     } else {
-                        // Si la respuesta no es exitosa, log de error y retorna false
                         console.error("Error en el login:", data.msg);
-                        setStore({ isAuthenticated: false, loggedInUser: null });  // Limpia el estado si falla
+                        setStore({ isAuthenticated: false, loggedInUser: null });
                         return false;
                     }
                 } catch (error) {
-                    // Manejo de errores en la solicitud
                     console.error("Error en la solicitud de loginSmoker:", error);
-                    setStore({ isAuthenticated: false, loggedInUser: null });  // Limpia el estado en caso de error
+                    setStore({ isAuthenticated: false, loggedInUser: null });
                     return false;
                 }
             },
+
 
 
 
@@ -150,11 +151,11 @@ const getState = ({ getStore, getActions, setStore }) => {
                         setStore({
                             isAuthenticated: true,
                             userId: data.id,
-                            nombreUsuario: data.nombre_usuario,
+                            nombre_usuario: data.nombre_usuario,
                             numerocigarro_usuario: data.numerocigarro_usuario,
                             periodicidad: data.periodicidad,
                             tipo_consumo: data.tipo_consumo,
-                            fotoUsuario: data.foto_usuario,
+                            foto_usuario: data.foto_usuario,
                         });
 
                         return true;
@@ -238,7 +239,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             // Logout
-            logout: () => {
+            logoutsmoker: () => {
                 localStorage.removeItem('token');
                 setStore({
                     loggedInUser: null,
@@ -268,6 +269,42 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
+            updateProfile: async (coachId, coachData) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/create_profile/coach/${coachId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}` // Incluye el token si es necesario
+                        },
+                        body: JSON.stringify(coachData),
+                    });
+
+                    const data = await response.json();
+                    console.log('Datos recibidos en updateProfile:', data);
+
+                    if (response.ok) {
+                        // Actualizar el store con la información del perfil actualizado
+                        setStore({
+                            loggedInCoach: {
+                                id: coachId,
+                                nombre: data.coach.nombre_coach || '',
+                                genero: data.coach.genero_coach || '',
+                                cumpleaños: data.coach.nacimiento_coach || ''
+                            }
+                        });
+                        return true;
+                    } else {
+                        console.error("Error actualizando perfil:", data.msg);
+                        return false;
+                    }
+                } catch (error) {
+                    console.error("Error en la solicitud de updateProfile:", error);
+                    return false;
+                }
+            },
+
+
             //SIGNUP COACH
             signupCoach: async (coachData) => {
                 try {
@@ -295,45 +332,88 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            //login coach
+            // Login de Coach
             loginCoach: async (coachData) => {
                 try {
+                    // Enviar la solicitud de login al backend
                     const response = await fetch(`${process.env.BACKEND_URL}/api/login-coach`, {
-                        method: "POST",
+                        method: 'POST',
                         headers: {
-                            "Content-Type": "application/json",
+                            'Content-Type': 'application/json',
                         },
                         body: JSON.stringify(coachData),
                     });
 
+                    // Obtener los datos devueltos por el backend
+                    const data = await response.json();
+                    console.log('Datos recibidos en loginCoach:', data);
+
+                    // Verificar si la respuesta es exitosa
                     if (response.ok) {
-                        const data = await response.json();
+                        // Guardar el token en el localStorage
+                        localStorage.setItem('token', data.token);
+
+                        // Almacenar la información del coach en el estado global/store
                         setStore({
-                            isAuthenticated: true,
-                            coachId: data.coach_id,
-                            nombre_coach: data.nombre_coach, // Nuevo campo
-                            genero_coach: data.genero_coach, // Nuevo campo
-                            foto_coach: data.foto_coach, // Nuevo campo
+                            loggedInCoach: {
+                                id: data.coach_id || null, // Verificar si el ID está presente
+                                email: data.email_coach || '', // Usar email_coach en lugar de email
+                                nombre: data.nombre || '',  // Guardar otros datos si están disponibles
+                                genero: data.genero || '',
+                                cumpleaños: data.cumpleaños || ''
+                            },
+                            isAuthenticated: true,  // Marcar que el usuario está autenticado
                         });
-                        localStorage.setItem("token", data.token); // Guarda el token en localStorage
-                        return true; // Indica que el login fue exitoso
+
+                        return true;  // Devolver true si el login fue exitoso
                     } else {
-                        const errorData = await response.json();
-                        console.error("Error en el login del coach:", errorData);
-                        return false; // Indica que el login falló
+                        // Manejar casos de error en el login
+                        console.error("Error en el login del coach:", data.msg);
+                        setStore({ isAuthenticated: false, loggedInCoach: null }); // Resetear el estado
+                        return false;  // Devolver false si hubo un error
                     }
                 } catch (error) {
-                    console.error("Error durante el login del coach:", error);
-                    return false; // Indica que hubo un error durante el proceso
+                    // Manejo de errores en la solicitud al backend
+                    console.error("Error en la solicitud de loginCoach:", error);
+                    setStore({ isAuthenticated: false, loggedInCoach: null }); // Resetear el estado en caso de fallo
+                    return false;  // Devolver false si ocurrió un error
                 }
             },
-            logoutsmoker: () => {
-                localStorage.removeItem("token");
-        
-                setStore({ user: null, token: null });
-        
+
+
+
+            getCoachInfo: async (coachId) => { // Accept coachId as a parameter
+                if (!coachId) {
+                    console.error("Coach ID is required");
+                    return null; // Return null if coachId is not provided
+                }
+
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coach_info/${coachId}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem("token")}`, // Ensure token is present
+                        },
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log("Información del coach:", data);
+                        setStore({ coachInfo: data }); // Update the store with the coach info
+                        return data; // Return the fetched data for further use
+                    } else {
+                        console.error("Error fetching coach info:", response.statusText);
+                        return null; // Return null in case of an error
+                    }
+                } catch (error) {
+                    console.error("Error fetching coach info:", error);
+                    return null; // Handle any network or unexpected errors
+                }
             },
-           
+
+
+            // Método para subir la imagen del coach a Cloudinary
             uploadCoachImage: async (file) => {
                 if (!file || !file.type.startsWith('image/')) {
                     console.error("El archivo no es una imagen válida.");
