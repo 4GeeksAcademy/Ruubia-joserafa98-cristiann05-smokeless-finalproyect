@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
-import Map from './component/Map';
 import { BackendURL } from "./component/backendURL";
 import { Home } from "./pages/homePage";
 import SignupSmoker from "./pages/signupSmoker";
@@ -15,9 +14,10 @@ import CreateProfileUser from "./pages/createProfile-user";
 import CreateConsumProfile from "./pages/ConfiguracionConsumo";
 import CoachProfile from "./pages/CoachProfile";
 import SmokerProfile from "./pages/SmokerProfile";
+import SmokerMapPage from "./pages/SmokerMapPage";
 import CoachMapPage from "./pages/CoachMapPage";
-import CreateProfileCoach from "./pages/createProfile-coach"
-
+import CreateProfileCoach from "./pages/createProfile-coach";
+import LoginSelection from "./pages/LoginSelection";
 import Navbar from "./component/navbar"; 
 import Footer from "./component/footer";
 
@@ -66,7 +66,8 @@ const Layout = () => {
                         <Route element={<CreateConsumProfile />} path="/question-config-smoker" />
                         <Route element={<CreateProfileCoach />} path="/question-profile-coach" />
                         <Route element={<CoachMapPage />} path="/control-panel-coach/map" />
-                        <Route element={<Map />} path="/map" />
+                        <Route element={<SmokerMapPage />} path="/control-panel-smoker/map" />
+                        <Route element={<LoginSelection />} path="/login-selection" />
                         <Route element={<h1>Not found!</h1>} />
                         </Routes>
                     <Footer />

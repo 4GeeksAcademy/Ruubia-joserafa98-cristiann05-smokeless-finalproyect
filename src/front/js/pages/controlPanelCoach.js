@@ -11,7 +11,7 @@ const ControlPanelCoach = () => {
         // Verificar si el coach está autenticado
         if (!store.isAuthenticated) {
             // Redirigir al coach a la página de registro/login si no está autenticado
-            navigate("/signup-coach"); // Cambia esto a la ruta de tu página de login si es necesario
+            navigate("/"); // Cambia esto a la ruta de tu página de login si es necesario
         }
     }, [store.isAuthenticated, navigate]); // Dependencias de useEffect
 

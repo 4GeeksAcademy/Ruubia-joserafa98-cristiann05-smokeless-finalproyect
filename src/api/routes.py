@@ -134,9 +134,12 @@ def create_profile_coach(coach_id):
     if not coach:
         return jsonify({"msg": "Coach no encontrado"}), 404
 
-    nombre = request.json.get('nombre_coach', None)
-    genero = request.json.get('genero_coach', None)
-    cumpleaños = request.json.get('nacimiento_coach', None)
+    # Agrega log aquí para verificar los datos recibidos
+    print("Datos recibidos:", request.json)  # Muestra los datos que se están recibiendo
+
+    nombre = request.json.get('nombre_coach')
+    genero = request.json.get('genero_coach')
+    cumpleaños = request.json.get('cumpleaños_coach')  # Asegúrate de que este nombre coincida
 
     if nombre:
         coach.nombre_coach = nombre
@@ -144,10 +147,12 @@ def create_profile_coach(coach_id):
         coach.genero_coach = genero
     if cumpleaños:
         try:
+            # Verifica que la fecha esté en el formato correcto
             coach.nacimiento_coach = datetime.strptime(cumpleaños, '%Y-%m-%d').date()
         except ValueError:
             return jsonify({"msg": "Fecha de nacimiento inválida. Debe estar en el formato YYYY-MM-DD."}), 400
 
+    # Guarda los cambios en la base de datos
     db.session.commit()
 
     return jsonify({"msg": "Perfil del coach actualizado exitosamente", "coach": coach.serialize()}), 200

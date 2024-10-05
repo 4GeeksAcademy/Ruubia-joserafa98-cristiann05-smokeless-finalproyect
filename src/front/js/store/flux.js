@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom';
-
 const getState = ({ getStore, getActions, setStore }) => {
     return {
         store: {
