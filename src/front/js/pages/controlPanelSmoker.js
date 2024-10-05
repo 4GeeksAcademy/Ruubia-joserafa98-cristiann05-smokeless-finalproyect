@@ -11,11 +11,11 @@ const ControlPanelSmoker = () => {
     useEffect(() => {
         const checkToken = () => {
             const token = localStorage.getItem("token");
-            console.log("Token actual:", token); // Log para verificar el token
             if (!token) {
-                navigate('/'); // Redirige a la página principal si no hay token
+                // Redirige a la página principal si no hay token
+                navigate('/');
             } else {
-                setLoading(false);
+                setLoading(false); // Deja de cargar si el token es válido
             }
         };
 
@@ -24,9 +24,7 @@ const ControlPanelSmoker = () => {
 
     const handleLogout = () => {
         actions.logoutsmoker(); // Llama a la acción de cierre de sesión
-        setTimeout(() => {
-            navigate('/'); // Redirige a la página principal después de un breve retraso
-        }, 100); // Puedes ajustar el tiempo según sea necesario
+        navigate('/'); // Redirige a la página principal después de cerrar sesión
     };
 
     if (loading) {
@@ -43,8 +41,6 @@ const ControlPanelSmoker = () => {
             >
                 Ver Perfil del Fumador
             </button>
-            <button className="btn btn-info mt-3" onClick={() => navigate("/control-panel-smoker/map")}>
-                mapa</button>
             <button className="btn btn-danger" onClick={handleLogout}>
                 Logout
             </button>

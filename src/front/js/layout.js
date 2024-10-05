@@ -41,16 +41,22 @@ const Layout = () => {
 
     if (!process.env.BACKEND_URL || process.env.BACKEND_URL === "") return <BackendURL />;
 
+    // Rutas donde no queremos mostrar el Navbar
+    const hiddenRoutes = ['/control-panel-coach', '/control-panel-smoker'];
+
     return (
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                    <Navbar 
-                        toggleTheme={toggleTheme} 
-                        language={language} 
-                        handleLanguageChange={handleLanguageChange} 
-                        theme={theme} // Pasa el tema al Navbar
-                    />
+                    {/* Renderiza el Navbar solo si la ruta no está en hiddenRoutes */}
+                    {!hiddenRoutes.includes(window.location.pathname) && (
+                        <Navbar 
+                            toggleTheme={toggleTheme} 
+                            language={language} 
+                            handleLanguageChange={handleLanguageChange} 
+                            theme={theme} 
+                        />
+                    )}
                     <Routes>
                         <Route element={<Home toggleTheme={toggleTheme} />} path="/" />
                         <Route element={<SignupSmoker />} path="/signup-smoker" />
@@ -67,7 +73,7 @@ const Layout = () => {
                         <Route element={<SmokerMapPage />} path="/control-panel-smoker/map" />
                         <Route element={<LoginSelection />} path="/login-selection" />
                         <Route element={<h1>Not found!</h1>} />
-                        </Routes>
+                    </Routes>
                     <Footer />
                 </ScrollToTop>
             </BrowserRouter>

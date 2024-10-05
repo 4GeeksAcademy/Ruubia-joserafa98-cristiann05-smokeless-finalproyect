@@ -210,6 +210,7 @@ def login_coach():
     if not email or not password:
         return jsonify({"msg": "Faltan email o password"}), 400
 
+    # Busca al coach por email
     coach = Coach.query.filter_by(email_coach=email).first()
     if not coach or coach.password_coach != password:
         return jsonify({"msg": "Credenciales inválidas"}), 401
@@ -221,8 +222,12 @@ def login_coach():
         "msg": "Login exitoso",
         "coach_id": coach.id,
         "email_coach": coach.email_coach,
-        "token": token  # Se eliminó nombre_coach
+        "nombre_coach": coach.nombre_coach,  # Asegúrate de incluir el nombre
+        "genero_coach": coach.genero_coach,  # Incluye también el género
+        "nacimiento_coach": coach.nacimiento_coach.isoformat() if coach.nacimiento_coach else None,
+        "token": token  # Devuelve el token para uso posterior
     }), 200
+
 
 
 # Obtener tipos de consumo (GET)

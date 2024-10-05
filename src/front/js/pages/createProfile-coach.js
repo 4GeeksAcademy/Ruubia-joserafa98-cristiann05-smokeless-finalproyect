@@ -45,7 +45,7 @@ const CreateProfileCoach = () => {
 
         console.log("Datos enviados en el perfil:", updatedData);
 
-        const success = await actions.updateProfile(store.loggedInCoach.id, updatedData);
+        const success = await actions.updateProfileCoach(store.loggedInCoach.id, updatedData);
         if (success) {
             alert("Perfil actualizado con éxito");
             navigate('/control-panel-coach'); // Redirige a la página deseada

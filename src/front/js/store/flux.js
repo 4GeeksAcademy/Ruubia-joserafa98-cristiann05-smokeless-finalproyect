@@ -19,10 +19,11 @@ const getState = ({ getStore, getActions, setStore }) => {
                 nombre: '',
                 genero: '',
                 cumpleaños: '',
+                isProfileComplete: false  // Nueva propiedad que indica si el perfil está completo
             },
             seguimiento: [],
-            perfilCreado: false,
-            isAuthenticated: false,
+            perfilCreado: false,  // Refleja si el perfil del coach o usuario fue creado
+            isAuthenticated: false, // Indica si el usuario o coach está autenticado
             userId: null,
             userInfo: null,
             coachInfo: null,
@@ -88,13 +89,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(smokerData),
                     });
-            
+
                     const data = await response.json();
                     console.log("Datos recibidos en loginSmoker:", data);
-            
+
                     if (response.ok) {
                         localStorage.setItem('token', data.token);
-            
+
                         setStore({
                             loggedInUser: {
                                 id: data.user_id || null, // Asegúrate de que este valor sea correcto
@@ -106,8 +107,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                             },
                             isAuthenticated: true,
                         });
-            
-                        return true; 
+
+                        return true;
                     } else {
                         console.error("Error en el login:", data.msg);
                         setStore({ isAuthenticated: false, loggedInUser: null });
@@ -119,7 +120,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false;
                 }
             },
-            
+
 
 
 
@@ -204,7 +205,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(updatedData),
                     });
-        
+
                     if (response.ok) {
                         const data = await response.json();
                         setStore((prevStore) => ({
@@ -267,7 +268,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            updateProfile: async (coachId, coachData) => {
+            updateProfileCoach: async (coachId, coachData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/create_profile/coach/${coachId}`, {
                         method: 'PUT',
@@ -277,10 +278,10 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(coachData),
                     });
-            
+
                     const data = await response.json();
                     console.log('Datos recibidos en updateProfile:', data);
-            
+
                     if (response.ok) {
                         // Actualizar el store con la información del perfil actualizado
                         setStore({
@@ -301,7 +302,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false;
                 }
             },
-            
+
 
             //SIGNUP COACH
             signupCoach: async (coachData) => {
@@ -333,82 +334,89 @@ const getState = ({ getStore, getActions, setStore }) => {
             // Login de Coach
             loginCoach: async (coachData) => {
                 try {
-                    // Enviar la solicitud de login al backend
                     const response = await fetch(`${process.env.BACKEND_URL}/api/login-coach`, {
-                        method: 'POST',
+                        method: "POST",
                         headers: {
-                            'Content-Type': 'application/json',
+                            "Content-Type": "application/json",
                         },
                         body: JSON.stringify(coachData),
                     });
-            
-                    // Obtener los datos devueltos por el backend
+
                     const data = await response.json();
-                    console.log('Datos recibidos en loginCoach:', data);
-            
-                    // Verificar si la respuesta es exitosa
+                    console.log("Datos recibidos en loginCoach:", data);
+
                     if (response.ok) {
-                        // Guardar el token en el localStorage
                         localStorage.setItem('token', data.token);
-            
-                        // Almacenar la información del coach en el estado global/store
+
                         setStore({
                             loggedInCoach: {
-                                id: data.coach_id || null, // Verificar si el ID está presente
-                                email: data.email_coach || '', // Usar email_coach en lugar de email
-                                nombre: data.nombre || '',  // Guardar otros datos si están disponibles
-                                genero: data.genero || '',
-                                cumpleaños: data.cumpleaños || ''
+                                id: data.coach_id || null, // Asegúrate de que este valor sea correcto
+                                nombre: data.nombre_coach || '',
+                                genero: data.genero_coach || '',
+                                cumpleaños: data.cumpleaños_coach || ''
                             },
-                            isAuthenticated: true,  // Marcar que el usuario está autenticado
+                            isAuthenticated: true,
                         });
-            
-                        return true;  // Devolver true si el login fue exitoso
+
+                        return true;
                     } else {
-                        // Manejar casos de error en el login
-                        console.error("Error en el login del coach:", data.msg);
-                        setStore({ isAuthenticated: false, loggedInCoach: null }); // Resetear el estado
-                        return false;  // Devolver false si hubo un error
+                        console.error("Error en el login:", data.msg);
+                        setStore({ isAuthenticated: false, loggedInCoach: null });
+                        return false;
                     }
                 } catch (error) {
-                    // Manejo de errores en la solicitud al backend
                     console.error("Error en la solicitud de loginCoach:", error);
-                    setStore({ isAuthenticated: false, loggedInCoach: null }); // Resetear el estado en caso de fallo
-                    return false;  // Devolver false si ocurrió un error
+                    setStore({ isAuthenticated: false, loggedInCoach: null });
+                    return false;
                 }
             },
-            
 
 
-            getCoachInfo: async (coachId) => { // Accept coachId as a parameter
-                if (!coachId) {
-                    console.error("Coach ID is required");
-                    return null; // Return null if coachId is not provided
-                }
-
+            getCoachInfo: async (coachId) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/coach_info/${coachId}`, {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",
-                            "Authorization": `Bearer ${localStorage.getItem("token")}`, // Ensure token is present
+                            "Authorization": `Bearer ${localStorage.getItem("token")}`,
                         },
                     });
 
                     if (response.ok) {
                         const data = await response.json();
                         console.log("Información del coach:", data);
-                        setStore({ coachInfo: data }); // Update the store with the coach info
-                        return data; // Return the fetched data for further use
+                        setStore({
+                            coachInfo: {
+                                nombre: data.nombre_coach, // Asegúrate de que este campo existe
+                                genero: data.genero_coach,
+                                cumpleaños: data.nacimiento_coach // Verifica que la API devuelva este campo
+                            }
+                        });
+                        return data;
                     } else {
-                        console.error("Error fetching coach info:", response.statusText);
-                        return null; // Return null in case of an error
+                        console.error("Error al obtener información del coach:", response.statusText);
+                        return null;
                     }
                 } catch (error) {
-                    console.error("Error fetching coach info:", error);
-                    return null; // Handle any network or unexpected errors
+                    console.error("Error al obtener información del coach:", error);
+                    return null;
                 }
             },
+            
+            // Logout
+            logoutCoach: () => {
+                // Elimina el token del localStorage
+                localStorage.removeItem('token');
+
+                // Limpia el store restableciendo los valores del coach
+                setStore({
+                    loggedInCoach: null,  // Limpia la información del coach
+                    isAuthenticated: false, // Cambia el estado de autenticación
+                    coachInfo: null, // Limpia la información adicional del coach
+                });
+            },
+
+
 
 
             // Método para subir la imagen del coach a Cloudinary
