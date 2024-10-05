@@ -13,7 +13,6 @@ import injectContext from "./store/appContext";
 import CreateProfileUser from "./pages/createProfile-user";
 import CreateConsumProfile from "./pages/ConfiguracionConsumo";
 import CoachProfile from "./pages/CoachProfile";
-import SmokerProfile from "./pages/SmokerProfile";
 import SmokerMapPage from "./pages/SmokerMapPage";
 import CoachMapPage from "./pages/CoachMapPage";
 import CreateProfileCoach from "./pages/createProfile-coach";
@@ -61,7 +60,6 @@ const Layout = () => {
                         <Route element={<LoginCoach />} path="/login-coach" />
                         <Route element={<ControlPanelCoach />} path="/control-panel-coach" />
                         <Route element={<CoachProfile />} path="/coach-profile" />
-                        <Route element={<SmokerProfile />} path="/smoker-profile" />
                         <Route element={<CreateProfileUser />} path="/question-profile-smoker" />
                         <Route element={<CreateConsumProfile />} path="/question-config-smoker" />
                         <Route element={<CreateProfileCoach />} path="/question-profile-coach" />

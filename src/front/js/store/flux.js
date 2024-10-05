@@ -102,6 +102,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                                 nombre: data.nombre_usuario || '',
                                 genero: data.genero_usuario || '',
                                 cumpleaños: data.nacimiento_usuario || '',
+                                foto_usuario: data.foto_usuario || '',
                             },
                             isAuthenticated: true,
                         });
@@ -152,7 +153,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             numerocigarro_usuario: data.numerocigarro_usuario,
                             periodicidad: data.periodicidad,
                             tipo_consumo: data.tipo_consumo,
-                            fotoUsuario: data.foto_usuario,
+                            foto_usuario: data.foto_usuario,
                         });
 
                         return true;
