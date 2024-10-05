@@ -8,20 +8,26 @@ const CreateProfileUser = () => {
     const [nombreUsuario, setNombreUsuario] = useState("");
     const [genero, setGenero] = useState("masculino");
     const [cumpleaños, setCumpleaños] = useState("");
+    const [fotoUsuario, setFotoUsuario] = useState(null); // Estado para la imagen
     const [error, setError] = useState(""); // Manejo de errores
     const navigate = useNavigate(); // Hook de navegación
 
     // Efecto para cargar los datos del usuario logueado
     useEffect(() => {
         if (store.loggedInUser) {
-            console.log("Usuario logueado en CreateProfileUser:", store.loggedInUser);
             setNombreUsuario(store.loggedInUser.nombre || ""); // Cargar nombre
             setGenero(store.loggedInUser.genero || "masculino"); // Cargar género
             if (store.loggedInUser.cumpleaños && typeof store.loggedInUser.cumpleaños === 'string') {
                 setCumpleaños(store.loggedInUser.cumpleaños.split("T")[0]); // Cargar cumpleaños
             }
+            setFotoUsuario(store.loggedInUser.foto_usuario || null); // Cargar la imagen si existe
         }
     }, [store.loggedInUser]); // Efecto depende de los cambios en `loggedInUser`
+
+    // Manejar la selección de la imagen
+    const handleImageUpload = (e) => {
+        setFotoUsuario(e.target.files[0]); // Guardar la imagen seleccionada
+    };
 
     // Manejar el envío del formulario
     const handleSubmit = async (e) => {
@@ -34,11 +40,24 @@ const CreateProfileUser = () => {
             return;
         }
 
+        // Subir la imagen a Cloudinary si se seleccionó una
+        let imageUrl = store.loggedInUser.foto_usuario; // Si ya tiene una imagen, se conserva
+        if (fotoUsuario) {
+            const uploadResult = await actions.uploadImageToCloudinary(fotoUsuario); // Subir imagen
+            if (uploadResult) {
+                imageUrl = uploadResult.secure_url; // Guardar URL de la imagen subida
+            } else {
+                setError("Error al subir la imagen. Inténtalo de nuevo.");
+                return;
+            }
+        }
+
         // Datos a enviar al actualizar perfil
         const updatedData = {
             nombre_usuario: nombreUsuario,
             genero_usuario: genero,
             nacimiento_usuario: cumpleaños,
+            foto_usuario: imageUrl, // Guardar la URL de la imagen en la base de datos
         };
 
         console.log("Datos enviados en el perfil:", updatedData);
@@ -91,6 +110,13 @@ const CreateProfileUser = () => {
                         required
                     />
                 </div>
+                <div className="form-group">
+                    <label>Foto de Perfil:</label>
+                    <input
+                        type="file"
+                        onChange={handleImageUpload}
+                    />
+                </div>
                 {error && <p className="error-message">{error}</p>}
                 <button type="submit" className="submit-button">Actualizar Perfil</button>
             </form>
@@ -99,3 +125,4 @@ const CreateProfileUser = () => {
 };
 
 export default CreateProfileUser;
+
