@@ -1,0 +1,88 @@
+/* Contenedor principal */
+.login-container {
+  display: flex;
+  justify-content: center;
+  gap: 60px; /* Aumentar el espaciado entre tarjetas */
+  margin: 40px auto; /* Espaciado superior e inferior */
+  max-width: 1200px; /* Ancho máximo */
+}
+
+/* Estilos de la tarjeta */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column; /* Disposición vertical */
+  align-items: center;
+  justify-content: center;
+  width: 320px; /* Ancho fijo */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Sombra de tarjeta */
+  padding: 32px; /* Padding interno */
+  overflow: hidden; /* Ocultar contenido desbordante */
+  border-radius: 10px; /* Bordes redondeados */
+  background: #212121; /* Fondo oscuro */
+  border: 2px solid #313131; /* Bordes oscuros */
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1); /* Transición suave */
+}
+
+/* Estilo del icono */
+.icon {
+  width: 80px; /* Ajusta el tamaño del icono a 80px */
+  height: auto; /* Mantener proporciones */
+  margin-bottom: 20px; /* Espacio inferior */
+}
+
+/* Efecto hover en la tarjeta */
+.card:hover {
+  box-shadow: 0 0 20px rgba(9, 117, 241, 0.8); /* Efecto de sombra al pasar el ratón */
+  border-color: #0974f1; /* Cambiar color de borde al pasar el ratón */
+  transform: scale(1.05); /* Aumentar ligeramente el tamaño de la tarjeta */
+}
+
+/* Estilo del contenido */
+.content {
+  display: flex;
+  flex-direction: column; /* Disposición vertical */
+  align-items: center; /* Centrar contenido */
+  gap: 20px; /* Espacio entre elementos */
+  color: #e8e8e8; /* Color de texto */
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1); /* Transición suave */
+}
+
+/* Encabezado de la tarjeta */
+.content .heading {
+  font-weight: 700; /* Negrita */
+  font-size: 24px; /* Tamaño de texto */
+  text-align: center; /* Centrar texto */
+}
+
+/* Descripción */
+.content .para {
+  line-height: 1.5; /* Altura de línea */
+  text-align: center; /* Centrar texto */
+}
+
+/* Botón */
+.content .btn {
+  color: #e8e8e8; /* Color de texto */
+  text-decoration: none; /* Sin subrayado */
+  padding: 10px 20px; /* Espaciado interno */
+  font-weight: 600; /* Peso de fuente */
+  border: none; /* Sin borde */
+  cursor: pointer; /* Puntero de cursor */
+  background: #0974f1; /* Fondo azul */
+  border-radius: 5px; /* Bordes redondeados */
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); /* Sombra del botón */
+  transition: background 0.3s ease, color 0.3s ease; /* Transición suave */
+}
+
+/* Efecto hover en el botón */
+.content .btn:hover {
+  background: #e8e8e8; /* Fondo claro al pasar el ratón */
+  color: #212121; /* Color oscuro para el texto al pasar el ratón */
+  outline: none; /* Sin contorno */
+}
+
+/* Efecto activo en el botón */
+.content .btn:active {
+  box-shadow: none; /* Sin sombra al hacer clic */
+}
