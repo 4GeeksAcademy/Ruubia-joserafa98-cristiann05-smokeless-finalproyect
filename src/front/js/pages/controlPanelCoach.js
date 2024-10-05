@@ -4,20 +4,20 @@ import { Context } from "../store/appContext";
 import SolicitudesCoach from "../component/SolicitudesCoach";
 
 const ControlPanelCoach = () => {
-    const { store } = useContext(Context); // Acceder al estado global
+    const { store, actions } = useContext(Context); // Acceder al estado global y a las acciones
     const navigate = useNavigate();
 
     useEffect(() => {
         // Verificar si el coach está autenticado
         if (!store.isAuthenticated) {
-            // Redirigir al coach a la página de registro/login si no está autenticado
-            navigate("/signup-coach"); // Cambia esto a la ruta de tu página de login si es necesario
+            // Redirigir al coach a la página de login si no está autenticado
+            navigate("/login-coach"); // Cambia esto a la ruta de tu página de login
         }
     }, [store.isAuthenticated, navigate]); // Dependencias de useEffect
 
     const handleLogout = () => {
-        // Elimina el token del localStorage
-        localStorage.removeItem("token");
+        // Llama a la acción de logout
+        actions.logoutCoach(); // Ejecuta la acción de logout
 
         // Redirigir a la página de login
         navigate("/login-coach");
