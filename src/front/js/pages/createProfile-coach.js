@@ -15,8 +15,9 @@ const CreateProfileCoach = () => {
             console.log("Coach logueado en CreateProfileCoach:", store.loggedInCoach);
             setNombreCoach(store.loggedInCoach.nombre || "");
             setGenero(store.loggedInCoach.genero || "masculino");
+            // Asegúrate de que el cumpleaños esté en el formato correcto
             if (store.loggedInCoach.cumpleaños) {
-                setCumpleaños(store.loggedInCoach.cumpleaños.split("T")[0]);
+                setCumpleaños(new Date(store.loggedInCoach.cumpleaños).toISOString().split("T")[0]);
             }
         }
     }, [store.loggedInCoach]);
@@ -30,18 +31,24 @@ const CreateProfileCoach = () => {
             return;
         }
 
+        // Validar que el cumpleaños no esté vacío
+        if (!cumpleaños) {
+            setError("La fecha de cumpleaños es requerida.");
+            return;
+        }
+
         const updatedData = {
             nombre_coach: nombreCoach,
             genero_coach: genero,
-            cumpleaños_coach: cumpleaños,
+            cumpleaños_coach: cumpleaños, // Aquí se asegura que el campo esté bien definido
         };
 
         console.log("Datos enviados en el perfil:", updatedData);
 
-        const success = await actions.updateProfile(store.loggedInCoach.id, updatedData);
+        const success = await actions.updateProfileCoach(store.loggedInCoach.id, updatedData);
         if (success) {
             alert("Perfil actualizado con éxito");
-            navigate('/control-panel-coach'); // Cambia a la siguiente página deseada
+            navigate('/control-panel-coach'); // Redirige a la página deseada
         } else {
             alert("Error al actualizar el perfil");
         }

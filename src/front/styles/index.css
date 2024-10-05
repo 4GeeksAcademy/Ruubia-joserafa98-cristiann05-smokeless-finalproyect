@@ -5,12 +5,25 @@ body {
     padding: 0;
     min-height: 100vh;
     display: flex;
-    flex-direction: column; /* Cambia a column para apilar el navbar y el contenido */
+    flex-direction: column;
     justify-content: flex-start;
     font-family: 'Arial', sans-serif;
-    transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
-    background-color: #0b0d12; /* Color de fondo oscuro como respaldo */
-    background-image: linear-gradient(to bottom, #0a1f36, #0b0d12); /* Gradiente azul a negro */
+    transition: background-image 0.5s ease-in-out, color 0.5s ease-in-out; /* Transición suave para el fondo y color */
+    background-image: linear-gradient(to bottom, #0a1f36, #0b0d12); /* Fondo por defecto (modo oscuro) */
+    color: white; /* Color de texto en modo oscuro */
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Modo oscuro */
+body.dark {
+    background-image: linear-gradient(to bottom, #0a1f36, #0b0d12);
+    color: white; /* Color de texto en modo oscuro */
+}
+
+/* Modo claro */
+body.light {
+    background-image: linear-gradient(to bottom, #ffffff, #f0f0f0);
+    color: #333; /* Color de texto en modo claro */
 }
 
 /* Navbar */
@@ -30,17 +43,6 @@ body {
 
 body.light .navbar .nav-item {
     color: #333; /* Cambia a color oscuro en modo claro */
-}
-
-/* Estilos para el tema oscuro */
-body.dark {
-    color: white; /* Color de texto blanco */
-}
-
-/* Estilos para el tema claro */
-body.light {
-    background-color: #f7f9fc; /* Fondo blanco suave */
-    color: #333; /* Color de texto oscuro */
 }
 
 /* Estilos de los idiomas */
@@ -65,3 +67,8 @@ body.light .language {
 }
 
 /* Estilos adicionales según sea necesario */
+
+#map {
+    height: 100vh; /* Ajusta esto según sea necesario */
+    width: 100%;
+  }

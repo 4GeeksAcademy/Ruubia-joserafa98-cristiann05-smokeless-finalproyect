@@ -11,7 +11,7 @@ const customIcon = L.icon({
     popupAnchor: [1, -34], // Punto donde se abre el popup en relación al icono
 });
 
-const CoachMapPage = () => {
+const SmokerMapPage = () => {
     const [map, setMap] = useState(null); // Estado para almacenar la referencia del mapa
     const [marker, setMarker] = useState(null); // Estado para el marcador
     const [inputValue, setInputValue] = useState(''); // Estado para el input
@@ -154,4 +154,4 @@ const CoachMapPage = () => {
     );
 };
 
-export default CoachMapPage;
+export default SmokerMapPage;
