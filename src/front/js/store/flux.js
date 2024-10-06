@@ -262,7 +262,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/${coachId}`); // Asegúrate de que esta URL sea correcta
                     const data = await response.json();
-                    setStore({ coach: data }); // Guarda la información del coach en el store
+                    console.log(data)
+                    setStore({ coach: data });
                 } catch (error) {
                     console.error("Error fetching coach:", error);
                 }

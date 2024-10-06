@@ -4,22 +4,18 @@ import { Context } from "../store/appContext";
 import SolicitudesCoach from "../component/SolicitudesCoach";
 
 const ControlPanelCoach = () => {
-    const { store, actions } = useContext(Context); // Acceder al estado global y a las acciones
+    const { store, actions } = useContext(Context);
     const navigate = useNavigate();
+    const { coach } = store; // Asegúrate de que 'coach' esté en tu store
 
     useEffect(() => {
-        // Verificar si el coach está autenticado
         if (!store.isAuthenticated) {
-            // Redirigir al coach a la página de login si no está autenticado
-            navigate("/login-coach"); // Cambia esto a la ruta de tu página de login
+            navigate("/login-coach");
         }
-    }, [store.isAuthenticated, navigate]); // Dependencias de useEffect
+    }, [store.isAuthenticated, navigate]);
 
     const handleLogout = () => {
-        // Llama a la acción de logout
-        actions.logoutCoach(); // Ejecuta la acción de logout
-
-        // Redirigir a la página de login
+        actions.logoutCoach();
         navigate("/login-coach");
     };
 
@@ -29,7 +25,7 @@ const ControlPanelCoach = () => {
             <p>This is the control panel for coaches.</p>
             <p>Here you will be able to manage your profile, track your clients' progress, and much more.</p>
             <button className="btn btn-primary">Manage Profile</button>
-            <button className="btn btn-secondary ml-3">Track Clients</button>
+            <button className="btn btn-secondary ml-3" onClick={() => navigate("/track-client")}>Track Clients</button>
             <button className="btn btn-info mt-3" onClick={() => navigate("/control-panel-coach/map")}>
                 View Coach Map
             </button>
@@ -38,10 +34,10 @@ const ControlPanelCoach = () => {
             </button>
             <button className="btn btn-danger mt-3" onClick={handleLogout}>
                 Logout
-            </button> {/* Botón para cerrar sesión */}
-            <SolicitudesCoach />
+            </button>
         </div>
     );
 };
 
 export default ControlPanelCoach;
+

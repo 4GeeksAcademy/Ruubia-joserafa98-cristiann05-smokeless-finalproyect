@@ -1,19 +1,19 @@
 import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 
-const SolicitudesCoach = ({ coachId }) => {
+const SolicitudesCoach = () => {
     const { store, actions } = useContext(Context);
-
+    
     useEffect(() => {
         // Obtener todas las solicitudes para el coach específico al cargar el componente
-        actions.getSolicitudesPorUser(coachId);
-    }, [coachId, actions]);
+        if (store.loggedInCoach && store.loggedInCoach.id) {
+            actions.getSolicitudesPorUser(store.loggedInCoach.id);
+        }
+    }, [store.loggedInCoach, actions]);
 
     const handleApprove = async (solicitudId) => {
         try {
-            // Llama a la acción para actualizar el estado de la solicitud a "aprobada"
             await actions.updateSolicitud(solicitudId, { estado: "aprobada", fecha_respuesta: new Date() });
-            // Puedes incluir lógica adicional aquí si es necesario
         } catch (error) {
             console.error("Error al aprobar la solicitud:", error);
         }
@@ -21,9 +21,7 @@ const SolicitudesCoach = ({ coachId }) => {
 
     const handleReject = async (solicitudId) => {
         try {
-            // Llama a la acción para actualizar el estado de la solicitud a "rechazada"
             await actions.updateSolicitud(solicitudId, { estado: "rechazada", fecha_respuesta: new Date() });
-            // Puedes incluir lógica adicional aquí si es necesario
         } catch (error) {
             console.error("Error al rechazar la solicitud:", error);
         }
