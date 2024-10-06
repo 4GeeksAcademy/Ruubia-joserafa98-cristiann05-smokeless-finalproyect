@@ -10,7 +10,7 @@ const SolicitudesCoach = () => {
         const fetchSolicitudes = async () => {
             if (store.loggedInCoach && store.loggedInCoach.id) {
                 try {
-                    await actions.getSolicitudesPorUser(store.loggedInCoach.id);
+                    await actions.getAllSolicitudes(store.loggedInCoach.id);
                 } catch (error) {
                     setError("Error al cargar las solicitudes");
                     console.error(error);
@@ -26,14 +26,17 @@ const SolicitudesCoach = () => {
     const handleUpdate = async (solicitudId, updatedData) => {
         try {
             await actions.updateSolicitud(solicitudId, updatedData);
-            await actions.getSolicitudesPorUser(store.loggedInCoach.id);
+            
+            // Filtrar la solicitud actualizada para que no aparezca en "solicitudes recibidas"
+            const updatedSolicitudes = store.solicitudes.filter(solicitud => solicitud.id !== solicitudId);
+            
+            actions.setStore({ solicitudes: updatedSolicitudes });
         } catch (error) {
             console.error("Error al actualizar la solicitud:", error);
         }
-        const updatedSolicitudes = store.solicitudes.filter(solicitud => solicitud.id !== solicitudId);
-actions.setStore({ solicitudes: updatedSolicitudes });
-
     };
+    
+    
 
     const handleApprove = async (solicitudId) => {
         await handleUpdate(solicitudId, {
@@ -55,15 +58,15 @@ actions.setStore({ solicitudes: updatedSolicitudes });
 
     return (
         <div className="container mt-5 bg-light">
-            <h2 className="text-center mb-4">Solicitudes Recibidas</h2>
+            <h2 className="text-center text-dark mb-4">Solicitudes Recibidas</h2>
             {loading ? (
-                <p className="text-center">Cargando solicitudes...</p>
+                <p className="text-center text-dark">Cargando solicitudes...</p>
             ) : error ? (
                 <p className="text-center text-danger">{error}</p>
             ) : (
                 <>
-                    {/* Tabla de todas las solicitudes */}
-                    <h3>Todas las Solicitudes</h3>
+                    {/* Tabla de Solicitudes Recibidas */}
+                    <h3 className="text-dark">Solicitudes Recibidas</h3>
                     {solicitudesRecibidas.length > 0 ? (
                         <table className="table table-striped">
                             <thead>
@@ -77,25 +80,27 @@ actions.setStore({ solicitudes: updatedSolicitudes });
                             </thead>
                             <tbody>
                                 {solicitudesRecibidas.map((solicitud) => (
-                                    <tr key={solicitud.id}>
-                                        <td>{solicitud.nombre_usuario}</td>
-                                        <td>{solicitud.comentarios}</td>
-                                        <td>{new Date(solicitud.fecha_solicitud).toLocaleString()}</td>
-                                        <td>{solicitud.estado}</td>
-                                        <td>
-                                            <button className="btn btn-success me-2" onClick={() => handleApprove(solicitud.id)}>Aprobar</button>
-                                            <button className="btn btn-danger" onClick={() => handleReject(solicitud.id)}>Rechazar</button>
-                                        </td>
-                                    </tr>
+                                    solicitud.fecha_respuesta === null ? ( // Mostrar solo si la fecha_respuesta es null
+                                        <tr key={solicitud.id}>
+                                            <td>{solicitud.nombre_usuario}</td>
+                                            <td>{solicitud.comentarios}</td>
+                                            <td>{solicitud.fecha_solicitud ? new Date(solicitud.fecha_solicitud).toLocaleString() : 'No disponible'}</td>
+                                            <td>{solicitud.estado}</td>
+                                            <td>
+                                                <button className="btn btn-success me-2" onClick={() => handleApprove(solicitud.id)}>Aprobar</button>
+                                                <button className="btn btn-danger" onClick={() => handleReject(solicitud.id)}>Rechazar</button>
+                                            </td>
+                                        </tr>
+                                    ) : null // No mostrar si la fecha_respuesta no es null
                                 ))}
                             </tbody>
                         </table>
                     ) : (
                         <p>No hay solicitudes recibidas.</p>
                     )}
-
-                    {/* Tabla de solicitudes aprobadas */}
-                    <h3>Solicitudes Aprobadas</h3>
+    
+                    {/* Tabla de Solicitudes Aprobadas */}
+                    <h3 className="text-dark">Solicitudes Aprobadas</h3>
                     {solicitudesAprobadas.length > 0 ? (
                         <table className="table table-success">
                             <thead>
@@ -107,20 +112,22 @@ actions.setStore({ solicitudes: updatedSolicitudes });
                             </thead>
                             <tbody>
                                 {solicitudesAprobadas.map((solicitud) => (
-                                    <tr key={solicitud.id}>
-                                        <td>{solicitud.nombre_usuario}</td>
-                                        <td>{solicitud.comentarios}</td>
-                                        <td>{new Date(solicitud.fecha_solicitud).toLocaleString()}</td>
-                                    </tr>
+                                    solicitud.estado === true && solicitud.fecha_respuesta ? ( // Mostrar solo si el estado es true y hay una fecha_respuesta
+                                        <tr key={solicitud.id}>
+                                            <td>{solicitud.nombre_usuario}</td>
+                                            <td>{solicitud.comentarios}</td>
+                                            <td>{new Date(solicitud.fecha_solicitud).toLocaleString()}</td>
+                                        </tr>
+                                    ) : null // No mostrar si no cumple las condiciones
                                 ))}
                             </tbody>
                         </table>
                     ) : (
                         <p>No hay solicitudes aprobadas.</p>
                     )}
-
-                    {/* Tabla de solicitudes rechazadas */}
-                    <h3>Solicitudes Rechazadas</h3>
+    
+                    {/* Tabla de Solicitudes Rechazadas */}
+                    <h3 className="text-dark">Solicitudes Rechazadas</h3>
                     {solicitudesRechazadas.length > 0 ? (
                         <table className="table table-danger">
                             <thead>
@@ -132,11 +139,13 @@ actions.setStore({ solicitudes: updatedSolicitudes });
                             </thead>
                             <tbody>
                                 {solicitudesRechazadas.map((solicitud) => (
-                                    <tr key={solicitud.id}>
-                                        <td>{solicitud.nombre_usuario}</td>
-                                        <td>{solicitud.comentarios}</td>
-                                        <td>{new Date(solicitud.fecha_solicitud).toLocaleString()}</td>
-                                    </tr>
+                                    solicitud.estado === false && solicitud.fecha_respuesta ? ( // Mostrar solo si el estado es false y hay una fecha_respuesta
+                                        <tr key={solicitud.id}>
+                                            <td>{solicitud.nombre_usuario}</td>
+                                            <td>{solicitud.comentarios}</td>
+                                            <td>{new Date(solicitud.fecha_solicitud).toLocaleString()}</td>
+                                        </tr>
+                                    ) : null // No mostrar si no cumple las condiciones
                                 ))}
                             </tbody>
                         </table>
@@ -147,7 +156,8 @@ actions.setStore({ solicitudes: updatedSolicitudes });
             )}
         </div>
     );
-};
+       
+}    
 
 export default SolicitudesCoach;
 
