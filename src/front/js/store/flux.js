@@ -460,32 +460,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             // Método para subir la imagen del smoker a Cloudinary
             uploadSmokerImage: async (file) => {
-                // Verificar si el archivo es válido
                 if (!file || !file.type.startsWith('image/')) {
                     console.error("El archivo no es una imagen válida.");
-                    return null; // Retorna null si el archivo no es válido
+                    return null;
                 }
             
-                // Verificar el tamaño del archivo (opcional)
                 const maxSize = 2 * 1024 * 1024; // 2 MB
                 if (file.size > maxSize) {
                     console.error("El archivo es demasiado grande. Debe ser menor a 2 MB.");
                     return null;
                 }
             
-                // Mensajes de depuración
-                console.log("Nombre del archivo:", file.name);
-                console.log("Tamaño del archivo:", file.size);
-                console.log("Tipo de archivo:", file.type);
-            
                 const formData = new FormData();
-                formData.append("file", file); // Asegúrate de que 'file' es la clave
-                formData.append("upload_preset", "ml_default"); // Preset de Cloudinary
-            
-                let response;
+                formData.append("file", file);
+                formData.append("upload_preset", process.env.CLOUDINARY_UPLOAD_PRESET); // Asegúrate de usar el preset correcto
             
                 try {
-                    response = await fetch(`https://api.cloudinary.com/v1_1/dsnmmg3kl/image/upload`, {
+                    const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`, {
                         method: "POST",
                         body: formData,
                     });
@@ -496,28 +487,22 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }
             
                     const data = await response.json();
-            
-                    // Actualizar el store con la URL de la imagen
+                    // Actualiza el store con la URL de la imagen
                     setStore((prevStore) => ({
                         ...prevStore,
                         loggedInUser: {
                             ...prevStore.loggedInUser,
-                            foto_usuario: data.secure_url, // Asegúrate de usar la propiedad correcta
+                            foto_usuario: data.secure_url,
                         }
                     }));
             
-                    return data; // Devuelve los datos completos de la imagen, incluido `secure_url`
+                    return data;
                 } catch (error) {
                     console.error("Error uploading image:", error);
-                    if (response) {
-                        const errorResponse = await response.json();
-                        console.error("Detalles del error:", errorResponse);
-                    } else {
-                        console.error("No se pudo obtener la respuesta del servidor.");
-                    }
                     return null;
                 }
-            },
+            },           
+            
             getCoachesLocations: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/ubicaciones`); // Ajusta la ruta según sea necesario
