@@ -5,26 +5,30 @@ import { useContext } from "react";
 
 const CoachDetails = () => {
     const { coachId } = useParams(); // Extraer el coachId de la URL
-    const { actions } = useContext(Context); 
-    const [coach, setCoach] = useState(null); 
+    const { actions, store } = useContext(Context); 
     const [loading, setLoading] = useState(true); // Estado para manejar la carga
     const [error, setError] = useState(null); // Estado para manejar errores
 
     useEffect(() => {
         const fetchCoachData = async () => {
+            if (!coachId) {
+                setError("No se ha proporcionado coachId");
+                setLoading(false);
+                return;
+            }
             try {
-                const coachData = await actions.getCoach(coachId); // Usa coachId para la solicitud
-                setCoach(coachData);
-                setLoading(false); // Establecer carga como completa
+                await actions.getCoach(coachId); // Acción que actualiza el store
+                setLoading(false); 
             } catch (error) {
-                console.error("Error fetching coach:", error);
-                setError("Error al cargar datos del coach."); // Manejar error
-                setLoading(false); // Establecer carga como completa
+                console.error("Error al obtener los datos del coach:", error);
+                setError("No se pudieron obtener los datos del coach.");
+                setLoading(false);
             }
         };
-
         fetchCoachData();
     }, [coachId, actions]);
+
+    const coach = store.coach; // Obtener coach desde el store
 
     return (
         <div className="container mt-5">
@@ -32,10 +36,10 @@ const CoachDetails = () => {
             {loading ? (
                 <p className="text-center">Cargando datos del coach...</p>
             ) : error ? (
-                <p className="text-center">{error}</p> // Mostrar mensaje de error
-            ) : coach ? (
+                <p className="text-center">{error}</p> 
+            ) : coach && coach.email_coach ? (
                 <div className="card">
-                    <img src={coach.foto_coach} alt="Foto del Coach" className="card-img-top" />
+                    <img src={coach.foto_coach || "https://via.placeholder.com/150"} alt="Foto del Coach" className="card-img-top" />
                     <div className="card-body">
                         <h5 className="card-title">{coach.nombre_coach || 'Nombre no disponible'}</h5>
                         <p className="card-text"><strong>Email:</strong> {coach.email_coach}</p>
@@ -56,4 +60,6 @@ const CoachDetails = () => {
 };
 
 export default CoachDetails;
+
+
 
