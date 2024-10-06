@@ -15,10 +15,10 @@ const CreateProfileUser = () => {
     // Efecto para cargar los datos del usuario logueado
     useEffect(() => {
         if (store.loggedInUser) {
-            setnombre_usuario(store.loggedInUser.nombre || ""); // Cargar nombre
-            setGenero(store.loggedInUser.genero || "masculino"); // Cargar género
-            if (store.loggedInUser.cumpleaños && typeof store.loggedInUser.cumpleaños === 'string') {
-                setCumpleaños(store.loggedInUser.cumpleaños.split("T")[0]); // Cargar cumpleaños
+            setnombre_usuario(store.loggedInUser.nombre_usuario || ""); // Cargar nombre
+            setGenero(store.loggedInUser.genero_usuario || "masculino"); // Cargar género
+            if (store.loggedInUser.nacimiento_usuario && typeof store.loggedInUser.nacimiento_usuario === 'string') {
+                setCumpleaños(store.loggedInUser.nacimiento_usuario.split("T")[0]); // Cargar cumpleaños
             }
             setfoto_usuario(store.loggedInUser.foto_usuario || null); // Cargar la imagen si existe
         }
@@ -44,14 +44,15 @@ const CreateProfileUser = () => {
         let imageUrl = store.loggedInUser.foto_usuario; // Si ya tiene una imagen, se conserva
         if (foto_usuario) {
             const uploadResult = await actions.uploadSmokerImage(foto_usuario); // Subir imagen
-            if (uploadResult) {
-                imageUrl = uploadResult.url; // Asegúrate de usar la propiedad correcta de la respuesta
+            console.log(uploadResult); // Imprime el resultado de Cloudinary para verificar los campos
+
+            if (uploadResult && uploadResult.secure_url) {
+                imageUrl = uploadResult.secure_url; // Usar la URL de la imagen subida
             } else {
                 setError("Error al subir la imagen. Inténtalo de nuevo.");
                 return;
             }
         }
-   
 
         // Datos a enviar al actualizar perfil
         const updatedData = {
@@ -126,4 +127,3 @@ const CreateProfileUser = () => {
 };
 
 export default CreateProfileUser;
-

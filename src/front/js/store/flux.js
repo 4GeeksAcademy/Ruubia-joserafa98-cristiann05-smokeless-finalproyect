@@ -479,10 +479,10 @@ const getState = ({ getStore, getActions, setStore }) => {
                 console.log("Tipo de archivo:", file.type);
             
                 const formData = new FormData();
-                formData.append("file", file);
-                formData.append("upload_preset", "ml_default"); // Tu preset de subida
+                formData.append("file", file); // Asegúrate de que 'file' es la clave
+                formData.append("upload_preset", "ml_default"); // Preset de Cloudinary
             
-                let response; // Declara la variable aquí
+                let response;
             
                 try {
                     response = await fetch(`https://api.cloudinary.com/v1_1/dsnmmg3kl/image/upload`, {
@@ -496,30 +496,28 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }
             
                     const data = await response.json();
-                    // Actualiza el store con la nueva URL
+            
+                    // Actualizar el store con la URL de la imagen
                     setStore((prevStore) => ({
                         ...prevStore,
                         loggedInUser: {
                             ...prevStore.loggedInUser,
-                            foto_usuario: data.secure_url, // Asegúrate de que esto sea el campo correcto en el store
+                            foto_usuario: data.secure_url, // Asegúrate de usar la propiedad correcta
                         }
                     }));
             
-                    return data.secure_url; // Retorna la URL de la imagen subida
+                    return data; // Devuelve los datos completos de la imagen, incluido `secure_url`
                 } catch (error) {
                     console.error("Error uploading image:", error);
-                    // Asegúrate de que `response` esté definido antes de acceder a ella
                     if (response) {
                         const errorResponse = await response.json();
                         console.error("Detalles del error:", errorResponse);
                     } else {
                         console.error("No se pudo obtener la respuesta del servidor.");
                     }
-                    return null; // Retorna null si hay un error
+                    return null;
                 }
             },
-            
-
             getCoachesLocations: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/ubicaciones`); // Ajusta la ruta según sea necesario
