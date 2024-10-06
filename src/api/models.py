@@ -106,12 +106,14 @@ class Solicitud(db.Model):
         return {
             "id": self.id,
             "id_usuario": self.id_usuario,
+            "nombre_usuario": self.user.nombre_usuario, 
             "id_coach": self.id_coach,
             "fecha_solicitud": self.fecha_solicitud.strftime("%d/%m/%Y") if self.fecha_solicitud else None,
             "estado": self.estado,
             "fecha_respuesta": self.fecha_respuesta.strftime("%d/%m/%Y") if self.fecha_respuesta else None,
             "comentarios": self.comentarios
         }
+
 
 
 class Mensajes(db.Model):

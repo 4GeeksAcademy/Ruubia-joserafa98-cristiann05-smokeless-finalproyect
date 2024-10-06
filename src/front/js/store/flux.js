@@ -27,7 +27,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             userId: null,
             userInfo: null,
             coachInfo: null,
-            solicitud: [],
+            solicitudes: [],
         },
         actions: {
 
@@ -581,11 +581,12 @@ const getState = ({ getStore, getActions, setStore }) => {
             // Obtener solicitudes por usuario específico
             getSolicitudesPorUser: async (userId) => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/solicitudes/${userId}`);
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/solicitudes/usuario/${userId}`);
                     if (!response.ok) {
                         throw new Error("Error en la respuesta del servidor");
                     }
                     const data = await response.json();
+                    console.log ("probando data",data)
                     setStore({ solicitudes: data }); // Guarda las solicitudes del usuario en el store
                 } catch (error) {
                     console.error("Error fetching solicitudes por usuario:", error);
@@ -618,23 +619,26 @@ const getState = ({ getStore, getActions, setStore }) => {
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify(updatedData), // Enviar el objeto de actualización
+                        body: JSON.stringify(updatedData),
                     });
                     if (!response.ok) {
                         throw new Error("Error al actualizar la solicitud");
                     }
-
+            
                     const data = await response.json();
+            
+                    // Actualiza la solicitud en el store y elimina de la lista
                     setStore((prevStore) => ({
                         ...prevStore,
                         solicitudes: prevStore.solicitudes.map((solicitud) =>
-                            solicitud.id === solicitudId ? data : solicitud // Actualiza la solicitud en el store
+                            solicitud.id === solicitudId ? { ...solicitud, ...updatedData } : solicitud
                         ),
-                    }));
+                    }));                    
                 } catch (error) {
                     console.error("Error updating solicitud:", error);
                 }
             },
+            
 
             // Eliminar una solicitud específica
             deleteSolicitud: async (solicitudId) => {
