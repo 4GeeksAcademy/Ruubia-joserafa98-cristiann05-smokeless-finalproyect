@@ -460,26 +460,41 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             // Método para subir la imagen del smoker a Cloudinary
             uploadSmokerImage: async (file) => {
+                // Verificar si el archivo es válido
                 if (!file || !file.type.startsWith('image/')) {
                     console.error("El archivo no es una imagen válida.");
                     return null; // Retorna null si el archivo no es válido
                 }
-
+            
+                // Verificar el tamaño del archivo (opcional)
+                const maxSize = 2 * 1024 * 1024; // 2 MB
+                if (file.size > maxSize) {
+                    console.error("El archivo es demasiado grande. Debe ser menor a 2 MB.");
+                    return null;
+                }
+            
+                // Mensajes de depuración
+                console.log("Nombre del archivo:", file.name);
+                console.log("Tamaño del archivo:", file.size);
+                console.log("Tipo de archivo:", file.type);
+            
                 const formData = new FormData();
                 formData.append("file", file);
                 formData.append("upload_preset", "ml_default"); // Tu preset de subida
-
+            
+                let response; // Declara la variable aquí
+            
                 try {
-                    const response = await fetch(`https://api.cloudinary.com/v1_1/dsnmmg3kl/image/upload`, {
+                    response = await fetch(`https://api.cloudinary.com/v1_1/dsnmmg3kl/image/upload`, {
                         method: "POST",
                         body: formData,
                     });
-
+            
                     if (!response.ok) {
                         const errorData = await response.json();
                         throw new Error(`Error al subir la imagen: ${errorData.message}`);
                     }
-
+            
                     const data = await response.json();
                     // Actualiza el store con la nueva URL
                     setStore((prevStore) => ({
@@ -489,13 +504,21 @@ const getState = ({ getStore, getActions, setStore }) => {
                             foto_usuario: data.secure_url, // Asegúrate de que esto sea el campo correcto en el store
                         }
                     }));
-
+            
                     return data.secure_url; // Retorna la URL de la imagen subida
                 } catch (error) {
                     console.error("Error uploading image:", error);
+                    // Asegúrate de que `response` esté definido antes de acceder a ella
+                    if (response) {
+                        const errorResponse = await response.json();
+                        console.error("Detalles del error:", errorResponse);
+                    } else {
+                        console.error("No se pudo obtener la respuesta del servidor.");
+                    }
                     return null; // Retorna null si hay un error
                 }
             },
+            
 
             getCoachesLocations: async () => {
                 try {

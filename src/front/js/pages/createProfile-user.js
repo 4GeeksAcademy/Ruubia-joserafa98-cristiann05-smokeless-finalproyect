@@ -45,12 +45,13 @@ const CreateProfileUser = () => {
         if (foto_usuario) {
             const uploadResult = await actions.uploadSmokerImage(foto_usuario); // Subir imagen
             if (uploadResult) {
-                imageUrl = uploadResult.secure_url; // Guardar URL de la imagen subida
+                imageUrl = uploadResult.url; // Asegúrate de usar la propiedad correcta de la respuesta
             } else {
                 setError("Error al subir la imagen. Inténtalo de nuevo.");
                 return;
             }
         }
+   
 
         // Datos a enviar al actualizar perfil
         const updatedData = {
