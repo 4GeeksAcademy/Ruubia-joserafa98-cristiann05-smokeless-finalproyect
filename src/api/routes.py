@@ -2,9 +2,10 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, SmokerUser, Coach, TiposConsumo, Mensajes, Solicitud
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-from datetime import datetime
+from datetime import datetime 
 from cloudinary_config import cloudinary
-from datetime import date
+
+
 
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
 
@@ -348,11 +349,13 @@ def upload_smoker_image(smoker_id):
         # Sube la imagen a Cloudinary
         response = cloudinary.uploader.upload(file)
         image_url = response['secure_url']
+        public_id = response['public_id']  # Obtén el public_id
 
-        # Actualiza el campo foto_usuario en la base de datos
+        # Actualiza el campo foto_usuario y public_id en la base de datos
         smoker = SmokerUser.query.get(smoker_id)
         if smoker:
             smoker.foto_usuario = image_url
+            smoker.public_id = public_id  # Actualiza el public_id
             db.session.commit()
             return jsonify({'message': 'Image uploaded successfully', 'url': image_url}), 200
         else:
@@ -399,7 +402,7 @@ def update_smoker_image(smoker_id):
 
         # Actualiza la URL y el public_id en la base de datos
         smoker.foto_usuario = image_url
-        smoker.public_id = new_public_id
+        smoker.public_id = new_public_id  # Actualiza el public_id
         db.session.commit()
 
         return jsonify({'message': 'Image updated successfully', 'url': image_url}), 200

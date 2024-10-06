@@ -466,6 +466,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return null; // Retorna null si el archivo no es válido
                 }
             
+                // Verificar el tamaño del archivo (opcional)
+                const maxSize = 2 * 1024 * 1024; // 2 MB
+                if (file.size > maxSize) {
+                    console.error("El archivo es demasiado grande. Debe ser menor a 2 MB.");
+                    return null;
+                }
+            
                 // Mensajes de depuración
                 console.log("Nombre del archivo:", file.name);
                 console.log("Tamaño del archivo:", file.size);
@@ -510,7 +517,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }
                     return null; // Retorna null si hay un error
                 }
-            },     
+            },
+            
 
             getCoachesLocations: async () => {
                 try {
