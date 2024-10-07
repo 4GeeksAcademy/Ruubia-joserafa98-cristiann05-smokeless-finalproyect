@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const UserProfile = () => {
-    const [userData, setUserData] = useState({});
+    const { userId } = useParams(); // Obtener el userId de la URL
+    const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true); // Manejar estado de carga
 
     useEffect(() => {
-        const userId = localStorage.getItem("user_id");
-        console.log("User ID:", userId); // Agregar console.log para verificar el ID
-
-        if (!userId) {
-            console.error("No se encontró el user_id en localStorage.");
-            return; // Salir si userId es null
-        }
-
         const fetchUserProfile = async () => {
             try {
                 const response = await fetch(`${process.env.BACKEND_URL}/api/smoker/${userId}`, {
@@ -23,18 +18,28 @@ const UserProfile = () => {
                 });
 
                 if (!response.ok) {
-                    throw new Error("Error en la respuesta de la API: " + response.statusText);
+                    throw new Error(`Error: ${response.statusText}`);
                 }
 
                 const data = await response.json();
-                setUserData(data);
+                setUserData(data); // Guardar los datos obtenidos en el estado
             } catch (error) {
-                console.error("Error fetching user profile:", error);
+                console.error("Error al obtener el perfil del usuario:", error);
+            } finally {
+                setLoading(false); // Dejar de mostrar el estado de carga
             }
         };
 
         fetchUserProfile();
-    }, []);
+    }, [userId]);
+
+    if (loading) {
+        return <p>Cargando perfil del usuario...</p>; // Mostrar un mensaje mientras se cargan los datos
+    }
+
+    if (!userData) {
+        return <p>No se pudo cargar el perfil del usuario.</p>; // Manejar errores
+    }
 
     return (
         <div className="user-profile">
@@ -56,3 +61,4 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
+
