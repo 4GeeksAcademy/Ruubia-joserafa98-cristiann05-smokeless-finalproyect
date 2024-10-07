@@ -19,13 +19,13 @@ CORS(api)
 
 # USUARIOS
 # Obtener todos los usuarios fumadores (GET)
-@api.route('/smokers', methods=['GET'])
-def get_all_smokers():
-    smokers = SmokerUser.query.all()
-    return jsonify([smoker.serialize() for smoker in smokers]), 200
+@api.route('/smoker', methods=['GET'])
+def get_all_smoker():
+    smoker = SmokerUser.query.all()
+    return jsonify([smoker.serialize() for smoker in smoker]), 200
 
 # Obtener un fumador por ID (GET)
-@api.route('/smokers/<int:user_id>', methods=['GET'])
+@api.route('/smoker/<int:user_id>', methods=['GET'])
 def get_smoker(user_id):
     smoker = SmokerUser.query.get(user_id)
     if smoker is None:
@@ -79,6 +79,23 @@ def login():
     token = create_access_token(identity=user.id)
 
     return jsonify({"msg": "Login exitoso", "token": token, "user_id": user.id}), 200
+@api.route("/api/smoker/<int:user_id>", methods=["GET"])
+def get_smoker_profile(user_id):
+    smoker = SmokerUser.query.get(user_id)
+    if smoker is None:
+        return jsonify({"error": "Smoker not found"}), 404
+
+    return jsonify({
+        "email_usuario": smoker.email_usuario,
+        "nombre_usuario": smoker.nombre_usuario,
+        "genero_usuario": smoker.genero_usuario,
+        "nacimiento_usuario": smoker.nacimiento_usuario,
+        "tiempo_fumando": smoker.tiempo_fumando,
+        "numero_cigarrillos": smoker.numero_cigarrillos,
+        "periodicidad_consumo": smoker.periodicidad_consumo,
+        "foto_usuario": smoker.foto_usuario,  # Aquí se devuelve la URL de la foto
+        "public_id": smoker.public_id
+    })
 
 # Actualización de perfil de usuario
 @api.route('/create_profile/<int:user_id>', methods=['PUT'])
@@ -331,10 +348,9 @@ def delete_image(coach_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Repetir lógica similar para los smokers...
 
 # Endpoint para subir imágenes de un smoker
-@api.route('/smokers/upload_image/<int:user_id>', methods=['POST'])
+@api.route('/smoker/upload_image/<int:user_id>', methods=['POST'])
 def upload_smoker_image(user_id):
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
@@ -364,7 +380,7 @@ def upload_smoker_image(user_id):
         return jsonify({'error': str(e)}), 500
 
 # Endpoint para obtener la imagen de un smoker
-@api.route('/smokers/image/<int:user_id>', methods=['GET'])
+@api.route('/smoker/image/<int:user_id>', methods=['GET'])
 def get_smoker_image(user_id):
     smoker = SmokerUser.query.get(user_id)
     if smoker and smoker.foto_usuario:
@@ -373,7 +389,7 @@ def get_smoker_image(user_id):
         return jsonify({'error': 'Image not found'}), 404
 
 # Endpoint para actualizar la imagen de un smoker
-@api.route('/smokers/update_image/<int:user_id>', methods=['PUT'])
+@api.route('/smoker/update_image/<int:user_id>', methods=['PUT'])
 def update_smoker_image(user_id):
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
@@ -410,7 +426,7 @@ def update_smoker_image(user_id):
         return jsonify({'error': str(e)}), 500
 
 # Endpoint para eliminar la imagen de un smoker
-@api.route('/smokers/delete_image/<int:user_id>', methods=['DELETE'])
+@api.route('/smoker/delete_image/<int:user_id>', methods=['DELETE'])
 def delete_smoker_image(user_id):
     try:
         smoker = SmokerUser.query.get(user_id)

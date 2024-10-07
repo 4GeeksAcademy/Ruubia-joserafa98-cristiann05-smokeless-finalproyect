@@ -1,7 +1,7 @@
 const getState = ({ getStore, getActions, setStore }) => {
     return {
         store: {
-            smokers: [],
+            smoker: [],
             tiposConsumo: [],
             coaches: [],
             loggedInUser: {
@@ -33,16 +33,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             setStore: (newStore) => setStore((prevStore) => ({ ...prevStore, ...newStore })),
 
-            getAllSmokers: async () => {
+            getAllsmoker: async () => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/smokers`);
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/smoker`);
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const data = await response.json();
-                    setStore({ smokers: data });
+                    setStore({ smoker: data });
                 } catch (error) {
-                    console.error("Error fetching smokers:", error);
+                    console.error("Error fetching smoker:", error);
                 }
             },
 
@@ -64,7 +64,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         console.log("Nuevo usuario creado:", newSmoker); // Muestra los datos del nuevo usuario
 
                         // No almacenar el token aquí
-                        setStore({ smokers: [...getStore().smokers, newSmoker] }); // Actualiza el estado
+                        setStore({ smoker: [...getStore().smoker, newSmoker] }); // Actualiza el estado
 
                         return true; // Retorna verdadero si la operación es exitosa
                     } else {
@@ -248,7 +248,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 });
             },
 
-                        // Obtener todos los coaches
+            // Obtener todos los coaches
             getAllCoaches: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/coaches`);
@@ -384,7 +384,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "Authorization": `Bearer ${localStorage.getItem("token")}`,
                         },
                     });
-            
+
                     if (response.ok) {
                         const data = await response.json();
                         console.log("Información del coach:", data);
@@ -399,7 +399,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return null;
                 }
             },
-           
+
 
             // Logout
             logoutCoach: () => {
@@ -417,33 +417,33 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("El archivo no es una imagen válida.");
                     return null; // Retorna null si el archivo no es válido
                 }
-            
+
                 const maxSize = 2 * 1024 * 1024; // 2 MB
                 if (file.size > maxSize) {
                     console.error("El archivo es demasiado grande. Debe ser menor a 2 MB.");
                     return null;
                 }
-            
+
                 const formData = new FormData();
                 formData.append("file", file);
                 formData.append("upload_preset", process.env.CLOUDINARY_UPLOAD_PRESET); // Asegúrate de usar el preset correcto
-            
+
                 try {
                     const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`, {
                         method: "POST",
                         body: formData,
                     });
-            
+
                     if (!response.ok) {
                         const errorData = await response.json();
                         throw new Error(`Error al subir la imagen: ${errorData.message}`);
                     }
-            
+
                     const data = await response.json();
                     console.log("Respuesta de Cloudinary:", data); // Verifica la respuesta
-                    
+
                     const imageUrl = data.secure_url; // Obtén la URL de la respuesta de Cloudinary
-            
+
                     // Enviar la URL a tu API
                     const apiResponse = await fetch(`/api/coaches/upload_image/${coachId}`, {
                         method: "POST",
@@ -452,12 +452,12 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify({ imageUrl }),
                     });
-            
+
                     if (!apiResponse.ok) {
                         const apiError = await apiResponse.json();
                         console.error("Error al enviar la imagen a la API:", apiError);
                     }
-            
+
                     // Actualiza el store con la URL de la imagen
                     setStore((prevStore) => ({
                         ...prevStore,
@@ -466,42 +466,42 @@ const getState = ({ getStore, getActions, setStore }) => {
                             foto_coach: imageUrl, // Asegúrate de que el campo sea correcto
                         }
                     }));
-            
+
                     return data;
                 } catch (error) {
                     console.error("Error uploading image:", error);
                     return null;
                 }
             },
-                        
+
             // Método para subir la imagen del smoker a Cloudinary
             uploadSmokerImage: async (file) => {
                 if (!file || !file.type.startsWith('image/')) {
                     console.error("El archivo no es una imagen válida.");
                     return null;
                 }
-            
+
                 const maxSize = 2 * 1024 * 1024; // 2 MB
                 if (file.size > maxSize) {
                     console.error("El archivo es demasiado grande. Debe ser menor a 2 MB.");
                     return null;
                 }
-            
+
                 const formData = new FormData();
                 formData.append("file", file);
                 formData.append("upload_preset", process.env.CLOUDINARY_UPLOAD_PRESET); // Asegúrate de usar el preset correcto
-            
+
                 try {
                     const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`, {
                         method: "POST",
                         body: formData,
                     });
-            
+
                     if (!response.ok) {
                         const errorData = await response.json();
                         throw new Error(`Error al subir la imagen: ${errorData.message}`);
                     }
-            
+
                     const data = await response.json();
                     // Actualiza el store con la URL de la imagen
                     setStore((prevStore) => ({
@@ -511,13 +511,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                             foto_usuario: data.secure_url,
                         }
                     }));
-            
+
                     return data;
                 } catch (error) {
                     console.error("Error uploading image:", error);
                     return null;
                 }
-            },           
+            },
             getCoachesLocations: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/ubicaciones`); // Ajusta la ruta según sea necesario
@@ -600,14 +600,14 @@ const getState = ({ getStore, getActions, setStore }) => {
                         throw new Error("Error en la respuesta del servidor");
                     }
                     const data = await response.json();
-                    console.log ("probando data",data)
+                    console.log("probando data", data)
                     setStore({ solicitudes: data }); // Guarda las solicitudes del usuario en el store
                 } catch (error) {
                     console.error("Error fetching solicitudes por usuario:", error);
                 }
             },
 
-            
+
             addSolicitud: async (newSolicitud) => {
                 console.log("Datos a enviar:", newSolicitud); // Agrega esta línea para depurar
                 try {
@@ -623,7 +623,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error adding solicitud:", error);
                 }
             },
-            
+
 
             // Actualizar una solicitud específica
             updateSolicitud: async (solicitudId, updatedData) => {
@@ -638,21 +638,21 @@ const getState = ({ getStore, getActions, setStore }) => {
                     if (!response.ok) {
                         throw new Error("Error al actualizar la solicitud");
                     }
-            
+
                     const data = await response.json();
-            
+
                     // Actualiza la solicitud en el store y elimina de la lista
                     setStore((prevStore) => ({
                         ...prevStore,
                         solicitudes: prevStore.solicitudes.map((solicitud) =>
                             solicitud.id === solicitudId ? { ...solicitud, ...updatedData } : solicitud
                         ),
-                    }));                    
+                    }));
                 } catch (error) {
                     console.error("Error updating solicitud:", error);
                 }
             },
-            
+
 
             // Eliminar una solicitud específica
             deleteSolicitud: async (solicitudId) => {

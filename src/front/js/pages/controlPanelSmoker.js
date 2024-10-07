@@ -34,10 +34,10 @@ const ControlPanelSmoker = () => {
     return (
         <div className="container mt-5">
             <h1>Welcome to your Dashboard!</h1>
-            <p>This is the control panel for smokers.</p>
-            <button 
-                className="btn btn-primary mt-3" 
-                onClick={() => navigate("/smoker-profile")}
+            <p>This is the control panel for smoker.</p>
+            <button
+                className="btn btn-primary mt-3"
+                onClick={() => navigate("/user-profile")}
             >
                 Ver Perfil del Fumador
             </button>
