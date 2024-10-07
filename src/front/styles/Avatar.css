@@ -1,0 +1,57 @@
+.avatar {
+    position: relative;
+    display: inline-block;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #f3f4f6; /* Fondo claro por defecto si no hay imagen */
+    color: #1f2937; /* Color del texto para las iniciales (gris oscuro) */
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegura que la imagen mantenga su proporción */
+}
+
+.avatar-placeholder {
+    text-transform: uppercase; /* Las iniciales se mostrarán en mayúsculas */
+}
+
+.status {
+    position: absolute;
+    right: -4px;
+    bottom: -4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white; /* Añade un borde blanco para separar el estado del avatar */
+}
+
+.status.online {
+    background-color: #34d399; /* Verde para en línea (equivale a bg-green-400 en Tailwind) */
+}
+
+.status.offline {
+    background-color: #d1d5db; /* Gris para desconectado (equivale a bg-gray-400) */
+}
+
+/* Tamaños del avatar */
+.avatar.small {
+    width: 40px;
+    height: 40px;
+}
+
+.avatar.medium {
+    width: 64px;
+    height: 64px;
+}
+
+.avatar.large {
+    width: 100px;
+    height: 100px;
+}
