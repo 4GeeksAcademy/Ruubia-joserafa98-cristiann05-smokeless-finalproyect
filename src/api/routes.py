@@ -4,16 +4,18 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from datetime import datetime 
 from cloudinary_config import cloudinary
+from upload_image import upload_image_to_coach, upload_image_to_smoker
 
 
 
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
 
 api = Blueprint('api', __name__)
-coaches_bp = Blueprint('coaches', __name__)
+
 
 # Allow CORS requests to this API
 CORS(api)
+
 
 # USUARIOS
 # Obtener todos los usuarios fumadores (GET)
@@ -23,9 +25,9 @@ def get_all_smokers():
     return jsonify([smoker.serialize() for smoker in smokers]), 200
 
 # Obtener un fumador por ID (GET)
-@api.route('/smokers/<int:smoker_id>', methods=['GET'])
-def get_smoker(smoker_id):
-    smoker = SmokerUser.query.get(smoker_id)
+@api.route('/smokers/<int:user_id>', methods=['GET'])
+def get_smoker(user_id):
+    smoker = SmokerUser.query.get(user_id)
     if smoker is None:
         return jsonify({"error": "Usuario no encontrado"}), 404
     return jsonify(smoker.serialize()), 200
@@ -110,9 +112,10 @@ def update_consumo_profile(user_id):
     numero_cigarrillos = request.json.get('numero_cigarrillos', None)
     periodicidad_consumo = request.json.get('periodicidad_consumo', None)
     tiempo_fumando = request.json.get('tiempo_fumando', None)
-
+    print(f"Forma de consumo recibida: {forma_consumo_str}")
     if forma_consumo_str:
         tipo_consumo = TiposConsumo.query.filter_by(name=forma_consumo_str).first()
+        print(f"Tipo de consumo encontrado: {tipo_consumo}")
         if tipo_consumo:
             user.forma_consumo = tipo_consumo.id
         else:
@@ -140,7 +143,7 @@ def create_profile_coach(coach_id):
 
     nombre = request.json.get('nombre_coach')
     genero = request.json.get('genero_coach')
-    cumpleaños = request.json.get('cumpleaños_coach')  # Asegúrate de que este nombre coincida
+    cumpleaños = request.json.get('nacimiento_coach')  
 
     if nombre:
         coach.nombre_coach = nombre
@@ -157,6 +160,7 @@ def create_profile_coach(coach_id):
     db.session.commit()
 
     return jsonify({"msg": "Perfil del coach actualizado exitosamente", "coach": coach.serialize()}), 200
+
 
 # Obtener todos los coaches (GET)
 @api.route('/coaches', methods=['GET'])
@@ -190,6 +194,7 @@ def signup_coach():
         password_coach=password,
         nombre_coach=None,
         genero_coach=None,
+        nacimiento_coach=None,
         direccion=None,
         latitud=None,
         longitud=None,
@@ -221,15 +226,9 @@ def login_coach():
 
     return jsonify({
         "msg": "Login exitoso",
-        "coach_id": coach.id,
-        "email_coach": coach.email_coach,
-        "nombre_coach": coach.nombre_coach,  # Asegúrate de incluir el nombre
-        "genero_coach": coach.genero_coach,  # Incluye también el género
-        "nacimiento_coach": coach.nacimiento_coach.isoformat() if coach.nacimiento_coach else None,
-        "token": token  # Devuelve el token para uso posterior
+        "token": token,
+        "coach_id": coach.id  # Mantener solo el coach_id en la respuesta
     }), 200
-
-
 
 # Obtener tipos de consumo (GET)
 @api.route('/tiposconsumo', methods=['GET'])
@@ -246,7 +245,7 @@ def get_consuming(tiposconsumo_id):
     return jsonify(tiposconsumo.serialize()), 200
 
 # Endpoint para subir imágenes
-@coaches_bp.route('/coaches/upload_image/<int:coach_id>', methods=['POST'])
+@api.route('/coaches/upload_image/<int:coach_id>', methods=['POST'])
 def upload_image(coach_id):
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
@@ -273,7 +272,7 @@ def upload_image(coach_id):
         return jsonify({'error': str(e)}), 500
 
 # Endpoint para obtener la imagen de un coach
-@coaches_bp.route('/coaches/image/<int:coach_id>', methods=['GET'])
+@api.route('/coaches/image/<int:coach_id>', methods=['GET'])
 def get_image(coach_id):
     coach = Coach.query.get(coach_id)
     if coach and coach.foto_coach:
@@ -282,7 +281,7 @@ def get_image(coach_id):
         return jsonify({'error': 'Image not found'}), 404
 
 # Endpoint para actualizar la imagen de un coach
-@coaches_bp.route('/coaches/update_image/<int:coach_id>', methods=['PUT'])
+@api.route('/coaches/update_image/<int:coach_id>', methods=['PUT'])
 def update_image(coach_id):
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
@@ -313,7 +312,7 @@ def update_image(coach_id):
         return jsonify({'error': str(e)}), 500
 
 # Endpoint para eliminar la imagen de un coach
-@coaches_bp.route('/coaches/delete_image/<int:coach_id>', methods=['DELETE'])
+@api.route('/coaches/delete_image/<int:coach_id>', methods=['DELETE'])
 def delete_image(coach_id):
     try:
         coach = Coach.query.get(coach_id)
@@ -335,8 +334,8 @@ def delete_image(coach_id):
 # Repetir lógica similar para los smokers...
 
 # Endpoint para subir imágenes de un smoker
-@api.route('/smokers/upload_image/<int:smoker_id>', methods=['POST'])
-def upload_smoker_image(smoker_id):
+@api.route('/smokers/upload_image/<int:user_id>', methods=['POST'])
+def upload_smoker_image(user_id):
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
 
@@ -352,7 +351,7 @@ def upload_smoker_image(smoker_id):
         public_id = response['public_id']  # Obtén el public_id
 
         # Actualiza el campo foto_usuario y public_id en la base de datos
-        smoker = SmokerUser.query.get(smoker_id)
+        smoker = SmokerUser.query.get(user_id)
         if smoker:
             smoker.foto_usuario = image_url
             smoker.public_id = public_id  # Actualiza el public_id
@@ -365,17 +364,17 @@ def upload_smoker_image(smoker_id):
         return jsonify({'error': str(e)}), 500
 
 # Endpoint para obtener la imagen de un smoker
-@api.route('/smokers/image/<int:smoker_id>', methods=['GET'])
-def get_smoker_image(smoker_id):
-    smoker = SmokerUser.query.get(smoker_id)
+@api.route('/smokers/image/<int:user_id>', methods=['GET'])
+def get_smoker_image(user_id):
+    smoker = SmokerUser.query.get(user_id)
     if smoker and smoker.foto_usuario:
         return jsonify({'image_url': smoker.foto_usuario}), 200
     else:
         return jsonify({'error': 'Image not found'}), 404
 
 # Endpoint para actualizar la imagen de un smoker
-@api.route('/smokers/update_image/<int:smoker_id>', methods=['PUT'])
-def update_smoker_image(smoker_id):
+@api.route('/smokers/update_image/<int:user_id>', methods=['PUT'])
+def update_smoker_image(user_id):
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
 
@@ -386,7 +385,7 @@ def update_smoker_image(smoker_id):
 
     try:
         # Busca el smoker en la base de datos
-        smoker = SmokerUser.query.get(smoker_id)
+        smoker = SmokerUser.query.get(user_id)
         if not smoker:
             return jsonify({'error': 'Smoker not found'}), 404
 
@@ -411,10 +410,10 @@ def update_smoker_image(smoker_id):
         return jsonify({'error': str(e)}), 500
 
 # Endpoint para eliminar la imagen de un smoker
-@api.route('/smokers/delete_image/<int:smoker_id>', methods=['DELETE'])
-def delete_smoker_image(smoker_id):
+@api.route('/smokers/delete_image/<int:user_id>', methods=['DELETE'])
+def delete_smoker_image(user_id):
     try:
-        smoker = SmokerUser.query.get(smoker_id)
+        smoker = SmokerUser.query.get(user_id)
         if smoker:
             if smoker.public_id:
                 # Elimina la imagen de Cloudinary
@@ -430,6 +429,20 @@ def delete_smoker_image(smoker_id):
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@api.route('/users/upload_image/<int:user_id>', methods=['POST'])
+def upload_user_image(user_id):
+    request_data = request.get_json()  # Obtén los datos de la solicitud
+    image_url = request_data.get('imageUrl')  # Obtén la URL de la imagen
+
+    try:
+        # Actualiza la imagen en la base de datos
+        UserModel.update_one({'_id': user_id}, {'$set': {'foto_usuario': image_url}})
+        return jsonify({'message': 'Perfil actualizado con éxito.'}), 200
+    except Exception as error:
+        print("Error al actualizar el perfil:", error)
+        return jsonify({'message': 'Error al actualizar el perfil.'}), 500
+
 
 # Obtener las ubicaciones de todos los coaches (GET)
 @api.route('/coaches/locations', methods=['GET'])
@@ -594,6 +607,47 @@ def delete_solicitud(id):
     db.session.delete(solicitud)
     db.session.commit()
     return jsonify({"message": "Solicitud eliminada exitosamente"}), 200
+
+@api.route('/upload-coach-image', methods=['POST'])
+def upload_coach_image_v1():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+
+    file = request.files['file']  # Suponiendo que la imagen viene en un formulario
+
+    try:
+        # Guardar la imagen localmente antes de subir a Cloudinary
+        file_path = f"ruta/a/donde/guardar/{file.filename}"
+        file.save(file_path)
+
+        image_url = upload_image_to_coach(file_path)  # Usar la función
+        if image_url:
+            return jsonify({"url": image_url}), 200
+        return jsonify({"error": "Error al subir la imagen"}), 500
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Endpoint para subir la imagen de un smoker
+@api.route('/upload-smoker-image', methods=['POST'])
+def upload_smoker_image_v1():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+
+    file = request.files['file']  # Suponiendo que la imagen viene en un formulario
+
+    try:
+        # Guardar la imagen localmente antes de subir a Cloudinary
+        file_path = f"ruta/a/donde/guardar/{file.filename}"
+        file.save(file_path)
+
+        image_url = upload_image_to_smoker(file_path)  # Usar la función
+        if image_url:
+            return jsonify({"url": image_url}), 200
+        return jsonify({"error": "Error al subir la imagen"}), 500
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # Ruta protegida con JWT
 @api.route('/protected', methods=['GET'])
