@@ -4,12 +4,10 @@ import "../../styles/homePage.css"; // CSS global
 import Atropos from 'atropos/react'; // Importa Atropos
 import 'atropos/css'; // Importa los estilos de Atropos
 import foto from '../../img/logos/imagenesweb/prueba.png';
-import Navbar from "../component/navbar";
+import CustomButton from '../component/button'; // Importa tu botón personalizado
 
 export const Home = ({ toggleTheme }) => {
-    const [theme, setTheme] = useState(() => {
-        return localStorage.getItem('theme') || 'light'; // Cambiar el valor predeterminado a 'light'
-    });
+    const [isLightTheme, setIsLightTheme] = useState(false);
 
     useEffect(() => {
         const text = "Bienvenido a Smokeless";
@@ -52,49 +50,41 @@ export const Home = ({ toggleTheme }) => {
     }, []);
 
     const handleThemeToggle = () => {
-        const newTheme = theme === 'dark' ? 'light' : 'dark'; // Alterna el tema
-        setTheme(newTheme);
-        localStorage.setItem('theme', newTheme); // Guarda el tema en localStorage
+        setIsLightTheme(prev => !prev); // Cambia entre los temas
         toggleTheme(); // Llama a la función proporcionada para alternar el tema global
     };
 
     return (
-        <>
-            <Navbar toggleTheme={handleThemeToggle} theme={theme} /> {/* Pasa el tema actual al Navbar */}
-            <div className={`container ${theme}`}>
-                <div className="animated-text" id="animatedText"></div>
+        <div className={`container ${isLightTheme ? 'light' : 'dark'}`}>
+            <div className="animated-text" id="animatedText"></div>
 
-                <div className="button-container">
-                    <Link to="/signup-smoker">
-                        <button className={`register-button ${theme}`}>
-                            REGISTRARSE COMO FUMADOR
-                        </button>
-                    </Link>
-                    <Link to="/signup-coach">
-                        <button className={`register-button ${theme}`}>
-                            REGISTRARSE COMO COACH
-                        </button>
-                    </Link>
-                </div>
-
-                <div className="mt-4">
-                    <Link to="/login-selection">
-                        <button className="create-custom-button">
-                            YA TENGO UNA CUENTA
-                        </button>
-                    </Link>
-                </div>
-
-                <div className="mt-5">
-                    <Atropos
-                        className="my-atropos"
-                        activeOffset={40}
-                        shadowScale={1.05}
-                    >
-                        <img className="atropos-image" src={foto} data-atropos-offset="0" alt="3D Effect" />
-                    </Atropos>
-                </div>
+            <div className="button-container" style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginTop: '20px' }}>
+                <Link to="/signup-smoker">
+                    <button className="register-button">
+                        REGISTRARSE COMO FUMADOR
+                    </button>
+                </Link>
+                <Link to="/signup-coach">
+                    <button className="register-button">
+                        REGISTRARSE COMO COACH
+                    </button>
+                </Link>
             </div>
-        </>
+            <div className="mt-4">
+                <Link to="/login-selection">
+                    <CustomButton>Ya tengo una cuenta</CustomButton>
+                </Link>
+            </div>
+
+            <div className="mt-5">
+                <Atropos
+                    className="my-atropos"
+                    activeOffset={40}
+                    shadowScale={1.05}
+                >
+                    <img className="atropos-image" src={foto} data-atropos-offset="0" alt="3D Effect" />
+                </Atropos>
+            </div>
+        </div>
     );
 };

@@ -1,36 +1,11 @@
-/* Navbar */
-.navbar {
-    display: flex;
-    align-items: center;
-    padding: 1rem 50px; /* Espaciado a los lados */
-    position: fixed; /* Fijo en la parte superior */
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
-    background: transparent; /* Sin fondo */
-    box-shadow: none; /* Eliminar sombras */
-    transition: background-color 0.3s ease; /* Suavizar el cambio de fondo */
-}
-
-/* Estilo para el modo oscuro */
-.navbar--dark {
-    background-color: transparent; /* Mantener fondo transparente en modo oscuro */
-    color: #ffffff; /* Color de texto en modo oscuro */
-}
-
 
 /* Contenedor para los controles (solo el switch) */
 .navbar-controls {
     display: flex; /* Usar flex para alinear horizontalmente */
     align-items: center; /* Alinear verticalmente */
-    gap: 20px; /* Espaciado entre controles */
-    margin-left: auto; /* Empujar el contenedor a la derecha */
-}
-
-/* Estilos para los elementos del navbar */
-.navbar .nav-item {
-    color: inherit; /* Color de texto por defecto que hereda según el tema */
+    gap: 100px; /* Espaciado entre controles */
+    margin-left: 1100px; /* Empujar el contenedor a la derecha */
+    margin-top: 30px;
 }
 
 /* Estilos para el Dropdown */
@@ -41,7 +16,9 @@
 .dropdown-toggle {
     background: none;
     border: none;
-    color: inherit; /* Color de texto del botón de dropdown según el tema */
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
 }
 
 .dropdown-menu {
@@ -62,7 +39,19 @@
     background-color: #f8f9fa; /* Color de fondo al pasar el mouse */
 }
 
-/* Logo */
+/* navbar.css */
+.navbar {
+    display: flex;
+    align-items: center;
+    padding: 1rem 50px; /* Añade 20px de padding a la izquierda y derecha */
+    position: fixed; /* Fija el navbar en la parte superior */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+
 .logo-container {
     transition: transform 0.3s ease; /* Transición suave */
 }

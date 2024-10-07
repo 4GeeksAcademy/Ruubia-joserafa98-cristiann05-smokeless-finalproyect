@@ -2,13 +2,10 @@
 .login-container {
   display: flex;
   justify-content: center;
-  align-items: center; /* Centra verticalmente */
   gap: 60px; /* Aumentar el espaciado entre tarjetas */
-  margin: 0 auto; /* Remueve márgenes superiores e inferiores para centrar */
-  min-height: 100vh; /* Asegura que ocupe la altura completa del viewport */
+  margin: 40px auto; /* Espaciado superior e inferior */
   max-width: 1200px; /* Ancho máximo */
 }
-
 
 /* Estilos de la tarjeta */
 .card {

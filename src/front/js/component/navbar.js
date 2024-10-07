@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
-import logoDark from '../../img/logos/logoblanco.png'; // Logo blanco para modo oscuro
-import logoLight from '../../img/logos/logonegro.png'; // Logo negro para modo claro
-import { Link } from 'react-router-dom'; 
-import Switch from '../component/Switch'; // Importar el componente Switch
-import "../../styles/switch.css";
+import logoDark from '../../img/logos/logoblanco.png'; // Asegúrate de que la ruta es correcta
+import logoLight from '../../img/logos/logonegro.png'; // Ajusta según sea necesario
+import { Link } from 'react-router-dom'; // Asegúrate de importar Link
 import "../../styles/navbar.css";
+import '../../styles/switch.css';
 
 const Navbar = ({ toggleTheme, theme }) => {
-    // Cambiar el idioma inicial a 'English' y almacenar en localStorage
     const [language, setLanguage] = useState(() => {
-        const savedLanguage = localStorage.getItem('language');
-        return savedLanguage ? savedLanguage : "English"; // Establece "English" como idioma predeterminado
+        return localStorage.getItem('language') || "Spanish";
     });
 
     const icons = {
@@ -29,15 +26,15 @@ const Navbar = ({ toggleTheme, theme }) => {
     };
 
     useEffect(() => {
-        setLanguage(localStorage.getItem('language') || "English"); // Establecer el idioma a inglés si no hay
+        setLanguage(localStorage.getItem('language') || "Spanish");
     }, []);
 
     return (
-        <nav className={`navbar ${theme === 'dark' ? 'navbar--dark' : 'navbar--light'}`}>
+        <nav className="navbar">
             <div className="logo-container">
-                <Link to="/">
+                <Link to="/"> {/* Enlace al logo */}
                     <img 
-                        src={theme === 'light' ? logoLight : logoDark} 
+                        src={theme === 'dark' ? logoDark : logoLight} 
                         alt="Logo" 
                         className="logo" 
                     />
@@ -70,8 +67,10 @@ const Navbar = ({ toggleTheme, theme }) => {
                     </ul>
                 </div>
 
-                {/* Agregar el Switch aquí */}
-                <Switch theme={theme} toggleTheme={toggleTheme} />
+                <label className="switch" aria-label="Toggle Theme">
+                    <input type="checkbox" className="input__check" onChange={toggleTheme} />
+                    <span className="slider"></span>
+                </label>
             </div>
         </nav>
     );

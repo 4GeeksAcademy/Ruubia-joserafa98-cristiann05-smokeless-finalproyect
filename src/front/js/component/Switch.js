@@ -6,11 +6,11 @@ const Switch = ({ theme, toggleTheme }) => {
 
     return (
         <div className="theme-switch">
-            <label className="theme-switch__label">
+            <label className="theme-switch">
                 <input
                     type="checkbox"
-                    className="input__check" // Cambié aquí para que coincida con el CSS
-                    checked={isDarkMode} // Se activa si está en modo oscuro
+                    className="theme-switch__checkbox"
+                    checked={isDarkMode} // Determina si el checkbox está marcado
                     onChange={toggleTheme} // Llama a toggleTheme al cambiar
                 />
                 <div className="theme-switch__container">
