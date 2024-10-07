@@ -4,7 +4,7 @@ import { Context } from "../store/appContext";
 import CoachCard from "../component/CoachCards";
 
 const ControlPanelSmoker = () => {
-    const { actions } = useContext(Context);
+    const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
@@ -35,12 +35,20 @@ const ControlPanelSmoker = () => {
         <div className="container mt-5">
             <h1>Welcome to your Dashboard!</h1>
             <p>This is the control panel for smoker.</p>
-            <button
-                className="btn btn-primary mt-3"
-                onClick={() => navigate("/user-profile")}
-            >
-                Ver Perfil del Fumador
-            </button>
+            <button 
+                    className="btn btn-primary mt-3" 
+                    onClick={() => {
+                        if (store.loggedInUser) {
+                            navigate(`/user-profile/${store.loggedInUser.id}`);
+                        } else {
+                            console.error("loggedInSmoker is not defined");
+                        }
+                    }}
+                >
+                    Ver Perfil del Fumador
+                </button>
+
+
             <button className="btn btn-info mt-3" onClick={() => navigate("/control-panel-coach/map")}>
                 View Coach Map
             </button>

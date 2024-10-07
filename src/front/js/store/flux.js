@@ -46,7 +46,19 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-
+            getSmoker: async (userId) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/smoker/${userId}`);
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    setStore({ loggedInSmoker: data }); // Guarda los datos del fumador en el store
+                } catch (error) {
+                    console.error("Error fetching smoker:", error);
+                }
+            },
+            
             signupSmoker: async (smokerData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/signup-smoker`, {

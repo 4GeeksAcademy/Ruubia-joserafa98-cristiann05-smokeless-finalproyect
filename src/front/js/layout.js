@@ -76,7 +76,7 @@ const Layout = () => {
                         <Route element={<SmokerMapPage />} path="/control-panel-smoker/map" />
                         <Route element={<LoginSelection />} path="/login-selection" />
                         <Route element={<ViewProfileCoach />} path="/coach-details/:coachId" />
-                        <Route element={<UserProfile />} path="/user-profile" />
+                        <Route element={<UserProfile />} path="/user-profile/:userId" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
