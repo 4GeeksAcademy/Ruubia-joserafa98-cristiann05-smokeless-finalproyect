@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useStore } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
-import "../../styles/CreateProfileCoach.css";
 
 const CreateProfileCoach = () => {
     const { store, actions } = useStore();
