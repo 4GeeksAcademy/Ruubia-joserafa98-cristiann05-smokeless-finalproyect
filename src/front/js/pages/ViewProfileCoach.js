@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Context } from "../store/appContext"; 
 import { useContext } from "react";
 
-const CoachDetails = () => {
+const ViewProfileCoach = () => {
     const { coachId } = useParams(); // Extraer el coachId de la URL
     const { actions, store } = useContext(Context); 
     const [loading, setLoading] = useState(true); // Estado para manejar la carga
@@ -59,7 +59,7 @@ const CoachDetails = () => {
     );
 };
 
-export default CoachDetails;
+export default ViewProfileCoach;
 
 
 

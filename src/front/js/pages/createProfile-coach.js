@@ -1,26 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { useStore } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
+import "../../styles/CreateProfileCoach.css";
 
 const CreateProfileCoach = () => {
     const { store, actions } = useStore();
-    const [nombreCoach, setNombreCoach] = useState("");
+    const [nombre_coach, setnombre_coach] = useState("");
     const [genero, setGenero] = useState("masculino");
     const [cumpleaños, setCumpleaños] = useState("");
+    const [foto_coach, setfoto_coach] = useState(null); // Estado para la imagen
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
         if (store.loggedInCoach) {
-            console.log("Coach logueado en CreateProfileCoach:", store.loggedInCoach);
-            setNombreCoach(store.loggedInCoach.nombre || "");
-            setGenero(store.loggedInCoach.genero || "masculino");
-            // Asegúrate de que el cumpleaños esté en el formato correcto
-            if (store.loggedInCoach.cumpleaños) {
-                setCumpleaños(new Date(store.loggedInCoach.cumpleaños).toISOString().split("T")[0]);
+            setnombre_coach(store.loggedInCoach.nombre_coach || "");
+            setGenero(store.loggedInCoach.genero_coach || "masculino");
+            if (store.loggedInCoach.nacimiento_coach && typeof store.loggedInCoach.nacimiento_coach === 'string') {
+                setCumpleaños(store.loggedInCoach.nacimiento_coach.split("T")[0]);
             }
+    
+            setfoto_coach(store.loggedInCoach.foto_coach || null); // Cargar la imagen si existe
         }
     }, [store.loggedInCoach]);
+
+    // Manejar la selección de la imagen
+    const handleImageUpload = (e) => {
+        setfoto_coach(e.target.files[0]); // Guardar la imagen seleccionada
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -37,10 +44,25 @@ const CreateProfileCoach = () => {
             return;
         }
 
+        // Subir la imagen a Cloudinary si se seleccionó una
+        let imageUrl = store.loggedInCoach.foto_coach; // Si ya tiene una imagen, se conserva
+        if (foto_coach) {
+            const uploadResult = await actions.uploadCoachImage(foto_coach); // Subir imagen
+            console.log(uploadResult);
+
+            if (uploadResult && uploadResult.secure_url) {
+                imageUrl = uploadResult.secure_url; // Usar la URL de la imagen subida
+            } else {
+                setError("Error al subir la imagen. Inténtalo de nuevo.");
+                return;
+            }
+        }
+
         const updatedData = {
-            nombre_coach: nombreCoach,
+            nombre_coach: nombre_coach,
             genero_coach: genero,
-            cumpleaños_coach: cumpleaños, // Aquí se asegura que el campo esté bien definido
+            nacimiento_coach: cumpleaños,
+            foto_coach: imageUrl, // Guardar la URL de la imagen en la base de datos
         };
 
         console.log("Datos enviados en el perfil:", updatedData);
@@ -48,7 +70,7 @@ const CreateProfileCoach = () => {
         const success = await actions.updateProfileCoach(store.loggedInCoach.id, updatedData);
         if (success) {
             alert("Perfil actualizado con éxito");
-            navigate('/control-panel-coach'); // Redirige a la página deseada
+            navigate('/control-panel-coach');
         } else {
             alert("Error al actualizar el perfil");
         }
@@ -66,8 +88,8 @@ const CreateProfileCoach = () => {
                     <label>Nombre de Coach:</label>
                     <input
                         type="text"
-                        value={nombreCoach}
-                        onChange={(e) => setNombreCoach(e.target.value)}
+                        value={nombre_coach}
+                        onChange={(e) => setnombre_coach(e.target.value)}
                         required
                     />
                 </div>
@@ -89,6 +111,13 @@ const CreateProfileCoach = () => {
                         value={cumpleaños}
                         onChange={(e) => setCumpleaños(e.target.value)}
                         required
+                    />
+                </div>
+                <div>
+                    <label>Foto de Perfil:</label>
+                    <input
+                        type="file"
+                        onChange={handleImageUpload}
                     />
                 </div>
                 {error && <p>{error}</p>}

@@ -22,7 +22,7 @@ const CreateProfileUser = () => {
             }
             setfoto_usuario(store.loggedInUser.foto_usuario || null); // Cargar la imagen si existe
         }
-    }, [store.loggedInUser]); // Efecto depende de los cambios en `loggedInUser`
+    }, [store.loggedInUser]); // Efecto depende de los cambios en loggedInUser
 
     // Manejar la selección de la imagen
     const handleImageUpload = (e) => {
@@ -127,3 +127,4 @@ const CreateProfileUser = () => {
 };
 
 export default CreateProfileUser;
+

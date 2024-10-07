@@ -41,6 +41,9 @@ const ControlPanelSmoker = () => {
             >
                 Ver Perfil del Fumador
             </button>
+            <button className="btn btn-info mt-3" onClick={() => navigate("/control-panel-coach/map")}>
+                View Coach Map
+            </button>
             <button className="btn btn-danger" onClick={handleLogout}>
                 Logout
             </button>

@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 import SolicitudesCoach from "../component/SolicitudesCoach";
 
+
+
+
 const ControlPanelCoach = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
@@ -28,9 +31,6 @@ const ControlPanelCoach = () => {
             <button className="btn btn-secondary ml-3" onClick={() => navigate("/track-client")}>Track Clients</button>
             <button className="btn btn-info mt-3" onClick={() => navigate("/control-panel-coach/map")}>
                 View Coach Map
-            </button>
-            <button className="btn btn-info mt-3" onClick={() => navigate("/coach-profile")}>
-                View Coach Profile
             </button>
             <button className="btn btn-danger mt-3" onClick={handleLogout}>
                 Logout
