@@ -12,7 +12,7 @@ def upload_image_to_coach(file_path):
     return upload_image(file_path, 'coaches')
 
 def upload_image_to_smoker(file_path):
-    return upload_image(file_path, 'smokers')
+    return upload_image(file_path, 'smoker')
 
 def upload_image(file_path, folder):
     try:

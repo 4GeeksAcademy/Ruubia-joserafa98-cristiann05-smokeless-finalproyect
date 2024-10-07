@@ -18,7 +18,7 @@ import CreateProfileCoach from "./pages/createProfile-coach";
 import LoginSelection from "./pages/LoginSelection";
 import SolicitudesCoach from "./component/SolicitudesCoach";
 import ViewProfileCoach from "./pages/ViewProfileCoach";
-
+import UserProfile from "./pages/userProfile";
 
 import Navbar from "./component/navbar"; 
 import Footer from "./component/footer";
@@ -76,6 +76,7 @@ const Layout = () => {
                         <Route element={<SmokerMapPage />} path="/control-panel-smoker/map" />
                         <Route element={<LoginSelection />} path="/login-selection" />
                         <Route element={<ViewProfileCoach />} path="/coach-details/:coachId" />
+                        <Route element={<UserProfile />} path="/user-profile" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
