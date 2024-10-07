@@ -3,7 +3,6 @@
     font-family: 'Heading Now'; 
     src: url('https://fonts.vdhazel.com/headingnow/Heading-Now-Variable-Regular-trial.woff2') format('woff2'); 
     font-weight: normal; 
-    font-style: normal; 
 }
 
 /* General */
@@ -13,10 +12,16 @@
     padding: 0;
 }
 
+html {
+    height: 100%; /* Asegura que el html ocupe toda la altura */
+}
+
 body {
     font-family: "Arial", sans-serif; /* Fuente por defecto */
     color: white;
     background: linear-gradient(to bottom, #0a1f36, #0b0d12); /* Fondo degradado */
+    background-size: cover; /* Asegura que cubra toda el área */
+    background-attachment: fixed; /* Hace que el fondo quede fijo al hacer scroll */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -35,7 +40,7 @@ body {
     margin-bottom: 20px; /* Espaciado inferior */
     font-family: 'Heading Now', sans-serif; /* Aplicar la fuente de animación */
     color: #ffffff; /* Color del texto animado */
-    margin-top: 20px; /* Ajustado: reduce este valor para subir más */
+    margin-top: 50px; /* Ajustado: reduce este valor para subir más */
 }
 
 /* Estilo para letras animadas */
@@ -58,14 +63,18 @@ body {
 
 /* Contenedor principal */
 .container {
-    padding: 50px 20px; /* Reducido el padding superior */
+    display: flex; /* Asegura que el contenedor use flexbox */
+    flex-direction: column; /* Organiza los elementos en columna */
+    justify-content: center; /* Centra los elementos verticalmente */
+    align-items: center; /* Centra los elementos horizontalmente */
+    padding: 20px; /* Espacio interno del contenedor */
     max-width: 800px; /* Ancho máximo */
     width: 100%; /* Asegura que el contenedor no se expanda más allá del ancho máximo */
+    height: 100vh; /* Ocupa toda la altura de la ventana */
     margin: auto; /* Centrar el contenedor */
     background: transparent; /* Fondo transparente */
     border-radius: 15px; /* Bordes redondeados */
 }
-
 
 /* Estilo para enlaces */
 .link {
@@ -79,27 +88,22 @@ body {
     color: #ffffff;
 }
 
-/* Estilos específicos para el contenedor Atropos */
+/* Estilos de la imagen Atropos */
 .my-atropos {
     width: 100%; /* Asegura que el contenedor sea 100% del ancho */
     max-width: 600px; /* Ancho máximo para el efecto 3D */
-    margin: 5px auto; /* Reduce el margen superior para subir el contenedor más */
+    margin-top: 20px; /* Ajusta el margen superior */
     position: relative; /* Asegura que los elementos hijos se posicionen correctamente */
     background: transparent; /* Asegúrate de que el fondo sea transparente */
     border-radius: 15px; /* Borde redondeado de la imagen */
 }
 
-
-/* Estilos de la imagen Atropos */
 .atropos-image {
     width: 100%; /* Ocupa todo el ancho del contenedor */
     height: auto; /* Mantiene la proporción de la imagen */
     object-fit: cover; /* Ajusta la imagen para cubrir el contenedor */
-    margin-top: 50; /* Eliminar el margen superior */
     border-radius: 15px; /* Borde redondeado de la imagen */
 }
-
-
 
 /* Estilos generales */
 body {
@@ -109,11 +113,13 @@ body {
 /* Estilos para el tema oscuro */
 body.dark {
     background: linear-gradient(to bottom, #0a1f36, #0b0d12);
+    background-attachment: fixed;
 }
 
 /* Estilos para el tema claro */
 body.light {
     background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+    background-attachment: fixed;
 }
 
 body.light .animated-text {
@@ -135,8 +141,7 @@ body.light .animated-text {
     overflow: hidden;
     box-shadow: 0 0 0 0 transparent;
     transition: all 0.2s ease-in;
-    margin: 10px 0; /* Espaciado vertical entre botones (ajustado) */
-    margin-top: 30px;
+    margin: 10px 10px; /* Espaciado vertical y horizontal entre botones (ajustado) */
 }
 
 body.light .register-button {
@@ -188,3 +193,25 @@ body.light .register-button {
     transition: box-shadow 0.2s ease-in;
 }
 
+.create-custom-button {
+    padding-left: 33px;
+    padding-right: 33px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    border-radius: 9px;
+    background: #d5f365;
+    border: none;
+    font-family: inherit; /* Hereda la fuente del contenedor padre */
+    text-align: center;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.create-custom-button:hover {
+    box-shadow: 7px 5px 56px -14px #C3D900;
+}
+
+.create-custom-button:active {
+    transform: scale(0.97);
+    box-shadow: 7px 5px 56px -10px #C3D900;
+}

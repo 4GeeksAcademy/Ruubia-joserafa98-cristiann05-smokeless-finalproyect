@@ -52,7 +52,7 @@ const CreateConsumProfile = () => {
         const success = await actions.updateConsumptionProfile(store.loggedInUser.id, updatedData);
         if (success) {
             alert("Información de consumo actualizada con éxito");
-            navigate('/control-panel-smoker'); // Redirige al formulario de perfil
+            navigate('/dashboard-smoker'); // Redirige al formulario de perfil
         } else {
             alert("Error al actualizar la información de consumo");
         }

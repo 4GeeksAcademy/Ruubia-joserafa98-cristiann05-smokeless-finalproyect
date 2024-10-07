@@ -1,0 +1,100 @@
+/* Variables de Diseño */
+:root {
+    --top-navbar-height: 70px;
+    --border-color: #e4e8eb;
+    --brand-primary-color: #057bc3;
+    --brand-light-gray-bg-color: #f8f9fb;
+    --brand-light-gray-color: #e9eaec;
+    --font-family: 'Open Sans', sans-serif;
+    --background-color: #f5f6fa; /* Color de fondo suave */
+    --text-color: #333; /* Color de texto oscuro */
+  }
+  
+  /* Estilos Generales */
+  body {
+    padding-top: var(--top-navbar-height);
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6; /* Mejora la legibilidad */
+    margin: 0; /* Eliminar márgenes por defecto */
+  }
+  
+  /* Estilo Principal */
+  .main {
+    padding: 20px; /* Espaciado uniforme */
+    background-color: white; /* Fondo blanco para contraste */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra */
+    margin: 20px; /* Espacio alrededor */
+    transition: box-shadow 0.3s; /* Suavizar la sombra */
+  }
+  
+  /* Estilo al hacer hover sobre el contenedor principal */
+  .main:hover {
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+  }
+  
+  /* Estilos de la Tabla */
+  .table {
+    width: 100%; /* Ocupa todo el ancho */
+    border-collapse: collapse; /* Sin espacios entre celdas */
+    margin-bottom: 20px; /* Espacio inferior */
+  }
+  
+  /* Encabezados de la Tabla */
+  .table > thead > tr > th {
+    background-color: var(--brand-primary-color); /* Color de fondo azul */
+    color: white; /* Texto blanco */
+    padding: 15px; /* Espaciado interno */
+    text-align: left; /* Alineación a la izquierda */
+    font-weight: bold; /* Negrita */
+    border-bottom: 2px solid var(--border-color); /* Borde inferior */
+  }
+  
+  /* Estilos de las Celdas de la Tabla */
+  .table > tbody > tr > td {
+    padding: 12px; /* Espaciado interno */
+    border-top: 1px solid var(--border-color); /* Borde superior */
+    transition: background-color 0.3s; /* Transición suave para hover */
+  }
+  
+  /* Estilo para Filas Alternas */
+  .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #ffffff; /* Fondo blanco para filas impares */
+  }
+  
+  .table-striped > tbody > tr:nth-of-type(even) {
+    background-color: var(--brand-light-gray-bg-color); /* Fondo gris claro para filas pares */
+  }
+  
+  /* Efecto Hover en Filas */
+  .table > tbody > tr:hover {
+    background-color: rgba(5, 123, 195, 0.1); /* Fondo azul suave al pasar el mouse */
+  }
+  
+  /* Estilo de Pie de Página de Tabla */
+  .table > tfoot > tr > td {
+    padding: 12px; /* Espaciado interno */
+    font-weight: bold; /* Negrita */
+    background-color: var(--brand-light-gray-bg-color); /* Color de fondo suave */
+  }
+  
+  /* Responsividad */
+  @media (max-width: 768px) {
+    .main {
+      padding: 15px; /* Espaciado ajustado para pantallas pequeñas */
+      margin: 10px; /* Menor margen para pantallas pequeñas */
+    }
+  
+    .table > thead > tr > th,
+    .table > tbody > tr > td {
+      padding: 10px; /* Menos espaciado en celdas para pantallas pequeñas */
+    }
+  
+    /* Ajustar el texto en los encabezados */
+    .table > thead > tr > th {
+      font-size: 0.9rem; /* Tamaño de fuente más pequeño */
+    }
+  }
+  

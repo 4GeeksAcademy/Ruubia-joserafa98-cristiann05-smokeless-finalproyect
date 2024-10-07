@@ -1,0 +1,57 @@
+.sidebar {
+    display: none; /* Ocultar en dispositivos móviles */
+  }
+  
+  /* Estilos para pantallas grandes */
+  @media (min-width: 768px) {
+    .sidebar {
+      position: fixed;
+      top: 71px; /* Ajusta según la altura de la barra de navegación */
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      display: block;
+      padding: 20px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background-color: #343a40; /* Color de fondo oscuro */
+      border-right: 1px solid #e4e8eb; /* Borde derecho */
+      box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+      transition: width 0.3s; /* Transición suave para la apertura y cierre */
+      width: 250px; /* Ancho de la barra lateral */
+    }
+  }
+  
+  /* Estilo de la lista de navegación */
+  .nav-sidebar {
+    list-style: none; /* Eliminar viñetas */
+    padding: 0; /* Sin padding */
+    margin: 0; /* Sin margen */
+  }
+  
+  /* Estilo de los enlaces de navegación */
+  .nav-sidebar li {
+    margin-bottom: 10px; /* Espacio entre elementos */
+  }
+  
+  .nav-sidebar li a {
+    padding: 12px 15px; /* Padding para un mejor aspecto */
+    color: #ffffff; /* Color de texto blanco para mejor contraste */
+    font-weight: 600; /* Negrita para destacar el texto */
+    text-decoration: none; /* Sin subrayado */
+    border-radius: 5px; /* Bordes redondeados para los enlaces */
+    transition: background-color 0.3s, color 0.3s; /* Transiciones suaves para cambios de color */
+  }
+  
+  /* Efecto hover en enlaces */
+  .nav-sidebar li a:hover {
+    background-color: #007bff; /* Color de fondo azul al pasar el mouse */
+    color: white; /* Texto blanco al pasar el mouse */
+  }
+  
+  /* Iconos de la barra lateral */
+  .icon {
+    margin-right: 10px; /* Espacio entre icono y texto */
+    font-size: 1.2rem; /* Tamaño del icono */
+  }
+  
