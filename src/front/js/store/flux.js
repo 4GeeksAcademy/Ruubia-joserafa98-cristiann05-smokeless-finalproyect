@@ -1,7 +1,7 @@
 const getState = ({ getStore, getActions, setStore }) => {
     return {
         store: {
-            smokers: [],
+            smoker: [],
             tiposConsumo: [],
             coaches: [],
             loggedInUser: {
@@ -10,7 +10,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 nombre: '',
                 genero: '',
                 cumpleaños: '',
-                foto_coach: '',
                 foto_usuario: ''
             },
             loggedInCoach: {
@@ -19,6 +18,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 nombre: '',
                 genero: '',
                 cumpleaños: '',
+                foto_coach: '',
                 isProfileComplete: false  // Nueva propiedad que indica si el perfil está completo
             },
             seguimiento: [],
@@ -27,22 +27,22 @@ const getState = ({ getStore, getActions, setStore }) => {
             userId: null,
             userInfo: null,
             coachInfo: null,
-            solicitud: [],
+            solicitudes: [],
         },
         actions: {
 
             setStore: (newStore) => setStore((prevStore) => ({ ...prevStore, ...newStore })),
 
-            getAllSmokers: async () => {
+            getAllsmoker: async () => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/smokers`);
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/smoker`);
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const data = await response.json();
-                    setStore({ smokers: data });
+                    setStore({ smoker: data });
                 } catch (error) {
-                    console.error("Error fetching smokers:", error);
+                    console.error("Error fetching smoker:", error);
                 }
             },
 
@@ -64,7 +64,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         console.log("Nuevo usuario creado:", newSmoker); // Muestra los datos del nuevo usuario
 
                         // No almacenar el token aquí
-                        setStore({ smokers: [...getStore().smokers, newSmoker] }); // Actualiza el estado
+                        setStore({ smoker: [...getStore().smoker, newSmoker] }); // Actualiza el estado
 
                         return true; // Retorna verdadero si la operación es exitosa
                     } else {
@@ -248,33 +248,37 @@ const getState = ({ getStore, getActions, setStore }) => {
                 });
             },
 
+            // Obtener todos los coaches
             getAllCoaches: async () => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches`); // Ajusta la ruta según sea necesario
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches`);
                     const data = await response.json();
-                    setStore({ coaches: data }); // Actualiza el estado del store con los coaches obtenidos
+                    setStore({ coaches: data });
                 } catch (error) {
-                    console.error("Error fetching coaches:", error); // Manejo de errores
+                    console.error("Error fetching coaches:", error);
                 }
             },
 
+            // Obtener un coach específico
             getCoach: async (coachId) => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/${coachId}`); // Asegúrate de que esta URL sea correcta
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/${coachId}`);
                     const data = await response.json();
-                    setStore({ coach: data }); // Guarda la información del coach en el store
+                    console.log(data);
+                    setStore({ coach: data });
                 } catch (error) {
                     console.error("Error fetching coach:", error);
                 }
             },
 
+            // Actualizar el perfil del coach
             updateProfileCoach: async (coachId, coachData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/create_profile/coach/${coachId}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('token')}` // Incluye el token si es necesario
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
                         },
                         body: JSON.stringify(coachData),
                     });
@@ -283,13 +287,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.log('Datos recibidos en updateProfile:', data);
 
                     if (response.ok) {
-                        // Actualizar el store con la información del perfil actualizado
                         setStore({
                             loggedInCoach: {
                                 id: coachId,
                                 nombre: data.coach.nombre_coach || '',
                                 genero: data.coach.genero_coach || '',
-                                cumpleaños: data.coach.nacimiento_coach || ''
+                                cumpleaños: data.coach.nacimiento_coach || '',
+                                foto: data.coach.foto_coach || '' // Agregar la foto aquí
                             }
                         });
                         return true;
@@ -303,8 +307,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-
-            //SIGNUP COACH
+            // Registro del coach
             signupCoach: async (coachData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/signup-coach`, {
@@ -331,7 +334,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            // Login de Coach
+            // Login del coach
             loginCoach: async (coachData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/login-coach`, {
@@ -347,19 +350,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 
                     if (response.ok) {
                         localStorage.setItem('token', data.token);
-
-                        // Almacenar la información del coach en el estado global/store
                         setStore({
                             loggedInCoach: {
-                                id: data.coach_id || null, // Asegúrate de que este valor sea correcto
+                                id: data.coach_id || null,
                                 nombre: data.nombre_coach || '',
                                 genero: data.genero_coach || '',
-                                cumpleaños: data.cumpleaños_coach || ''
+                                cumpleaños: data.cumpleaños_coach || '',
+                                foto: data.foto_coach || '' // Agregar la foto aquí
                             },
                             isAuthenticated: true,
                         });
 
-                        return true;  // Devolver true si el login fue exitoso
+                        return true;
                     } else {
                         console.error("Error en el login:", data.msg);
                         setStore({ isAuthenticated: false, loggedInCoach: null });
@@ -372,6 +374,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
+            // Obtener información del coach
             getCoachInfo: async (coachId) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/coach_info/${coachId}`, {
@@ -385,13 +388,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     if (response.ok) {
                         const data = await response.json();
                         console.log("Información del coach:", data);
-                        setStore({
-                            coachInfo: {
-                                nombre: data.nombre_coach, // Asegúrate de que este campo existe
-                                genero: data.genero_coach,
-                                cumpleaños: data.nacimiento_coach // Verifica que la API devuelva este campo
-                            }
-                        });
+                        setStore({ coachInfo: data }); // Actualiza el store con la información del coach
                         return data;
                     } else {
                         console.error("Error al obtener información del coach:", response.statusText);
@@ -402,22 +399,17 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return null;
                 }
             },
-            
+
+
             // Logout
             logoutCoach: () => {
-                // Elimina el token del localStorage
                 localStorage.removeItem('token');
-
-                // Limpia el store restableciendo los valores del coach
                 setStore({
-                    loggedInCoach: null,  // Limpia la información del coach
-                    isAuthenticated: false, // Cambia el estado de autenticación
-                    coachInfo: null, // Limpia la información adicional del coach
+                    loggedInCoach: null,
+                    isAuthenticated: false,
+                    coachInfo: null,
                 });
             },
-
-
-
 
             // Método para subir la imagen del coach a Cloudinary
             uploadCoachImage: async (file) => {
@@ -426,12 +418,18 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return null; // Retorna null si el archivo no es válido
                 }
 
+                const maxSize = 2 * 1024 * 1024; // 2 MB
+                if (file.size > maxSize) {
+                    console.error("El archivo es demasiado grande. Debe ser menor a 2 MB.");
+                    return null;
+                }
+
                 const formData = new FormData();
                 formData.append("file", file);
-                formData.append("upload_preset", "ml_default"); // Tu preset de subida
+                formData.append("upload_preset", process.env.CLOUDINARY_UPLOAD_PRESET); // Asegúrate de usar el preset correcto
 
                 try {
-                    const response = await fetch(`https://api.cloudinary.com/v1_1/dsnmmg3kl/image/upload`, {
+                    const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`, {
                         method: "POST",
                         body: formData,
                     });
@@ -442,19 +440,37 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }
 
                     const data = await response.json();
-                    // Actualiza el store con la nueva URL
+                    console.log("Respuesta de Cloudinary:", data); // Verifica la respuesta
+
+                    const imageUrl = data.secure_url; // Obtén la URL de la respuesta de Cloudinary
+
+                    // Enviar la URL a tu API
+                    const apiResponse = await fetch(`/api/coaches/upload_image/${coachId}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ imageUrl }),
+                    });
+
+                    if (!apiResponse.ok) {
+                        const apiError = await apiResponse.json();
+                        console.error("Error al enviar la imagen a la API:", apiError);
+                    }
+
+                    // Actualiza el store con la URL de la imagen
                     setStore((prevStore) => ({
                         ...prevStore,
-                        loggedInUser: {
-                            ...prevStore.loggedInUser,
-                            foto_coach: data.secure_url, // Asegúrate de que esto sea el campo correcto en el store
+                        loggedInCoach: {
+                            ...prevStore.loggedInCoach,
+                            foto_coach: imageUrl, // Asegúrate de que el campo sea correcto
                         }
                     }));
 
-                    return data.secure_url; // Retorna la URL de la imagen subida
+                    return data;
                 } catch (error) {
                     console.error("Error uploading image:", error);
-                    return null; // Retorna null si hay un error
+                    return null;
                 }
             },
 
@@ -462,15 +478,21 @@ const getState = ({ getStore, getActions, setStore }) => {
             uploadSmokerImage: async (file) => {
                 if (!file || !file.type.startsWith('image/')) {
                     console.error("El archivo no es una imagen válida.");
-                    return null; // Retorna null si el archivo no es válido
+                    return null;
+                }
+
+                const maxSize = 2 * 1024 * 1024; // 2 MB
+                if (file.size > maxSize) {
+                    console.error("El archivo es demasiado grande. Debe ser menor a 2 MB.");
+                    return null;
                 }
 
                 const formData = new FormData();
                 formData.append("file", file);
-                formData.append("upload_preset", "ml_default"); // Tu preset de subida
+                formData.append("upload_preset", process.env.CLOUDINARY_UPLOAD_PRESET); // Asegúrate de usar el preset correcto
 
                 try {
-                    const response = await fetch(`https://api.cloudinary.com/v1_1/dsnmmg3kl/image/upload`, {
+                    const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`, {
                         method: "POST",
                         body: formData,
                     });
@@ -481,22 +503,21 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }
 
                     const data = await response.json();
-                    // Actualiza el store con la nueva URL
+                    // Actualiza el store con la URL de la imagen
                     setStore((prevStore) => ({
                         ...prevStore,
                         loggedInUser: {
                             ...prevStore.loggedInUser,
-                            foto_usuario: data.secure_url, // Asegúrate de que esto sea el campo correcto en el store
+                            foto_usuario: data.secure_url,
                         }
                     }));
 
-                    return data.secure_url; // Retorna la URL de la imagen subida
+                    return data;
                 } catch (error) {
                     console.error("Error uploading image:", error);
-                    return null; // Retorna null si hay un error
+                    return null;
                 }
             },
-
             getCoachesLocations: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/ubicaciones`); // Ajusta la ruta según sea necesario
@@ -574,40 +595,35 @@ const getState = ({ getStore, getActions, setStore }) => {
             // Obtener solicitudes por usuario específico
             getSolicitudesPorUser: async (userId) => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/solicitudes/${userId}`);
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/solicitudes/usuario/${userId}`);
                     if (!response.ok) {
                         throw new Error("Error en la respuesta del servidor");
                     }
                     const data = await response.json();
+                    console.log("probando data", data)
                     setStore({ solicitudes: data }); // Guarda las solicitudes del usuario en el store
                 } catch (error) {
                     console.error("Error fetching solicitudes por usuario:", error);
                 }
             },
 
-            // Agregar una nueva solicitud
+
             addSolicitud: async (newSolicitud) => {
+                console.log("Datos a enviar:", newSolicitud); // Agrega esta línea para depurar
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/solicitudes`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify(newSolicitud), // Enviar el objeto de solicitud
+                        body: JSON.stringify(newSolicitud),
                     });
-                    if (!response.ok) {
-                        throw new Error("Error al agregar la solicitud");
-                    }
-
-                    const data = await response.json();
-                    setStore((prevStore) => ({
-                        ...prevStore,
-                        solicitudes: [...prevStore.solicitudes, data], // Añade la nueva solicitud al store
-                    }));
+                    // Resto del código...
                 } catch (error) {
                     console.error("Error adding solicitud:", error);
                 }
             },
+
 
             // Actualizar una solicitud específica
             updateSolicitud: async (solicitudId, updatedData) => {
@@ -617,23 +633,26 @@ const getState = ({ getStore, getActions, setStore }) => {
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify(updatedData), // Enviar el objeto de actualización
+                        body: JSON.stringify(updatedData),
                     });
                     if (!response.ok) {
                         throw new Error("Error al actualizar la solicitud");
                     }
 
                     const data = await response.json();
+
+                    // Actualiza la solicitud en el store y elimina de la lista
                     setStore((prevStore) => ({
                         ...prevStore,
                         solicitudes: prevStore.solicitudes.map((solicitud) =>
-                            solicitud.id === solicitudId ? data : solicitud // Actualiza la solicitud en el store
+                            solicitud.id === solicitudId ? { ...solicitud, ...updatedData } : solicitud
                         ),
                     }));
                 } catch (error) {
                     console.error("Error updating solicitud:", error);
                 }
             },
+
 
             // Eliminar una solicitud específica
             deleteSolicitud: async (solicitudId) => {

@@ -3,27 +3,34 @@ import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom"; // Importar useNavigate
 
 const CoachCard = () => {
-    const { store, actions } = useContext(Context); 
-    const [alertMessage, setAlertMessage] = useState(""); 
+    const { store, actions } = useContext(Context);
+    const [alertMessage, setAlertMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate(); // Inicializar useNavigate
 
     useEffect(() => {
         const fetchCoaches = async () => {
-            await actions.getAllCoaches(); 
-            setIsLoading(false); 
+            await actions.getAllCoaches();
+            setIsLoading(false);
         };
         fetchCoaches();
     }, [actions]);
-    
+
     const handleAddCoach = (coachId) => {
+        const userId = store.loggedInUser.id; // Obtener el ID del usuario autenticado
+
+        if (!userId) {
+            setAlertMessage("Error: Usuario no autenticado.");
+            return; // Salir de la función si no hay un usuario autenticado
+        }
+
         const solicitudData = {
-            id_user: 1, 
-            id_coach: coachId, 
-            fecha_solicitud: new Date().toISOString(),
-            estado: 'pendiente', 
-            fecha_respuesta: null, 
-            comentarios: 'Estoy interesado en el coaching', 
+            id_usuario: userId, // Usar el ID del usuario
+            id_coach: coachId,
+            fecha_solicitud: new Date().toLocaleDateString('es-ES'), // Formato "dd/mm/yyyy"
+            estado: false, // Cambia a false si el estado es un booleano
+            fecha_respuesta: null,
+            comentarios: 'Estoy interesado en el coaching',
         };
 
         actions.addSolicitud(solicitudData)
@@ -33,8 +40,7 @@ const CoachCard = () => {
 
     // Función para redirigir al perfil del coach
     const handleViewProfile = (coachId) => {
-        navigate(`/CoachProfile
-            /${coachId}`); 
+        navigate(`/coach-details/${coachId}`); // Cambia la URL a '/coach-details/:coachId'
     };
 
     return (
@@ -49,7 +55,7 @@ const CoachCard = () => {
                 <div className="row">
                     {store.coaches.map((coach) => (
                         <div className="col-md-4 mb-4" key={coach.id}>
-                            <div className="card text-dark" style={{ width: "18rem" }}>
+                            <div className="card text" style={{ width: "18rem" }}>
                                 <img
                                     src={coach.foto_coach || "https://i.pinimg.com/550x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg"}
                                     className="card-img-top"
@@ -85,3 +91,4 @@ const CoachCard = () => {
 };
 
 export default CoachCard;
+
