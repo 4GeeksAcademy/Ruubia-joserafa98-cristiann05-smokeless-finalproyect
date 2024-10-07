@@ -12,10 +12,9 @@ const ControlPanelSmoker = () => {
         const checkToken = () => {
             const token = localStorage.getItem("token");
             if (!token) {
-                // Redirige a la página principal si no hay token
                 navigate('/');
             } else {
-                setLoading(false); // Deja de cargar si el token es válido
+                setLoading(false);
             }
         };
 
@@ -23,39 +22,56 @@ const ControlPanelSmoker = () => {
     }, [navigate]);
 
     const handleLogout = () => {
-        actions.logoutsmoker(); // Llama a la acción de cierre de sesión
-        navigate('/'); // Redirige a la página principal después de cerrar sesión
+        actions.logoutsmoker();
+        navigate('/');
+    };
+
+    const handleViewCoaches = () => {
+        navigate('/coach-available'); // Redirige a la nueva página de coaches
     };
 
     if (loading) {
-        return <div>Loading...</div>; // Mensaje mientras se verifica el token
+        return <div>Loading...</div>;
+    }
+    const handleViewApprovedCoaches = () => {
+        navigate('/approved-coaches'); // Redirige a la página de coaches aprobados
+    };
+    if (loading) {
+        return <div>Loading...</div>;
     }
 
     return (
         <div className="container mt-5">
             <h1>Welcome to your Dashboard!</h1>
             <p>This is the control panel for smoker.</p>
+            
             <button 
-                    className="btn btn-primary mt-3" 
-                    onClick={() => {
-                        if (store.loggedInUser) {
-                            navigate(`/user-profile/${store.loggedInUser.id}`);
-                        } else {
-                            console.error("loggedInSmoker is not defined");
-                        }
-                    }}
-                >
-                    Ver Perfil del Fumador
-                </button>
-
+                className="btn btn-primary mt-3" 
+                onClick={() => {
+                    if (store.loggedInUser) {
+                        navigate(`/user-profile/${store.loggedInUser.id}`);
+                    } else {
+                        console.error("loggedInSmoker is not defined");
+                    }
+                }}
+            >
+                Ver Perfil del Fumador
+            </button>
 
             <button className="btn btn-info mt-3" onClick={() => navigate("/control-panel-coach/map")}>
                 View Coach Map
             </button>
+
+            <button className="btn btn-primary mt-3" onClick={handleViewCoaches}>
+                Ver Coaches Disponibles
+            </button>
+
+            <button className="btn btn-secondary mt-3" onClick={handleViewApprovedCoaches}>
+                Ver Coaches Aprobados
+            </button>
             <button className="btn btn-danger" onClick={handleLogout}>
                 Logout
             </button>
-            <CoachCard />
         </div>
     );
 };
