@@ -63,11 +63,11 @@ const ControlPanelSmoker = () => {
             </button>
 
             <button className="btn btn-primary mt-3" onClick={handleViewCoaches}>
-                Ver Coaches Disponibles
+                Contratar Coaches Disponibles
             </button>
 
             <button className="btn btn-secondary mt-3" onClick={handleViewApprovedCoaches}>
-                Ver Coaches Aprobados
+                Ver a tus Coach
             </button>
             <button className="btn btn-danger" onClick={handleLogout}>
                 Logout
