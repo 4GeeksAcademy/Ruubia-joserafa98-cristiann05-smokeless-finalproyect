@@ -662,10 +662,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                     if (!response.ok) {
                         throw new Error("Error al actualizar la solicitud");
                     }
-
+            
                     const data = await response.json();
-
-                    // Actualiza la solicitud en el store y elimina de la lista
+            
                     setStore((prevStore) => ({
                         ...prevStore,
                         solicitudes: prevStore.solicitudes.map((solicitud) =>
@@ -676,6 +675,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error updating solicitud:", error);
                 }
             },
+            
 
 
             // Eliminar una solicitud específica

@@ -19,7 +19,7 @@ const ApprovedCoaches = () => {
         };
 
         fetchApprovedCoaches();
-    }, [actions]);
+    }, []);
 
     
     const approvedSolicitudes = store.solicitudes.filter(solicitud => 

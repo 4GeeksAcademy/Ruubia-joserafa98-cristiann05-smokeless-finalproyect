@@ -19,8 +19,18 @@ const CoachCard = () => {
             setIsLoading(false);
         };
         fetchData();
-    }, [actions]);
+    }, []);
 
+    const formatFecha = (date) => {
+        const dia = String(date.getDate()).padStart(2, '0'); // Asegurarse de que el día tenga 2 dígitos
+        const mes = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en JS son 0-11, por eso sumamos 1
+        const año = date.getFullYear(); // Obtener el año
+        return `${dia}/${mes}/${año}`;  // Formato final "dd/mm/yyyy"
+    };
+    
+
+    // Usamos new Date() para obtener la fecha actual
+    const fechaSolicitud = formatFecha(new Date());
     const handleAddCoach = (coachId) => {
         const userId = store.loggedInUser?.id;
     
@@ -32,7 +42,7 @@ const CoachCard = () => {
         const solicitudData = {
             id_usuario: userId,
             id_coach: coachId,
-            fecha_solicitud: new Date(),
+            fecha_solicitud: fechaSolicitud,
             estado: false,
             fecha_respuesta: null,
             comentarios: 'Estoy interesado en el coaching',

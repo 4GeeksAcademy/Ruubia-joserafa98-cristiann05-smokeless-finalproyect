@@ -21,7 +21,7 @@ const SolicitudesCoach = () => {
         };
 
         fetchSolicitudes();
-    }, [store.loggedInCoach, actions]);
+    }, []);
 
     const handleUpdate = async (solicitudId, updatedData) => {
         try {
@@ -37,15 +37,27 @@ const SolicitudesCoach = () => {
     };
 
     const handleApprove = async (solicitudId) => {
-        await handleUpdate(solicitudId, {
-            estado: 'true',
-            fecha_respuesta: new Date().toLocaleDateString('en-GB')
-        });
+        try {
+            await handleUpdate(solicitudId, {
+                estado: true,  // Asegúrate de que esto sea un booleano
+                fecha_respuesta: new Date().toLocaleDateString('en-GB') // En formato dd/mm/yyyy
+            });
+    
+            // Retraso para permitir la actualización
+            setTimeout(async () => {
+                if (store.loggedInCoach && store.loggedInCoach.id) {
+                    await actions.getAllSolicitudes(); // Para obtener la lista actualizada
+                }
+            }, 1000);
+            
+        } catch (error) {
+            console.error("Error al aprobar la solicitud:", error);
+        }
     };
-
+    
     const handleReject = async (solicitudId) => {
         await handleUpdate(solicitudId, {
-            estado: 'false',
+            estado: false, // Booleano false en lugar de string
             fecha_respuesta: new Date().toLocaleDateString('en-GB')
         });
     };
@@ -60,7 +72,7 @@ const SolicitudesCoach = () => {
     );
 
     const solicitudesRechazadas = store.solicitudes.filter(solicitud => 
-        solicitud.id_coach === store.loggedInCoach.id && solicitud.fecha_respuesta !== null
+        solicitud.id_coach === store.loggedInCoach.id && solicitud.estado === false && solicitud.fecha_respuesta !== null
     );
 
     return (

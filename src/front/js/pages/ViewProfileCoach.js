@@ -27,7 +27,7 @@ const ViewProfileCoach = () => {
             }
         };
         fetchCoachData();
-    }, [coachId, actions]);
+    }, []);
 
     const coach = store.coach;
 
