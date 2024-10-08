@@ -8,22 +8,27 @@ const CoachCard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
+    // Agregamos logs para verificar qué datos se están trayendo
+    console.log("Solicitudes actuales:", store.solicitudes);
+    console.log("Coaches actuales:", store.coaches);
+
     useEffect(() => {
-        const fetchCoaches = async () => {
-            await actions.getAllCoaches();
+        const fetchData = async () => {
+            await actions.getAllCoaches(); // Trae todos los coaches
+            await actions.getAllSolicitudes(); // Trae todas las solicitudes
             setIsLoading(false);
         };
-        fetchCoaches();
+        fetchData();
     }, [actions]);
 
     const handleAddCoach = (coachId) => {
-        const userId = store.loggedInUser.id;
-
+        const userId = store.loggedInUser?.id;
+    
         if (!userId) {
             setAlertMessage("Error: Usuario no autenticado.");
             return;
         }
-
+    
         const solicitudData = {
             id_usuario: userId,
             id_coach: coachId,
@@ -32,25 +37,36 @@ const CoachCard = () => {
             fecha_respuesta: null,
             comentarios: 'Estoy interesado en el coaching',
         };
-
+    
+        console.log("Solicitud a enviar:", solicitudData);
+    
         actions.addSolicitud(solicitudData)
             .then(() => {
                 setAlertMessage("Solicitud enviada exitosamente!");
                 actions.getAllCoaches(); // Forzar la obtención de coaches nuevamente
+                actions.getAllSolicitudes(); // Forzar la obtención de solicitudes nuevamente
             })
-            .catch(() => setAlertMessage("Hubo un fallo al enviar la solicitud."));
+            .catch((error) => {
+                console.error("Error al enviar la solicitud:", error);
+                setAlertMessage("Hubo un fallo al enviar la solicitud.");
+            });
     };
+    
 
     const handleViewProfile = (coachId) => {
         navigate(`/coach-details/${coachId}`);
     };
 
-    // Filtrar coaches que no tienen solicitudes pendientes
+    // Filtrar coaches que no tienen solicitudes pendientes ni aprobadas
     const filteredCoaches = store.coaches.filter(coach => {
         const hasRequest = store.solicitudes.some(solicitud => {
-            return solicitud.id_coach === coach.id && solicitud.fecha_respuesta === null; // Verificar fecha_respuesta
+            return (
+                solicitud.id_coach === coach.id &&
+                solicitud.id_usuario === store.loggedInUser.id && // Aseguramos que la solicitud pertenezca al usuario logueado
+                (solicitud.fecha_respuesta !== null || solicitud.estado === true)
+            );
         });
-        return !hasRequest; // Retornar solo aquellos que no tienen solicitudes pendientes
+        return !hasRequest; // Retornar solo aquellos que no tienen solicitudes pendientes ni aprobadas
     });
 
     return (
@@ -61,7 +77,9 @@ const CoachCard = () => {
                 </div>
             )}
             <h1 className="text-center mb-4 text-light">Coachs Disponibles</h1>
-            {filteredCoaches && filteredCoaches.length > 0 ? (
+            {isLoading ? (
+                <p className="text-center text-light">Cargando datos...</p>
+            ) : filteredCoaches && filteredCoaches.length > 0 ? (
                 <div className="row">
                     {filteredCoaches.map((coach) => (
                         <div className="col-md-12 mb-4" key={coach.id}>
@@ -94,7 +112,7 @@ const CoachCard = () => {
                     ))}
                 </div>
             ) : (
-                <p className="text-center text-light">No hay datos registrados.</p>
+                <p className="text-center text-light">No hay coaches disponibles.</p>
             )}
         </div>
     );
