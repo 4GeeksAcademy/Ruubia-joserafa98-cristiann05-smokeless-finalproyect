@@ -36,7 +36,7 @@ const injectContext = (PassedComponent) => {
             };
 
             fetchData();
-        }, [state.actions, state.store.coachId]); // Dependencias
+        }, []); // Dependencias
 
         return (
             <Context.Provider value={state}>
