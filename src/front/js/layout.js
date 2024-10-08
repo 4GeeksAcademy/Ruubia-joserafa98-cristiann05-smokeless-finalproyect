@@ -19,6 +19,7 @@ import LoginSelection from "./pages/LoginSelection";
 import SolicitudesCoach from "./component/SolicitudesCoach";
 import ViewProfileCoach from "./pages/ViewProfileCoach";
 import UserProfile from "./pages/userProfile";
+import CoachAddress from "./pages/CoachAddress";
 
 import Navbar from "./component/navbar"; 
 import Footer from "./component/footer";
@@ -77,6 +78,7 @@ const Layout = () => {
                         <Route element={<LoginSelection />} path="/login-selection" />
                         <Route element={<ViewProfileCoach />} path="/coach-details/:coachId" />
                         <Route element={<UserProfile />} path="/user-profile/:userId" />
+                        <Route element={<CoachAddress />} path="/question-address-coach" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
@@ -87,3 +89,4 @@ const Layout = () => {
 };
 
 export default injectContext(Layout);
+
