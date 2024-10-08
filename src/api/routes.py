@@ -21,8 +21,8 @@ CORS(api)
 # Obtener todos los usuarios fumadores (GET)
 @api.route('/smoker', methods=['GET'])
 def get_all_smoker():
-    smoker = SmokerUser.query.all()
-    return jsonify([smoker.serialize() for smoker in smoker]), 200
+    smokers = SmokerUser.query.all()
+    return jsonify([smoker.serialize() for smoker in smokers]), 200
 
 # Obtener un fumador por ID (GET)
 @api.route('/smoker/<int:user_id>', methods=['GET'])

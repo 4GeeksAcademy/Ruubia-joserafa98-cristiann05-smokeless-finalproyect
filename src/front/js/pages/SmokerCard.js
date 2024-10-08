@@ -9,19 +9,28 @@ const SmokerCard = () => {
     useEffect(() => {
         const fetchSmokersAndSolicitudes = async () => {
             try {
-                // Llamar a la acción de obtener smokers
+                // Llamar a la acción de obtener smokers y solicitudes
                 await actions.getAllsmoker();
-                await actions.getAllSolicitudes(); 
+                await actions.getAllSolicitudes();
             } catch (error) {
+                setError("Error al obtener los datos");
                 console.error("Error al obtener los datos:", error);
+            } finally {
+                setLoading(false);  // Asegurarse de que loading se desactiva
             }
         };
-    
+
         fetchSmokersAndSolicitudes();
     }, []);
-    
 
-    // Verificar si los datos de smokers y solicitudes existen antes de filtrar
+    if (loading) {
+        return <p className="text-center text-light">Cargando datos...</p>;
+    }
+
+    if (error) {
+        return <p className="text-center text-danger">{error}</p>;
+    }
+
     if (!store.solicitudes || !store.smoker) {
         return <p className="text-center text-light">Cargando datos...</p>;
     }
@@ -39,11 +48,7 @@ const SmokerCard = () => {
     return (
         <div className="container mt-5 mx-3">
             <h2 className="text-center mb-4 text-light">Clientes Aprobados</h2>
-            {loading ? (
-                <p className="text-center text-light">Cargando datos...</p> 
-            ) : error ? (
-                <p className="text-center text-danger">{error}</p> 
-            ) : approvedSmokerIds.length > 0 ? (
+            {approvedSmokerIds.length > 0 ? (
                 <div className="row">
                     {store.smoker
                         .filter(smoker => approvedSmokerIds.includes(smoker.id)) // Filtrar smokers aprobados
