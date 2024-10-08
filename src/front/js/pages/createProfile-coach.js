@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { useStore } from "../store/appContext";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react"; // Asegúrate de que useContext está importado
+import { useNavigate } from "react-router-dom"; // Importar useNavigate para redirección
+import { Context } from "../store/appContext"; // Importar el contexto
 import "../../styles/CreateProfileCoach.css";
 
 const CreateProfileCoach = () => {
-    const { store, actions } = useStore();
+    const { store, actions } = useContext(Context); // Obtener el contexto y las acciones
     const [nombre_coach, setnombre_coach] = useState("");
     const [genero, setGenero] = useState("masculino");
     const [cumpleaños, setCumpleaños] = useState("");
@@ -14,12 +14,12 @@ const CreateProfileCoach = () => {
 
     useEffect(() => {
         if (store.loggedInCoach) {
+            // Si el coach está logueado, carga su información
             setnombre_coach(store.loggedInCoach.nombre_coach || "");
             setGenero(store.loggedInCoach.genero_coach || "masculino");
             if (store.loggedInCoach.nacimiento_coach && typeof store.loggedInCoach.nacimiento_coach === 'string') {
                 setCumpleaños(store.loggedInCoach.nacimiento_coach.split("T")[0]);
             }
-    
             setfoto_coach(store.loggedInCoach.foto_coach || null); // Cargar la imagen si existe
         }
     }, [store.loggedInCoach]);
@@ -33,8 +33,17 @@ const CreateProfileCoach = () => {
         e.preventDefault();
         setError("");
 
+        // Verificar si hay un coach logueado
         if (!store.loggedInCoach) {
             setError("No hay coach logueado. Por favor, inicia sesión.");
+            return;
+        }
+
+        const coachId = store.loggedInCoach.id; // Obtener el ID del coach
+
+        // Verificar que el ID no sea nulo
+        if (!coachId) {
+            setError("ID de coach no válido.");
             return;
         }
 
@@ -67,63 +76,73 @@ const CreateProfileCoach = () => {
 
         console.log("Datos enviados en el perfil:", updatedData);
 
-        const success = await actions.updateProfileCoach(store.loggedInCoach.id, updatedData);
+        // Realizar la actualización del perfil del coach
+        const success = await actions.updateProfileCoach(coachId, updatedData);
         if (success) {
             alert("Perfil actualizado con éxito");
-            navigate('/control-panel-coach');
+            navigate('/question-address-coach');
         } else {
             alert("Error al actualizar el perfil");
         }
     };
 
+    // Si no hay coach logueado, muestra un mensaje
     if (!store.loggedInCoach) {
         return <div>No hay coach logueado. Por favor, inicia sesión.</div>;
     }
 
     return (
-        <div className="profile-form">
-            <h2>Actualizar Perfil de Coach</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Nombre de Coach:</label>
-                    <input
-                        type="text"
-                        value={nombre_coach}
-                        onChange={(e) => setnombre_coach(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Género:</label>
-                    <select
-                        value={genero}
-                        onChange={(e) => setGenero(e.target.value)}
-                        required
-                    >
-                        <option value="masculino">Masculino</option>
-                        <option value="femenino">Femenino</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Cumpleaños:</label>
-                    <input
-                        type="date"
-                        value={cumpleaños}
-                        onChange={(e) => setCumpleaños(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Foto de Perfil:</label>
-                    <input
-                        type="file"
-                        onChange={handleImageUpload}
-                    />
-                </div>
-                {error && <p>{error}</p>}
-                <button type="submit">Actualizar Perfil</button>
-            </form>
-        </div>
+        <>
+            <div className="profile-form">
+                <h2>Actualizar Perfil de Coach</h2>
+                <form onSubmit={handleSubmit}>
+                    <div>
+                        <label>Nombre de Coach:</label>
+                        <input
+                            type="text"
+                            value={nombre_coach}
+                            onChange={(e) => setnombre_coach(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label>Género:</label>
+                        <select
+                            value={genero}
+                            onChange={(e) => setGenero(e.target.value)}
+                            required
+                        >
+                            <option value="masculino">Masculino</option>
+                            <option value="femenino">Femenino</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Cumpleaños:</label>
+                        <input
+                            type="date"
+                            value={cumpleaños}
+                            onChange={(e) => setCumpleaños(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label>Foto de Perfil:</label>
+                        <input
+                            type="file"
+                            onChange={handleImageUpload}
+                        />
+                    </div>
+                    {error && <p>{error}</p>}
+                    <button type="submit">Actualizar Perfil</button>
+                </form>
+            </div>
+            <button
+                className="back-button"
+                onClick={() => navigate(-1)} // Navegar hacia atrás
+            >
+                Volver Atrás
+            </button>
+        </>
     );
 };
 

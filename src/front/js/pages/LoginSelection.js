@@ -16,33 +16,41 @@ const LoginSelection = () => {
   };
 
   return (
-    <div className="login-container">
-      {/* Primera Tarjeta */}
-      <div className="card">
-        <img src={fumadorImage} alt="Fumador" className="icon" />
-        <div className="content">
-          <h2 className="heading">Accede como Fumador</h2>
-          <p className="para">
-            Conéctate y descubre tips para dejar de fumar.
-          </p>
-          <button className="btn" onClick={handleAccedeSmoker}>Accede</button>
+    <>
+      <div className="login-container">
+        {/* Primera Tarjeta */}
+        <div className="card">
+          <img src={fumadorImage} alt="Fumador" className="icon" />
+          <div className="content">
+            <h2 className="heading">Accede como Fumador</h2>
+            <p className="para">
+              Conéctate y descubre tips para dejar de fumar.
+            </p>
+            <button className="btn" onClick={handleAccedeSmoker}>Accede</button>
+          </div>
         </div>
-      </div>
 
-      {/* Segunda Tarjeta */}
-      <div className="card">
-        <img src={coachImage} alt="Coach" className="icon" />
-        <div className="content">
-          <h2 className="heading">
-            Accede como <br /> Coach
-          </h2>
-          <p className="para">
-            Únete y ayuda a otros a alcanzar sus metas.
-          </p>
-          <button className="btn" onClick={handleAccedeCoach}>Accede</button>
+        {/* Segunda Tarjeta */}
+        <div className="card">
+          <img src={coachImage} alt="Coach" className="icon" />
+          <div className="content">
+            <h2 className="heading">
+              Accede como <br /> Coach
+            </h2>
+            <p className="para">
+              Únete y ayuda a otros a alcanzar sus metas.
+            </p>
+            <button className="btn" onClick={handleAccedeCoach}>Accede</button>
+          </div>
         </div>
       </div>
-    </div>
+      <button
+        className="back-button"
+        onClick={() => navigate(-1)} // Navegar hacia atrás
+      >
+        Volver Atrás
+      </button>
+    </>
   );
 };
 

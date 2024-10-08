@@ -359,7 +359,8 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             // Login del coach
-            loginCoach: async (coachData) => {
+             // Login del coach
+             loginCoach: async (coachData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/login-coach`, {
                         method: "POST",
@@ -369,34 +370,36 @@ const getState = ({ getStore, getActions, setStore }) => {
                         body: JSON.stringify(coachData),
                     });
 
-                    const data = await response.json();
-                    console.log("Datos recibidos en loginCoach:", data);
-
                     if (response.ok) {
-                        localStorage.setItem('token', data.token);
+                        const data = await response.json();
+                        console.log("Coach logueado:", data);
+
+                        // Establecer el estado de autenticación
                         setStore({
-                            loggedInCoach: {
-                                id: data.coach_id || null,
-                                nombre: data.nombre_coach || '',
-                                genero: data.genero_coach || '',
-                                cumpleaños: data.cumpleaños_coach || '',
-                                foto: data.foto_coach || '' // Agregar la foto aquí
-                            },
                             isAuthenticated: true,
+                            loggedInCoach: {
+                                id: data.coach_id,
+                                email: data.email,
+                                nombre: data.nombre,
+                                genero: data.genero,
+                                cumpleaños: data.cumpleaños,
+                                foto_coach: data.foto_coach,
+                                isProfileComplete: data.isProfileComplete || false // Asegúrate de que esta propiedad esté disponible
+                            }
                         });
 
-                        return true;
+                        return data; // Retornar los datos del coach
                     } else {
-                        console.error("Error en el login:", data.msg);
-                        setStore({ isAuthenticated: false, loggedInCoach: null });
-                        return false;
+                        console.error("Error al iniciar sesión:", response.statusText);
+                        return null;
                     }
                 } catch (error) {
-                    console.error("Error en la solicitud de loginCoach:", error);
-                    setStore({ isAuthenticated: false, loggedInCoach: null });
-                    return false;
+                    console.error("Error en el login:", error);
+                    return null;
                 }
             },
+
+
 
             // Obtener información del coach
             getCoachInfo: async (coachId) => {
@@ -423,6 +426,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return null;
                 }
             },
+
 
 
             // Logout

@@ -14,35 +14,62 @@ module.exports = {
   },
   module: {
     rules: [
-        {
-          test: /\.(js|jsx)$/,
-          exclude: /node_modules/,
-          use: ['babel-loader']
-        },
-        {
-          test: /\.(css|scss)$/, use: [{
-              loader: "style-loader" // creates style nodes from JS strings
-          }, {
-              loader: "css-loader" // translates CSS into CommonJS
-          }]
-        }, //css only files
-        {
-          test: /\.(png|svg|jpg|gif|jpeg|webp)$/, use: {
+      {
+        // Rule for handling audio files
+        test: /\.(mp3|wav|ogg)$/,
+        use: [
+          {
             loader: 'file-loader',
-            options: { name: '[name].[ext]' }
-          }
-        }, //for images
-        { test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/, use: ['file-loader'] } //for fonts
-    ]
+            options: {
+              name: '[name].[hash].[ext]', // Adjust the output filename format as needed
+              outputPath: 'sounds/', // Specify the output directory for sound files
+            },
+          },
+        ],
+      },
+      {
+        // Rule for handling JavaScript and JSX files
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader'],
+      },
+      {
+        // Rule for handling CSS and SCSS files
+        test: /\.(css|scss)$/,
+        use: [
+          {
+            loader: 'style-loader', // Creates style nodes from JS strings
+          },
+          {
+            loader: 'css-loader', // Translates CSS into CommonJS
+          },
+        ],
+      },
+      {
+        // Rule for handling images
+        test: /\.(png|svg|jpg|gif|jpeg|webp)$/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+          },
+        },
+      },
+      {
+        // Rule for handling font files
+        test: /\.(woff|woff2|ttf|eot|svg)$/,
+        use: ['file-loader'],
+      },
+    ],
   },
   resolve: {
-    extensions: ['*', '.js']
+    extensions: ['*', '.js', '.jsx'], // Added .jsx to extensions
   },
   plugins: [
     new HtmlWebpackPlugin({
-        favicon: 'iconoweb.ico',
-        template: 'template.html'
+      favicon: 'iconoweb.ico',
+      template: 'template.html',
     }),
-    new Dotenv({ safe: true, systemvars: true })
-  ]
+    new Dotenv({ safe: true, systemvars: true }),
+  ],
 };

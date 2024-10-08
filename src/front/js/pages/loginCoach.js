@@ -1,89 +1,124 @@
-import React, { useEffect, useState } from 'react';
-import { useStore } from '../store/appContext';
-import { useNavigate } from 'react-router-dom';
+import React, { useContext } from "react"; // Importar React
+import { useNavigate } from "react-router-dom"; // Importar useNavigate para redirección
+import { Context } from "../store/appContext"; // Importar el contexto
 
-// Componente que maneja el login para el coach
 const LoginCoach = () => {
-    const { actions, store } = useStore();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+    const { actions } = useContext(Context); // Obtener las acciones del contexto
+    const navigate = useNavigate(); // Inicializar el hook para la navegación
 
     const handleLogin = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setErrorMessage('');
+        e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+
+        // Obtener el email y la contraseña del formulario
+        const email = e.target.email.value.trim();
+        const password = e.target.password.value.trim();
+
+        // Validar que ambos campos no estén vacíos
+        if (!email || !password) {
+            console.log("Por favor, completa todos los campos."); // Mensaje de error en consola
+            return; // Salir de la función si hay campos vacíos
+        }
 
         const coachData = {
-            email_coach: email,
-            password_coach: password,
+            email_coach: email, // Obtener el email del formulario
+            password_coach: password, // Obtener la contraseña del formulario
         };
 
-        const loginSuccess = await actions.loginCoach(coachData);
+        try {
+            // Llama a la acción de inicio de sesión y maneja la respuesta
+            const loginResponse = await actions.loginCoach(coachData);
 
-        if (loginSuccess) {
-            console.log("Login exitoso, coach ID:", store.loggedInCoach.id);
-        } else {
-            setErrorMessage("Error en el inicio de sesión. Verifica tus credenciales.");
+            // Verifica que la respuesta contenga un ID de coach
+            if (loginResponse && loginResponse.coach_id) {
+                console.log("Login exitoso, coach ID:", loginResponse.coach_id);
+
+                // Cargar información del coach después de iniciar sesión
+                const coachInfo = await actions.getCoachInfo(loginResponse.coach_id);
+
+                if (coachInfo) {
+                    console.log("Información del coach:", coachInfo);
+
+                    // Verificar si el coach tiene la información necesaria
+                    const hasRequiredInfo =
+                        coachInfo.nombre_coach &&
+                        coachInfo.nacimiento_coach &&
+                        coachInfo.genero_coach &&
+                        coachInfo.direccion &&
+                        coachInfo.latitud &&
+                        coachInfo.longitud;
+
+                    if (hasRequiredInfo) {
+                        console.log("Redirigiendo a panel de control de coach..."); // Log para verificar
+                        navigate("/control-panel-coach"); // Redirigir al panel de control de coach
+                    } else {
+                        console.log("Faltan datos, redirigiendo a completar información...");
+                        navigate("/question-profile-coach"); // Redirigir a la página para completar información
+                    }
+                } else {
+                    console.error("No se pudo obtener la información del coach después de iniciar sesión.");
+                    console.log("Error al cargar la información del coach. Inténtalo de nuevo."); // Mensaje de error en consola
+                }
+            } else {
+                console.error("Error en el login: Respuesta no válida");
+                console.log("Credenciales incorrectas. Por favor, inténtalo de nuevo."); // Mensaje de error en consola
+            }
+        } catch (error) {
+            console.error("Se produjo un error al intentar iniciar sesión:", error);
+            console.log("Ocurrió un error inesperado. Inténtalo de nuevo."); // Mensaje de error en consola
         }
-        setLoading(false);
     };
 
-    useEffect(() => {
-        if (store.loggedInCoach) {
-            console.log("Coach logueado:", store.loggedInCoach);
-            const coachId = store.loggedInCoach.id;
-
-            if (coachId) {
-                actions.getCoachInfo(coachId);
-            } else {
-                console.error("ID de coach no disponible después de login");
-            }
-        }
-    }, [store.loggedInCoach, actions]);
-
-    useEffect(() => {
-        if (store.coachInfo) {
-            console.log("Información del coach actual:", store.coachInfo);
-            // Verifica si los campos necesarios están completos
-            const coachInfoComplete = store.coachInfo.nombre &&
-                store.coachInfo.genero &&
-                store.coachInfo.cumpleaños; // Aquí seguimos revisando el cumpleaños
-
-            console.log("¿Información del coach completa?", coachInfoComplete);
-
-            if (coachInfoComplete) {
-                console.log("Redirigiendo al panel de control...");
-                navigate("/control-panel-coach");
-            } else {
-                console.log("Redirigiendo a la actualización del perfil...");
-                navigate("/question-profile-coach");
-            }
-        }
-    }, [store.coachInfo, navigate]);
-
     return (
-        <form onSubmit={handleLogin}>
-            <input 
-                type="email" 
-                placeholder="Email" 
-                value={email} 
-                onChange={(e) => setEmail(e.target.value)} 
-                required 
-            />
-            <input 
-                type="password" 
-                placeholder="Contraseña" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-                required 
-            />
-            <button type="submit" disabled={loading}>Iniciar sesión</button>
-            {loading && <p>Cargando...</p>}
-            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-        </form>
+        <>
+            <div className="form-container">
+                <p className="title">Inicia Sesión</p>
+                <form className="form" onSubmit={handleLogin}>
+                    <div className="input-group">
+                        <label htmlFor="email">Correo electrónico</label>
+                        <input type="email" name="email" id="email" placeholder="Ingrese su correo electrónico" required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="password">Contraseña</label>
+                        <input type="password" name="password" id="password" placeholder="Ingrese su contraseña" required />
+                        <div className="forgot">
+                            <a rel="noopener noreferrer" href="#">¿Olvidaste tu contraseña?</a>
+                        </div>
+                    </div>
+                    <button className="sign" type="submit">Iniciar Sesión</button>
+                </form>
+                <div className="social-message">
+                    <div className="line"></div>
+                    <p className="message">Inicia sesión con cuentas sociales</p>
+                    <div className="line"></div>
+                </div>
+                <div className="social-icons">
+                    <button aria-label="Iniciar sesión con Google" className="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="w-5 h-5 fill-current">
+                            <path d="M16.318 13.714v5.484h9.078c-0.37 2.354-2.745 6.901-9.078 6.901-5.458 0-9.917-4.521-9.917-10.099s4.458-10.099 9.917-10.099c3.109 0 5.193 1.318 6.38 2.464l4.339-4.182c-2.786-2.599-6.396-4.182-10.719-4.182-8.844 0-16 7.151-16 16s7.156 16 16 16c9.234 0 15.365-6.49 15.365-15.635 0-1.052-0.115-1.854-0.255-2.651z"></path>
+                        </svg>
+                    </button>
+                    <button aria-label="Iniciar sesión con Twitter" className="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="w-5 h-5 fill-current">
+                            <path d="M31.937 6.093c-1.177 0.516-2.437 0.871-3.765 1.032 1.355-0.813 2.391-2.099 2.885-3.631-1.271 0.74-2.677 1.276-4.172 1.579-1.192-1.276-2.896-2.079-4.787-2.079-3.625 0-6.563 2.937-6.563 6.557 0 0.521 0.063 1.021 0.172 1.495-5.453-0.255-10.287-2.875-13.52-6.833-0.568 0.964-0.891 2.084-0.891 3.303 0 2.281 1.161 4.281 2.916 5.457-1.073-0.031-2.083-0.328-2.968-0.817v0.079c0 3.181 2.26 5.833 5.26 6.437-0.547 0.145-1.131 0.229-1.724 0.229-0.421 0-0.823-0.041-1.224-0.115 0.844 2.604 3.26 4.5 6.14 4.557-2.239 1.755-5.077 2.801-8.135 2.801-0.521 0-1.041-0.025-1.563-0.088 2.917 1.86 6.36 2.948 10.079 2.948 12.067 0 18.661-9.995 18.661-18.651 0-0.276 0-0.557-0.021-0.839 1.287-0.917 2.401-2.079 3.281-3.396z"></path>
+                        </svg>
+                    </button>
+                    <button aria-label="Iniciar sesión con GitHub" className="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="w-5 h-5 fill-current">
+                            <path d="M16 0.396c-8.839 0-16 7.167-16 16 0 7.073 4.584 13.068 10.937 15.183 0.803 0.151 1.093-0.344 1.093-0.772 0-0.38-0.009-1.385-0.015-2.719-4.453 0.964-5.391-2.151-5.391-2.151-0.729-1.844-1.781-2.339-1.781-2.339-1.448-0.989 0.115-0.968 0.115-0.968 1.604 0.109 2.448 1.645 2.448 1.645 1.427 2.448 3.744 1.74 4.661 1.328 0.14-1.031 0.557-1.74 1.011-2.135-3.552-0.401-7.287-1.776-7.287-7.907 0-1.751 0.62-3.177 1.645-4.297-0.177-0.401-0.719-2.031 0.141-4.235 0 0 1.339-0.427 4.4 1.641 1.281-0.355 2.641-0.532 4-0.541 1.36 0.009 2.719 0.187 4 0.541 3.043-2.068 4.381-1.641 4.381-1.641 0.859 2.204 0.317 3.833 0.161 4.235 1.015 1.12 1.635 2.547 1.635 4.297 0 6.145-3.74 7.5-7.296 7.891 0.556 0.479 1.077 1.464 1.077 2.959 0 2.14-0.020 3.864-0.020 4.385 0 0.416 0.28 0.916 1.104 0.755 6.4-2.093 10.979-8.093 10.979-15.156 0-8.833-7.161-16-16-16z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <p className="signup">¿No tienes una cuenta?
+                    <a rel="noopener noreferrer" href="/signup-coach" className=""> Regístrate</a>
+                </p>
+            </div>
+            <button
+                className="back-button"
+                onClick={() => navigate(-1)} // Navegar hacia atrás
+            >
+                Volver Atrás
+            </button>
+        </>
     );
 };
 

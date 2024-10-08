@@ -1,3 +1,4 @@
+// src/components/CoachMapPage.js
 import React, { useEffect, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css'; // Importar el CSS de Leaflet
@@ -11,7 +12,7 @@ const customIcon = L.icon({
     popupAnchor: [1, -34], // Punto donde se abre el popup en relación al icono
 });
 
-const CoachMapPage = () => {
+const CoachMapPage = ({ setLat, setLon }) => {
     const [map, setMap] = useState(null); // Estado para almacenar la referencia del mapa
     const [marker, setMarker] = useState(null); // Estado para el marcador
     const [inputValue, setInputValue] = useState(''); // Estado para el input
@@ -55,7 +56,11 @@ const CoachMapPage = () => {
                         const newMarker = L.marker([lat, lon], { icon: customIcon }).addTo(map); // Usar el icono personalizado
                         setMarker(newMarker);
                     }
-                } 
+
+                    // Guardar latitud y longitud en el estado padre
+                    setLat(lat);
+                    setLon(lon);
+                }
             })
             .catch(err => {
                 console.error('Error al buscar la ubicación:', err);
@@ -82,6 +87,10 @@ const CoachMapPage = () => {
                             const newMarker = L.marker([lat, lon], { icon: customIcon }).addTo(map); // Usar el icono personalizado
                             setMarker(newMarker);
                         }
+
+                        // Guardar latitud y longitud en el estado padre
+                        setLat(lat);
+                        setLon(lon);
 
                         // Limpiar resultados
                         setSearchResults([]); // Limpiar resultados después de buscar
@@ -111,13 +120,17 @@ const CoachMapPage = () => {
             setMarker(newMarker);
         }
 
+        // Guardar latitud y longitud en el estado padre
+        setLat(lat);
+        setLon(lon);
+
         setSearchResults([]); // Limpiar resultados después de seleccionar
         setInputValue(''); // Limpiar el input
     };
 
     return (
-        <div style={{ paddingTop: '60px' }}> {/* Ajuste para evitar que el navbar cubra el contenido */}
-            <h1>Buscar Ubicación en el Mapa</h1>
+        <div style={{ paddingTop: '20px' }}> {/* Ajuste para evitar que el navbar cubra el contenido */}
+            <h2>Buscar Ubicación en el Mapa</h2>
             <div style={{ display: 'flex', alignItems: 'center', margin: '20px' }}>
                 <input
                     type="text"
