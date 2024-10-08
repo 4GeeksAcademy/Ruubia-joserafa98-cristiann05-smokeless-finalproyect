@@ -80,51 +80,66 @@ const CreateProfileUser = () => {
     }
 
     return (
-        <div className="profile-form">
-            <h2 className="form-title">Actualizar Perfil</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>Nombre de Usuario:</label>
-                    <input
-                        type="text"
-                        value={nombre_usuario}
-                        onChange={(e) => setnombre_usuario(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Género:</label>
-                    <select
-                        value={genero}
-                        onChange={(e) => setGenero(e.target.value)}
-                        required
-                    >
-                        <option value="masculino">Masculino</option>
-                        <option value="femenino">Femenino</option>
-                    </select>
-                </div>
-                <div className="form-group">
-                    <label>Cumpleaños:</label>
-                    <input
-                        type="date"
-                        value={cumpleaños}
-                        onChange={(e) => setCumpleaños(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Foto de Perfil:</label>
-                    <input
-                        type="file"
-                        onChange={handleImageUpload}
-                    />
-                </div>
-                {error && <p className="error-message">{error}</p>}
-                <button type="submit" className="submit-button">Actualizar Perfil</button>
-            </form>
-        </div>
+        <>
+            <div className="profile-form">
+                <h2 className="form-title">Actualizar Perfil</h2>
+                <form onSubmit={handleSubmit}>
+                    {/* Input de Nombre */}
+                    <div className="form-group">
+                        <label>Nombre de Usuario:</label>
+                        <input
+                            type="text"
+                            value={nombre_usuario}
+                            onChange={(e) => setnombre_usuario(e.target.value)} // Esto es esencial para que el input no esté bloqueado
+                            required
+                        />
+                    </div>
+
+                    {/* Selección de Género */}
+                    <div className="form-group">
+                        <label>Género:</label>
+                        <select
+                            value={genero}
+                            onChange={(e) => setGenero(e.target.value)} // Permitir cambiar el valor del género
+                            required
+                        >
+                            <option value="masculino">Masculino</option>
+                            <option value="femenino">Femenino</option>
+                        </select>
+                    </div>
+
+                    {/* Input de Fecha de Nacimiento */}
+                    <div className="form-group">
+                        <label>Cumpleaños:</label>
+                        <input
+                            type="date"
+                            value={cumpleaños}
+                            onChange={(e) => setCumpleaños(e.target.value)} // Esto permite que el input de fecha sea editable
+                            required
+                        />
+                    </div>
+
+                    {/* Input para Subir Foto */}
+                    <div className="form-group">
+                        <label>Foto de Perfil:</label>
+                        <input
+                            type="file"
+                            onChange={handleImageUpload} // Manejo de archivos
+                        />
+                    </div>
+
+                    {error && <p className="error-message">{error}</p>}
+                    <button type="submit" className="submit-button">Actualizar Perfil</button>
+                </form>
+            </div>
+            <button
+                className="back-button"
+                onClick={() => navigate(-1)} // Navegar hacia atrás
+            >
+                Volver Atrás
+            </button>
+        </>
     );
 };
 
 export default CreateProfileUser;
-

@@ -160,7 +160,10 @@ def create_profile_coach(coach_id):
 
     nombre = request.json.get('nombre_coach')
     genero = request.json.get('genero_coach')
-    cumpleaños = request.json.get('nacimiento_coach')  
+    cumpleaños = request.json.get('nacimiento_coach')
+    direccion = request.json.get('direccion')  # Nueva entrada para dirección
+    latitud = request.json.get('latitud')  # Nueva entrada para latitud
+    longitud = request.json.get('longitud')  # Nueva entrada para longitud
 
     if nombre:
         coach.nombre_coach = nombre
@@ -173,10 +176,25 @@ def create_profile_coach(coach_id):
         except ValueError:
             return jsonify({"msg": "Fecha de nacimiento inválida. Debe estar en el formato YYYY-MM-DD."}), 400
 
+    # Guardar dirección, latitud y longitud si están presentes
+    if direccion:
+        coach.direccion = direccion
+    if latitud:
+        try:
+            coach.latitud = float(latitud)
+        except ValueError:
+            return jsonify({"msg": "Latitud inválida. Debe ser un número válido."}), 400
+    if longitud:
+        try:
+            coach.longitud = float(longitud)
+        except ValueError:
+            return jsonify({"msg": "Longitud inválida. Debe ser un número válido."}), 400
+
     # Guarda los cambios en la base de datos
     db.session.commit()
 
     return jsonify({"msg": "Perfil del coach actualizado exitosamente", "coach": coach.serialize()}), 200
+
 
 
 # Obtener todos los coaches (GET)
@@ -710,3 +728,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Crea las tablas de la base de datos
     app.run(debug=True)
+

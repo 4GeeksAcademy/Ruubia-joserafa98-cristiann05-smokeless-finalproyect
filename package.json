@@ -92,6 +92,7 @@
 		"react-polyfills": "0.0.1",
 		"react-router-dom": "^6.3.0",
 		"react-toastify": "^10.0.5",
-		"styled-components": "^6.1.13"
+		"styled-components": "^6.1.13",
+		"use-sound": "^4.0.3"
 	}
 }
