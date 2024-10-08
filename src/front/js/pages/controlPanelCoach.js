@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
-import SolicitudesCoach from "../component/SolicitudesCoach";
+
 
 
 
@@ -29,7 +29,7 @@ const ControlPanelCoach = () => {
             <p>Here you will be able to manage your profile, track your clients' progress, and much more.</p>
             <button className="btn btn-primary">Manage Profile</button>
             <button className="btn btn-secondary ml-3" onClick={() => navigate("/track-client")}>Track Clients</button>
-            <button className="btn btn-primary ml-3" onClick={() => navigate(`/coach-details/${store.loggedInCoach.id}`)}>View My Profile</button>
+            <button className="btn btn-primary ml-3" onClick={() => navigate(`/coach-profile/${store.loggedInCoach.id}`)}>View My Profile</button>
             <button className="btn btn-info mt-3" onClick={() => navigate("/control-panel-coach/map")}>
                 View Coach Map
             </button>

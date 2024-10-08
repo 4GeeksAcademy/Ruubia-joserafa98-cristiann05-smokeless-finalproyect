@@ -1,47 +1,83 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { useNavigate } from "react-router-dom"; // Importar useNavigate
+import { useNavigate } from "react-router-dom";
 
 const CoachCard = () => {
     const { store, actions } = useContext(Context);
     const [alertMessage, setAlertMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);
-    const navigate = useNavigate(); // Inicializar useNavigate
+    const navigate = useNavigate();
+
+    // Agregamos logs para verificar qué datos se están trayendo
+    console.log("Solicitudes actuales:", store.solicitudes);
+    console.log("Coaches actuales:", store.coaches);
 
     useEffect(() => {
-        const fetchCoaches = async () => {
-            await actions.getAllCoaches();
+        const fetchData = async () => {
+            await actions.getAllCoaches(); // Trae todos los coaches
+            await actions.getAllSolicitudes(); // Trae todas las solicitudes
             setIsLoading(false);
         };
-        fetchCoaches();
-    }, [actions]);
+        fetchData();
+    }, []);
 
+    const formatFecha = (date) => {
+        const dia = String(date.getDate()).padStart(2, '0'); // Asegurarse de que el día tenga 2 dígitos
+        const mes = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en JS son 0-11, por eso sumamos 1
+        const año = date.getFullYear(); // Obtener el año
+        return `${dia}/${mes}/${año}`;  // Formato final "dd/mm/yyyy"
+    };
+    
+
+    // Usamos new Date() para obtener la fecha actual
+    const fechaSolicitud = formatFecha(new Date());
     const handleAddCoach = (coachId) => {
-        const userId = store.loggedInUser.id; // Obtener el ID del usuario autenticado
-
+        const userId = store.loggedInUser?.id;
+    
         if (!userId) {
             setAlertMessage("Error: Usuario no autenticado.");
-            return; // Salir de la función si no hay un usuario autenticado
+            return;
         }
-
+    
         const solicitudData = {
-            id_usuario: userId, // Usar el ID del usuario
+            id_usuario: userId,
             id_coach: coachId,
-            fecha_solicitud: new Date().toLocaleDateString('es-ES'), // Formato "dd/mm/yyyy"
-            estado: false, // Cambia a false si el estado es un booleano
+            fecha_solicitud: fechaSolicitud,
+            estado: false,
             fecha_respuesta: null,
             comentarios: 'Estoy interesado en el coaching',
         };
-
+    
+        console.log("Solicitud a enviar:", solicitudData);
+    
         actions.addSolicitud(solicitudData)
-            .then(() => setAlertMessage("Solicitud enviada exitosamente!"))
-            .catch(() => setAlertMessage("Hubo un fallo al enviar la solicitud."));
+            .then(() => {
+                setAlertMessage("Solicitud enviada exitosamente!");
+                actions.getAllCoaches(); // Forzar la obtención de coaches nuevamente
+                actions.getAllSolicitudes(); // Forzar la obtención de solicitudes nuevamente
+            })
+            .catch((error) => {
+                console.error("Error al enviar la solicitud:", error);
+                setAlertMessage("Hubo un fallo al enviar la solicitud.");
+            });
+    };
+    
+
+    const handleViewProfile = (coachId) => {
+        navigate(`/coach-details/${coachId}`);
     };
 
-    // Función para redirigir al perfil del coach
-    const handleViewProfile = (coachId) => {
-        navigate(`/coach-details/${coachId}`); // Cambia la URL a '/coach-details/:coachId'
-    };
+    // Filtrar coaches que no tienen solicitudes pendientes ni aprobadas
+    const filteredCoaches = store.coaches.filter(coach => {
+        const hasRequest = store.solicitudes.some(solicitud => {
+            return (
+                solicitud.id_coach === coach.id &&
+                solicitud.id_usuario === store.loggedInUser.id && // Aseguramos que la solicitud pertenezca al usuario logueado
+                (solicitud.fecha_respuesta !== null || solicitud.estado === true)
+            );
+        });
+        return !hasRequest; // Retornar solo aquellos que no tienen solicitudes pendientes ni aprobadas
+    });
 
     return (
         <div className="container mt-5">
@@ -50,12 +86,14 @@ const CoachCard = () => {
                     {alertMessage}
                 </div>
             )}
-            <h1 className="text-center mb-4">Coachs Disponibles</h1>
-            {store.coaches && store.coaches.length > 0 ? (
+            <h1 className="text-center mb-4 text-light">Coachs Disponibles</h1>
+            {isLoading ? (
+                <p className="text-center text-light">Cargando datos...</p>
+            ) : filteredCoaches && filteredCoaches.length > 0 ? (
                 <div className="row">
-                    {store.coaches.map((coach) => (
-                        <div className="col-md-4 mb-4" key={coach.id}>
-                            <div className="card text" style={{ width: "18rem" }}>
+                    {filteredCoaches.map((coach) => (
+                        <div className="col-md-12 mb-4" key={coach.id}>
+                            <div className="card text-light" style={{ width: "18rem", backgroundColor: "#333" }}>
                                 <img
                                     src={coach.foto_coach || "https://i.pinimg.com/550x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg"}
                                     className="card-img-top"
@@ -84,11 +122,10 @@ const CoachCard = () => {
                     ))}
                 </div>
             ) : (
-                <p className="text-center">No hay datos registrados.</p>
+                <p className="text-center text-light">No hay coaches disponibles.</p>
             )}
         </div>
     );
 };
 
 export default CoachCard;
-

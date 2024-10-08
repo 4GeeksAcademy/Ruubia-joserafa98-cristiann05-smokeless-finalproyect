@@ -617,9 +617,10 @@ def update_solicitud(id):
         return jsonify({"error": "Solicitud no encontrada"}), 404
 
     data = request.get_json()
-    
+
+    # Actualización de los campos de la solicitud
     if 'estado' in data:
-        solicitud.estado = data['estado'] in ['true', 'True', '1']  # Convertir a booleano
+        solicitud.estado = data['estado']  # Asignar directamente el valor booleano
     if 'fecha_respuesta' in data:
         try:
             solicitud.fecha_respuesta = datetime.strptime(data['fecha_respuesta'], "%d/%m/%Y").date()
@@ -630,6 +631,7 @@ def update_solicitud(id):
 
     db.session.commit()
     return jsonify(solicitud.serialize()), 200
+
 
 # Eliminar una solicitud específica
 @api.route('/solicitudes/<int:id>', methods=['DELETE'])
