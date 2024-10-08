@@ -27,20 +27,31 @@ const CoachCard = () => {
         const solicitudData = {
             id_usuario: userId,
             id_coach: coachId,
-            fecha_solicitud: new Date().toLocaleDateString('es-ES'),
+            fecha_solicitud: new Date(),
             estado: false,
             fecha_respuesta: null,
             comentarios: 'Estoy interesado en el coaching',
         };
 
         actions.addSolicitud(solicitudData)
-            .then(() => setAlertMessage("Solicitud enviada exitosamente!"))
+            .then(() => {
+                setAlertMessage("Solicitud enviada exitosamente!");
+                actions.getAllCoaches(); // Forzar la obtención de coaches nuevamente
+            })
             .catch(() => setAlertMessage("Hubo un fallo al enviar la solicitud."));
     };
 
     const handleViewProfile = (coachId) => {
         navigate(`/coach-details/${coachId}`);
     };
+
+    // Filtrar coaches que no tienen solicitudes pendientes
+    const filteredCoaches = store.coaches.filter(coach => {
+        const hasRequest = store.solicitudes.some(solicitud => {
+            return solicitud.id_coach === coach.id && solicitud.fecha_respuesta === null; // Verificar fecha_respuesta
+        });
+        return !hasRequest; // Retornar solo aquellos que no tienen solicitudes pendientes
+    });
 
     return (
         <div className="container mt-5">
@@ -50,9 +61,9 @@ const CoachCard = () => {
                 </div>
             )}
             <h1 className="text-center mb-4 text-light">Coachs Disponibles</h1>
-            {store.coaches && store.coaches.length > 0 ? (
+            {filteredCoaches && filteredCoaches.length > 0 ? (
                 <div className="row">
-                    {store.coaches.map((coach) => (
+                    {filteredCoaches.map((coach) => (
                         <div className="col-md-12 mb-4" key={coach.id}>
                             <div className="card text-light" style={{ width: "18rem", backgroundColor: "#333" }}>
                                 <img

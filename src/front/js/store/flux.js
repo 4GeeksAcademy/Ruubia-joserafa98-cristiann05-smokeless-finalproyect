@@ -274,14 +274,26 @@ const getState = ({ getStore, getActions, setStore }) => {
             // Obtener un coach específico
             getCoach: async (coachId) => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/coaches/${coachId}`);
+                    const url = `${process.env.BACKEND_URL}/api/coaches/${coachId}`;
+                    console.log("Fetching coach data from URL:", url); // Verifica la URL
+            
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`); // Manejar errores HTTP
+                    }
+                    
                     const data = await response.json();
-                    console.log(data);
-                    setStore({ coach: data });
+                    if (data) {
+                        console.log("Coach data received:", data); // Verifica los datos recibidos
+                        setStore({ coach: data });
+                    } else {
+                        console.error("No data received for coach.");
+                    }
                 } catch (error) {
                     console.error("Error fetching coach:", error);
                 }
             },
+            
 
             // Actualizar el perfil del coach
             updateProfileCoach: async (coachId, coachData) => {

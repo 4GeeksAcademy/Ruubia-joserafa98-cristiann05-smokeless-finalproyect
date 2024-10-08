@@ -5,9 +5,9 @@ import { Context } from "../store/appContext";
 const ViewProfileCoach = () => {
     const { coachId } = useParams(); // Extraer el coachId de la URL
     const { actions, store } = useContext(Context); 
-    const [loading, setLoading] = useState(true); // Estado para manejar la carga
-    const [error, setError] = useState(null); // Estado para manejar errores
-    const [alertMessage, setAlertMessage] = useState(""); // Estado para mensajes de alerta
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [alertMessage, setAlertMessage] = useState("");
 
     useEffect(() => {
         const fetchCoachData = async () => {
@@ -17,8 +17,9 @@ const ViewProfileCoach = () => {
                 return;
             }
             try {
-                await actions.getCoach(coachId); // Acción que actualiza el store
-                setLoading(false); 
+                await actions.getCoach(coachId);
+                setLoading(false);
+                console.log("Datos del coach:", store.coach); // Verifica qué coach se está almacenando
             } catch (error) {
                 console.error("Error al obtener los datos del coach:", error);
                 setError("No se pudieron obtener los datos del coach.");
@@ -28,14 +29,14 @@ const ViewProfileCoach = () => {
         fetchCoachData();
     }, [coachId, actions]);
 
-    const coach = store.coach; // Obtener coach desde el store
+    const coach = store.coach;
 
     const handleSendRequest = () => {
-        const userId = store.loggedInUser.id; // Obtener el ID del usuario autenticado
+        const userId = store.loggedInUser.id;
 
         if (!userId) {
             setAlertMessage("Error: Usuario no autenticado.");
-            return; // Salir de la función si no hay un usuario autenticado
+            return;
         }
 
         const solicitudData = {
@@ -60,7 +61,7 @@ const ViewProfileCoach = () => {
             ) : error ? (
                 <p className="text-center text-danger">{error}</p> 
             ) : coach && coach.email_coach ? (
-                <div className="card bg-dark text-light"> {/* Estilo de fondo oscuro y texto claro */}
+                <div className="card bg-dark text-light">
                     <img 
                         src={coach.foto_coach || "https://via.placeholder.com/150"} 
                         alt="Foto del Coach" 
@@ -95,8 +96,3 @@ const ViewProfileCoach = () => {
 };
 
 export default ViewProfileCoach;
-
-
-
-
-
