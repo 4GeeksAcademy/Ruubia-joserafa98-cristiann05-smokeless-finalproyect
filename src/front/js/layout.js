@@ -4,7 +4,7 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 import { Home } from "./pages/homePage";
 import SignupSmoker from "./pages/signupSmoker";
-import LoginSmoker from "./pages/loginSmoker"; 
+import LoginSmoker from "./pages/loginSmoker";
 import ControlPanelSmoker from "./pages/controlPanelSmoker";
 import SignupCoach from "./pages/signupCoach";
 import LoginCoach from "./pages/loginCoach";
@@ -21,9 +21,8 @@ import ViewProfileCoach from "./pages/ViewProfileCoach";
 import UserProfile from "./pages/userProfile";
 import CoachAddress from "./pages/CoachAddress";
 
-import CoachCard from "./component/CoachCards";
+import CoachesList from "./pages/CoachesList";
 import ApprovedCoaches from "./pages/coachapprove";
-import SmokerCard from "./pages/SmokerCard";
 import Navbar from "./component/navbar"; 
 import Footer from "./component/footer";
 import CoachProfile from "./pages/CoachProfile";
@@ -58,11 +57,11 @@ const Layout = () => {
                 <ScrollToTop>
                     {/* Renderiza el Navbar solo si la ruta no está en hiddenRoutes */}
                     {!hiddenRoutes.includes(window.location.pathname) && (
-                        <Navbar 
-                            toggleTheme={toggleTheme} 
-                            language={language} 
-                            handleLanguageChange={handleLanguageChange} 
-                            theme={theme} 
+                        <Navbar
+                            toggleTheme={toggleTheme}
+                            language={language}
+                            handleLanguageChange={handleLanguageChange}
+                            theme={theme}
                         />
                     )}
                     <Routes>
@@ -83,7 +82,7 @@ const Layout = () => {
                         <Route element={<ViewProfileCoach />} path="/coach-details/:coachId" />
                         <Route element={<UserProfile />} path="/user-profile/:userId" />
                         <Route element={<CoachAddress />} path="/question-address-coach" />
-                        <Route element={<CoachCard />} path="/coach-available" /> 
+                        <Route element={<CoachesList />} path="/coaches" />
                         <Route element={<SmokerCard />} path="/my-clients" /> 
                         <Route element={<ApprovedCoaches />} path="/approved-coaches" />
                         <Route element={<CoachProfile />} path="/coach-profile/:coachId" />

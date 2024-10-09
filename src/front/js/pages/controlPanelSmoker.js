@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
-import CoachCard from "../component/CoachCards";
 
 const ControlPanelSmoker = () => {
     const { store, actions } = useContext(Context);
@@ -27,7 +26,7 @@ const ControlPanelSmoker = () => {
     };
 
     const handleViewCoaches = () => {
-        navigate('/coach-available'); // Redirige a la nueva página de coaches
+        navigate('/coaches'); // Redirige a la nueva página de coaches
     };
 
     if (loading) {
@@ -44,9 +43,9 @@ const ControlPanelSmoker = () => {
         <div className="container mt-5">
             <h1>Welcome to your Dashboard!</h1>
             <p>This is the control panel for smoker.</p>
-            
-            <button 
-                className="btn btn-primary mt-3" 
+
+            <button
+                className="btn btn-primary mt-3"
                 onClick={() => {
                     if (store.loggedInUser) {
                         navigate(`/user-profile/${store.loggedInUser.id}`);
