@@ -23,7 +23,7 @@ import CoachesList from "./pages/CoachesList";
 import ApprovedCoaches from "./pages/coachapprove";
 import SolicitudesSmoker from "./pages/SolicitudesSmoker";
 import CoachProfile from "./pages/CoachProfile";
-
+import UserProfile from "./pages/ViewProfileSmoker";
 const Layout = () => {
     const basename = process.env.BASENAME || "";
 
@@ -56,7 +56,6 @@ const Layout = () => {
                         <Route element={<CoachesList />} path="/Dashboard-Smoker/coaches" />
                         <Route element={<UserProfile />} path="/user-profile/:userId" />
                         <Route element={<CoachAddress />} path="/question-address-coach" />
-                        <Route element={<CoachesList />} path="/coaches" />
                         <Route element={<SmokerCard />} path="/my-clients" /> 
                         <Route element={<ApprovedCoaches />} path="/approved-coaches" />
                         <Route element={<CoachProfile />} path="/coach-profile/:coachId" />
