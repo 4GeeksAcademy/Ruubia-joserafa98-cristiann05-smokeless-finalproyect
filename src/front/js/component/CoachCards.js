@@ -8,10 +8,6 @@ const CoachCard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
-    // Agregamos logs para verificar qué datos se están trayendo
-    console.log("Solicitudes actuales:", store.solicitudes);
-    console.log("Coaches actuales:", store.coaches);
-
     useEffect(() => {
         const fetchData = async () => {
             await actions.getAllCoaches(); // Trae todos los coaches
@@ -22,15 +18,14 @@ const CoachCard = () => {
     }, []);
 
     const formatFecha = (date) => {
-        const dia = String(date.getDate()).padStart(2, '0'); // Asegurarse de que el día tenga 2 dígitos
-        const mes = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en JS son 0-11, por eso sumamos 1
-        const año = date.getFullYear(); // Obtener el año
-        return `${dia}/${mes}/${año}`;  // Formato final "dd/mm/yyyy"
+        const dia = String(date.getDate()).padStart(2, '0');
+        const mes = String(date.getMonth() + 1).padStart(2, '0');
+        const año = date.getFullYear();
+        return `${dia}/${mes}/${año}`;
     };
-    
 
-    // Usamos new Date() para obtener la fecha actual
     const fechaSolicitud = formatFecha(new Date());
+
     const handleAddCoach = (coachId) => {
         const userId = store.loggedInUser?.id;
     
@@ -53,8 +48,15 @@ const CoachCard = () => {
         actions.addSolicitud(solicitudData)
             .then(() => {
                 setAlertMessage("Solicitud enviada exitosamente!");
-                actions.getAllCoaches(); // Forzar la obtención de coaches nuevamente
-                actions.getAllSolicitudes(); // Forzar la obtención de solicitudes nuevamente
+                
+                return Promise.all([
+                    actions.getAllCoaches(), 
+                    actions.getAllSolicitudes() 
+                ]);
+            })
+            .then(() => {
+                // Aquí puedes hacer cualquier otra acción que necesites después de la actualización
+                console.log("Coaches y solicitudes actualizados.");
             })
             .catch((error) => {
                 console.error("Error al enviar la solicitud:", error);
@@ -67,16 +69,17 @@ const CoachCard = () => {
         navigate(`/coach-details/${coachId}`);
     };
 
-    // Filtrar coaches que no tienen solicitudes pendientes ni aprobadas
+    // Filtrar coaches que han completado su perfil y que no tienen solicitudes pendientes ni aprobadas
     const filteredCoaches = store.coaches.filter(coach => {
+        const hasValidProfile = coach.nombre_coach && coach.genero_coach && coach.direccion && coach.nacimiento_coach;
         const hasRequest = store.solicitudes.some(solicitud => {
             return (
                 solicitud.id_coach === coach.id &&
-                solicitud.id_usuario === store.loggedInUser.id && // Aseguramos que la solicitud pertenezca al usuario logueado
+                solicitud.id_usuario === store.loggedInUser.id &&
                 (solicitud.fecha_respuesta !== null || solicitud.estado === true)
             );
         });
-        return !hasRequest; // Retornar solo aquellos que no tienen solicitudes pendientes ni aprobadas
+        return hasValidProfile && !hasRequest; // Retornar solo aquellos que tienen un perfil válido y no tienen solicitudes pendientes ni aprobadas
     });
 
     return (
