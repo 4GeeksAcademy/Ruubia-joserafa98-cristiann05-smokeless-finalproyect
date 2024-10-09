@@ -55,7 +55,7 @@ const LoginSmoker = () => {
 
             if (userInfoComplete) {
                 // Redirigir al panel de control
-                navigate("/control-panel-smoker");
+                navigate("/Dashboard-Smoker");
             } else {
                 // Redirigir a los formularios
                 navigate("/question-profile-smoker");

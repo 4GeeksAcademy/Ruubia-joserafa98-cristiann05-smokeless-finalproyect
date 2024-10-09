@@ -5,89 +5,56 @@ import { BackendURL } from "./component/backendURL";
 import { Home } from "./pages/homePage";
 import SignupSmoker from "./pages/signupSmoker";
 import LoginSmoker from "./pages/loginSmoker";
-import ControlPanelSmoker from "./pages/controlPanelSmoker";
+import DasboardSmoker from "./pages/DashboardSmoker";
 import SignupCoach from "./pages/signupCoach";
 import LoginCoach from "./pages/loginCoach";
 import ControlPanelCoach from "./pages/controlPanelCoach";
 import injectContext from "./store/appContext";
 import CreateProfileUser from "./pages/createProfile-user";
 import CreateConsumProfile from "./pages/ConfiguracionConsumo";
-import SmokerMapPage from "./pages/SmokerMapPage";
-import CoachMapPage from "./pages/CoachMapPage";
 import CreateProfileCoach from "./pages/createProfile-coach";
 import LoginSelection from "./pages/LoginSelection";
 import SolicitudesCoach from "./component/SolicitudesCoach";
 import ViewProfileCoach from "./pages/ViewProfileCoach";
-import UserProfile from "./pages/userProfile";
+import ViewProfileSmoker from "./pages/ViewProfileSmoker";
 import CoachAddress from "./pages/CoachAddress";
 
 import CoachesList from "./pages/CoachesList";
 import ApprovedCoaches from "./pages/coachapprove";
-import Navbar from "./component/navbar";
-import Footer from "./component/footer";
 import CoachProfile from "./pages/CoachProfile";
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
-    const [theme, setTheme] = useState("dark");
-    const [language, setLanguage] = useState("es");
 
-    const handleLanguageChange = (e) => {
-        setLanguage(e.target.value);
-    };
-
-    const toggleTheme = () => {
-        const newTheme = theme === "light" ? "dark" : "light";
-        setTheme(newTheme);
-        document.body.className = newTheme;
-    };
-
-    useEffect(() => {
-        document.body.className = theme;
-    }, [theme]);
-
+    // Verifica la URL del backend
     if (!process.env.BACKEND_URL || process.env.BACKEND_URL === "") return <BackendURL />;
 
-    // Rutas donde no queremos mostrar el Navbar
-    const hiddenRoutes = ['/control-panel-coach', '/control-panel-smoker'];
 
     return (
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                    {/* Renderiza el Navbar solo si la ruta no está en hiddenRoutes */}
-                    {!hiddenRoutes.includes(window.location.pathname) && (
-                        <Navbar
-                            toggleTheme={toggleTheme}
-                            language={language}
-                            handleLanguageChange={handleLanguageChange}
-                            theme={theme}
-                        />
-                    )}
                     <Routes>
-                        <Route element={<Home toggleTheme={toggleTheme} />} path="/" />
+                        <Route element={<Home />} path="/" />
                         <Route element={<SignupSmoker />} path="/signup-smoker" />
                         <Route element={<LoginSmoker />} path="/login-smoker" />
-                        <Route element={<ControlPanelSmoker />} path="/control-panel-smoker" />
+                        <Route element={<DasboardSmoker />} path="/Dashboard-Smoker" />
                         <Route element={<SignupCoach />} path="/signup-coach" />
                         <Route element={<LoginCoach />} path="/login-coach" />
                         <Route element={<ControlPanelCoach />} path="/control-panel-coach" />
-                        <Route element={<SolicitudesCoach />} path="/track-client" />
+                        <Route element={<SolicitudesCoach />} path="/Dashboard-Smoker/solicitudes" />
                         <Route element={<CreateProfileUser />} path="/question-profile-smoker" />
                         <Route element={<CreateConsumProfile />} path="/question-config-smoker" />
                         <Route element={<CreateProfileCoach />} path="/question-profile-coach" />
-                        <Route element={<CoachMapPage />} path="/control-panel-coach/map" />
-                        <Route element={<SmokerMapPage />} path="/control-panel-smoker/map" />
                         <Route element={<LoginSelection />} path="/login-selection" />
-                        <Route element={<ViewProfileCoach />} path="/coach-details</:coachId>" />
-                        <Route element={<UserProfile />} path="/user-profile/:userId" />
+                        <Route element={<ViewProfileCoach />} path="/coach-details/:coachId" />
+                        <Route element={<ViewProfileSmoker />} path="/Dashboard-Smoker/user-profile/:userId" />
                         <Route element={<CoachAddress />} path="/question-address-coach" />
-                        <Route element={<CoachesList />} path="/coaches" />
+                        <Route element={<CoachesList />} path="/Dashboard-Smoker/coaches" />
                         <Route element={<ApprovedCoaches />} path="/approved-coaches" />
                         <Route element={<CoachProfile />} path="/coach-profile/:coachId" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
-                    <Footer />
                 </ScrollToTop>
             </BrowserRouter>
         </div>
@@ -95,4 +62,3 @@ const Layout = () => {
 };
 
 export default injectContext(Layout);
-

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import logoDark from '../../img/logos/logoblanco.png'; // Asegúrate de que la ruta es correcta
-import logoLight from '../../img/logos/logonegro.png'; // Ajusta según sea necesario
+import logo from '../../img/logos/logoblanco.png'; // Ajusta según sea necesario
 import { Link } from 'react-router-dom'; // Asegúrate de importar Link
 import "../../styles/navbar.css";
 import '../../styles/switch.css';
 
-const Navbar = ({ toggleTheme, theme }) => {
+const Navbar = () => {
     const [language, setLanguage] = useState(() => {
         return localStorage.getItem('language') || "Spanish";
     });
@@ -34,7 +33,7 @@ const Navbar = ({ toggleTheme, theme }) => {
             <div className="logo-container">
                 <Link to="/"> {/* Enlace al logo */}
                     <img 
-                        src={theme === 'dark' ? logoDark : logoLight} 
+                        src={logo} 
                         alt="Logo" 
                         className="logo" 
                     />
@@ -66,11 +65,6 @@ const Navbar = ({ toggleTheme, theme }) => {
                         ))}
                     </ul>
                 </div>
-
-                <label className="switch" aria-label="Toggle Theme">
-                    <input type="checkbox" className="input__check" onChange={toggleTheme} />
-                    <span className="slider"></span>
-                </label>
             </div>
         </nav>
     );

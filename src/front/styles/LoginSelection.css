@@ -9,6 +9,7 @@
 
 /* Estilos de la tarjeta */
 .card {
+  margin-top: 200px;
   position: relative;
   display: flex;
   flex-direction: column; /* Disposición vertical */
