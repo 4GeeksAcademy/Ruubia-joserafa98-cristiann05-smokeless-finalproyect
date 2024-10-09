@@ -24,6 +24,7 @@ import ApprovedCoaches from "./pages/coachapprove";
 import SolicitudesSmoker from "./pages/SolicitudesSmoker";
 import CoachProfile from "./pages/CoachProfile";
 import UserProfile from "./pages/ViewProfileSmoker";
+
 const Layout = () => {
     const basename = process.env.BASENAME || "";
 
