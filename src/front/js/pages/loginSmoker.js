@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '../store/appContext';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../component/navbar';
 
 // Componente que maneja el login
 const LoginSmoker = () => {
@@ -65,6 +66,7 @@ const LoginSmoker = () => {
 
     return (
         <>
+        <Navbar />
             <div className="form-container">
                 <p className="title">Iniciar sesión</p>
                 <form className="form" onSubmit={handleLogin}>
