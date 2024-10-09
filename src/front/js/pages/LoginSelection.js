@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import '../../styles/LoginSelection.css';
 import fumadorImage from '../../img/logos/animacion-login/cigarretecolor.png'; // Reemplaza con la ruta correcta
 import coachImage from '../../img/logos/animacion-login/trainer.png'; // Reemplaza con la ruta correcta
+import Navbar from '../component/navbar';
 
 const LoginSelection = () => {
   const navigate = useNavigate(); // Usa el hook useNavigate
@@ -17,6 +18,7 @@ const LoginSelection = () => {
 
   return (
     <>
+    <Navbar />
       <div className="login-container">
         {/* Primera Tarjeta */}
         <div className="card">

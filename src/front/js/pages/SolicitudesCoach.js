@@ -21,15 +21,21 @@ const SolicitudesCoach = () => {
         };
 
         fetchSolicitudes();
-    }, []);
+
+        // Polling para obtener solicitudes actualizadas cada 2 segundos
+        const intervalId = setInterval(() => {
+            fetchSolicitudes();
+        }, 2000);
+
+        // Cleanup en caso de que el componente se desmonte
+        return () => clearInterval(intervalId);
+    }, [store.loggedInCoach, actions]);
 
     const handleUpdate = async (solicitudId, updatedData) => {
         try {
             await actions.updateSolicitud(solicitudId, updatedData);
-            
             // Filtrar la solicitud actualizada para que no aparezca en "solicitudes recibidas"
             const updatedSolicitudes = store.solicitudes.filter(solicitud => solicitud.id !== solicitudId);
-            
             actions.setStore({ solicitudes: updatedSolicitudes });
         } catch (error) {
             console.error("Error al actualizar la solicitud:", error);
@@ -37,41 +43,29 @@ const SolicitudesCoach = () => {
     };
 
     const handleApprove = async (solicitudId) => {
-        try {
-            await handleUpdate(solicitudId, {
-                estado: true,  // Asegúrate de que esto sea un booleano
-                fecha_respuesta: new Date().toLocaleDateString('en-GB') // En formato dd/mm/yyyy
-            });
-    
-            // Retraso para permitir la actualización
-            setTimeout(async () => {
-                if (store.loggedInCoach && store.loggedInCoach.id) {
-                    await actions.getAllSolicitudes(); // Para obtener la lista actualizada
-                }
-            }, 1000);
-            
-        } catch (error) {
-            console.error("Error al aprobar la solicitud:", error);
-        }
+        await handleUpdate(solicitudId, {
+            estado: true, // Asegúrate de que esto sea un booleano
+            fecha_respuesta: new Date().toLocaleDateString('en-GB'), // En formato dd/mm/yyyy
+        });
     };
-    
+
     const handleReject = async (solicitudId) => {
         await handleUpdate(solicitudId, {
             estado: false, // Booleano false en lugar de string
-            fecha_respuesta: new Date().toLocaleDateString('en-GB')
+            fecha_respuesta: new Date().toLocaleDateString('en-GB'),
         });
     };
 
     // Filtrar solicitudes en función del coach logueado
-    const solicitudesRecibidas = store.solicitudes.filter(solicitud => 
+    const solicitudesRecibidas = store.solicitudes.filter(solicitud =>
         solicitud.id_coach === store.loggedInCoach.id && solicitud.fecha_respuesta === null
     );
 
-    const solicitudesAprobadas = store.solicitudes.filter(solicitud => 
+    const solicitudesAprobadas = store.solicitudes.filter(solicitud =>
         solicitud.id_coach === store.loggedInCoach.id && solicitud.estado === true
     );
 
-    const solicitudesRechazadas = store.solicitudes.filter(solicitud => 
+    const solicitudesRechazadas = store.solicitudes.filter(solicitud =>
         solicitud.id_coach === store.loggedInCoach.id && solicitud.estado === false && solicitud.fecha_respuesta !== null
     );
 
@@ -103,7 +97,7 @@ const SolicitudesCoach = () => {
                                         <td>{solicitud.nombre_usuario}</td>
                                         <td>{solicitud.comentarios}</td>
                                         <td>{solicitud.fecha_solicitud ? new Date(solicitud.fecha_solicitud).toLocaleString() : 'No disponible'}</td>
-                                        <td>{solicitud.estado}</td>
+                                        <td>{solicitud.estado === null ? 'Pendiente' : (solicitud.estado ? 'Aprobada' : 'Rechazada')}</td>
                                         <td>
                                             <button className="btn btn-success me-2" onClick={() => handleApprove(solicitud.id)}>Aprobar</button>
                                             <button className="btn btn-danger" onClick={() => handleReject(solicitud.id)}>Rechazar</button>
@@ -115,7 +109,7 @@ const SolicitudesCoach = () => {
                     ) : (
                         <p>No hay solicitudes recibidas.</p>
                     )}
-    
+
                     {/* Tabla de Solicitudes Aprobadas */}
                     <h3 className="text-dark">Solicitudes Aprobadas</h3>
                     {solicitudesAprobadas.length > 0 ? (
@@ -140,7 +134,7 @@ const SolicitudesCoach = () => {
                     ) : (
                         <p>No hay solicitudes aprobadas.</p>
                     )}
-    
+
                     {/* Tabla de Solicitudes Rechazadas */}
                     <h3 className="text-dark">Solicitudes Rechazadas</h3>
                     {solicitudesRechazadas.length > 0 ? (

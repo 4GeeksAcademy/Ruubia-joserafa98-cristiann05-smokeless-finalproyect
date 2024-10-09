@@ -1,6 +1,7 @@
 import React, { useContext } from "react"; // Importar React
 import { useNavigate } from "react-router-dom"; // Importar useNavigate para redirección
 import { Context } from "../store/appContext"; // Importar el contexto
+import Navbar from '../component/navbar';
 
 const LoginCoach = () => {
     const { actions } = useContext(Context); // Obtener las acciones del contexto
@@ -70,6 +71,7 @@ const LoginCoach = () => {
 
     return (
         <>
+        <Navbar />
             <div className="form-container">
                 <p className="title">Inicia Sesión</p>
                 <form className="form" onSubmit={handleLogin}>
