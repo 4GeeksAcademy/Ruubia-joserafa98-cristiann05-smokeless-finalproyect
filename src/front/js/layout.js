@@ -14,7 +14,7 @@ import CreateProfileUser from "./pages/createProfile-user";
 import CreateConsumProfile from "./pages/ConfiguracionConsumo";
 import CreateProfileCoach from "./pages/createProfile-coach";
 import LoginSelection from "./pages/LoginSelection";
-import SolicitudesCoach from "./component/SolicitudesCoach";
+import SolicitudesCoach from "./pages/SolicitudesCoach";
 import ViewProfileCoach from "./pages/ViewProfileCoach";
 import ViewProfileSmoker from "./pages/ViewProfileSmoker";
 import CoachAddress from "./pages/CoachAddress";
