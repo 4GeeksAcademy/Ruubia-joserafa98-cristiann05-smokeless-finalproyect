@@ -23,7 +23,7 @@ import CoachAddress from "./pages/CoachAddress";
 
 import CoachesList from "./pages/CoachesList";
 import ApprovedCoaches from "./pages/coachapprove";
-import Navbar from "./component/navbar";
+import Navbar from "./component/navbar"; 
 import Footer from "./component/footer";
 import CoachProfile from "./pages/CoachProfile";
 
@@ -79,10 +79,11 @@ const Layout = () => {
                         <Route element={<CoachMapPage />} path="/control-panel-coach/map" />
                         <Route element={<SmokerMapPage />} path="/control-panel-smoker/map" />
                         <Route element={<LoginSelection />} path="/login-selection" />
-                        <Route element={<ViewProfileCoach />} path="/coach-details</:coachId>" />
+                        <Route element={<ViewProfileCoach />} path="/coach-details/:coachId" />
                         <Route element={<UserProfile />} path="/user-profile/:userId" />
                         <Route element={<CoachAddress />} path="/question-address-coach" />
                         <Route element={<CoachesList />} path="/coaches" />
+                        <Route element={<SmokerCard />} path="/my-clients" /> 
                         <Route element={<ApprovedCoaches />} path="/approved-coaches" />
                         <Route element={<CoachProfile />} path="/coach-profile/:coachId" />
                         <Route element={<h1>Not found!</h1>} />

@@ -7,20 +7,22 @@ const ApprovedCoaches = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchApprovedCoaches = async () => {
+        const fetchData = async () => {
             try {
-                await actions.getAllSolicitudes(); // Cargar las solicitudes
+                // Asegúrate de traer tanto los coaches como las solicitudes antes de que se complete la carga
+                await actions.getAllCoaches(); // Trae todos los coaches
+                await actions.getAllSolicitudes(); // Trae todas las solicitudes
                 setLoading(false);
             } catch (error) {
-                console.error("Error al obtener las solicitudes:", error);
-                setError("No se pudieron obtener las solicitudes.");
+                console.error("Error al obtener los datos:", error);
+                setError("No se pudieron obtener los datos.");
                 setLoading(false);
             }
         };
-
-        fetchApprovedCoaches();
+    
+        fetchData();
     }, []);
-
+    
     
     const approvedSolicitudes = store.solicitudes.filter(solicitud => 
         solicitud.estado === true && 
