@@ -18,9 +18,10 @@ import SolicitudesCoach from "./component/SolicitudesCoach";
 import ViewProfileCoach from "./pages/ViewProfileCoach";
 import ViewProfileSmoker from "./pages/ViewProfileSmoker";
 import CoachAddress from "./pages/CoachAddress";
-
+import SmokerCard from "./pages/SmokerCard";
 import CoachesList from "./pages/CoachesList";
 import ApprovedCoaches from "./pages/coachapprove";
+import SolicitudesSmoker from "./pages/SolicitudesSmoker";
 import CoachProfile from "./pages/CoachProfile";
 
 const Layout = () => {
@@ -43,6 +44,8 @@ const Layout = () => {
                         <Route element={<LoginCoach />} path="/login-coach" />
                         <Route element={<ControlPanelCoach />} path="/control-panel-coach" />
                         <Route element={<SolicitudesCoach />} path="/Dashboard-Smoker/solicitudes" />
+                        <Route element={<SolicitudesCoach />} path="/track-client" />
+                        <Route element={<SolicitudesSmoker />} path="/track-coach" />
                         <Route element={<CreateProfileUser />} path="/question-profile-smoker" />
                         <Route element={<CreateConsumProfile />} path="/question-config-smoker" />
                         <Route element={<CreateProfileCoach />} path="/question-profile-coach" />
@@ -51,6 +54,10 @@ const Layout = () => {
                         <Route element={<ViewProfileSmoker />} path="/Dashboard-Smoker/user-profile/:userId" />
                         <Route element={<CoachAddress />} path="/question-address-coach" />
                         <Route element={<CoachesList />} path="/Dashboard-Smoker/coaches" />
+                        <Route element={<UserProfile />} path="/user-profile/:userId" />
+                        <Route element={<CoachAddress />} path="/question-address-coach" />
+                        <Route element={<CoachesList />} path="/coaches" />
+                        <Route element={<SmokerCard />} path="/my-clients" /> 
                         <Route element={<ApprovedCoaches />} path="/approved-coaches" />
                         <Route element={<CoachProfile />} path="/coach-profile/:coachId" />
                         <Route element={<h1>Not found!</h1>} />

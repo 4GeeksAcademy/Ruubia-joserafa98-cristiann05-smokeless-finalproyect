@@ -63,21 +63,27 @@ const CoachesList = () => {
         navigate(`/coach-details/${coachId}`);
     };
 
-    // Filtrar coaches por ciudad y por solicitudes
+   
     const filteredCoaches = store.coaches
-        .filter(coach => {
-            const hasRequest = store.solicitudes.some(solicitud => {
-                return (
-                    solicitud.id_coach === coach.id &&
-                    solicitud.id_usuario === store.loggedInUser.id &&
-                    (solicitud.fecha_respuesta !== null || solicitud.estado === true)
-                );
-            });
-            return !hasRequest; // Retorna los coaches que no tienen solicitudes pendientes ni aprobadas
-        })
-        .filter(coach => {
-            return coach.direccion.toLowerCase().includes(searchCity.toLowerCase()); // Filtra por ciudad
+    .filter(coach => {
+        // Asegurarse de que los coaches tengan los campos completos
+        return coach.nombre_coach && coach.genero_coach && coach.direccion && coach.nacimiento_coach;
+    })
+    .filter(coach => {
+        const hasRequest = store.solicitudes.some(solicitud => {
+            return (
+                solicitud.id_coach === coach.id &&
+                solicitud.id_usuario === store.loggedInUser.id &&
+                (solicitud.fecha_respuesta !== null || solicitud.estado === true)
+            );
         });
+        return !hasRequest; // Retorna los coaches que no tienen solicitudes pendientes ni aprobadas
+    })
+    .filter(coach => {
+        return coach.direccion.toLowerCase().includes(searchCity.toLowerCase()); // Filtra por ciudad
+    });
+
+
 
     return (
         <div className="user-dashboard-container">

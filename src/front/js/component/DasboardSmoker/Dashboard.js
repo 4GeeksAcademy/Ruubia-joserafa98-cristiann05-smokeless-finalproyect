@@ -65,6 +65,7 @@ const DropdownWithLogo = ({ isConnected, loggedInUser, navigate }) => {
                         <i className="fas fa-cog icon" /> {/* Icono de configuración */}
                         Configuraciones
                     </button>
+                    <button className="btn btn-secondary ml-3" onClick={() => navigate("/track-coach")}>Solicitudes</button>
                 </div>
             )}
         </div>

@@ -21,8 +21,8 @@ CORS(api)
 # Obtener todos los usuarios fumadores (GET)
 @api.route('/smoker', methods=['GET'])
 def get_all_smoker():
-    smoker = SmokerUser.query.all()
-    return jsonify([smoker.serialize() for smoker in smoker]), 200
+    smokers = SmokerUser.query.all()
+    return jsonify([smoker.serialize() for smoker in smokers]), 200
 
 # Obtener un fumador por ID (GET)
 @api.route('/smoker/<int:user_id>', methods=['GET'])
@@ -31,6 +31,30 @@ def get_smoker(user_id):
     if smoker is None:
         return jsonify({"error": "Usuario no encontrado"}), 404
     return jsonify(smoker.serialize()), 200
+
+@api.route('/smoker/<int:user_id>', methods=['PUT'])
+def update_smoker(user_id):
+    smoker = SmokerUser.query.get(user_id)
+    if smoker is None:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    # Obtener los datos del cuerpo de la solicitud
+    data = request.get_json()
+    # Actualizar los campos del fumador
+    smoker.nombre_usuario = data.get('nombre_usuario', smoker.nombre_usuario)
+    smoker.genero_usuario = data.get('genero_usuario', smoker.genero_usuario)
+    smoker.nacimiento_usuario = data.get('nacimiento_usuario', smoker.nacimiento_usuario)
+    smoker.tiempo_fumando = data.get('tiempo_fumando', smoker.tiempo_fumando)
+    smoker.numero_cigarrillos = data.get('numero_cigarrillos', smoker.numero_cigarrillos)
+    smoker.periodicidad_consumo = data.get('periodicidad_consumo', smoker.periodicidad_consumo)
+
+    # Guardar los cambios en la base de datos
+    try:
+        db.session.commit()
+        return jsonify(smoker.serialize()), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 # Ruta de Sign Up
 @api.route('/signup-smoker', methods=['POST'])
@@ -209,6 +233,33 @@ def get_coach(coach_id):
     coach = Coach.query.get(coach_id)
     if coach is None:
         return jsonify({"error": "Coach no encontrado"}), 404
+    return jsonify(coach.serialize()), 200
+
+@api.route('/coaches/<int:coach_id>', methods=['PUT'])
+def update_coach(coach_id):
+    coach = Coach.query.get(coach_id)
+    if coach is None:
+        return jsonify({"error": "Coach no encontrado"}), 404
+    
+    data = request.get_json()
+    
+    # Verifica que los campos que deseas actualizar están en la solicitud
+    if 'nombre_coach' in data:
+        coach.nombre_coach = data['nombre_coach']
+    if 'genero_coach' in data:
+        coach.genero_coach = data['genero_coach']
+    if 'nacimiento_coach' in data:
+        coach.nacimiento_coach = data['nacimiento_coach']
+    if 'direccion' in data:
+        coach.direccion = data['direccion']
+    if 'descripcion_coach' in data:
+        coach.descripcion_coach = data['descripcion_coach']
+    if 'precio_servicio' in data:
+        coach.precio_servicio = data['precio_servicio']
+    
+    # Guarda los cambios en la base de datos
+    db.session.commit()
+    
     return jsonify(coach.serialize()), 200
 
 # Ruta de Sign Up para coach

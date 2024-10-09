@@ -40,11 +40,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const data = await response.json();
+                    console.log("Data received from API:", data); 
                     setStore({ smoker: data });
                 } catch (error) {
                     console.error("Error fetching smoker:", error);
                 }
             },
+            
 
             getSmoker: async (userId) => {
                 try {
