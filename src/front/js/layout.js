@@ -46,7 +46,7 @@ const Layout = () => {
                         <Route element={<ControlPanelCoach />} path="/control-panel-coach" />
                         <Route element={<SolicitudesCoach />} path="/Dashboard-Smoker/solicitudes" />
                         <Route element={<SolicitudesCoach />} path="/track-client" />
-                        <Route element={<SolicitudesSmoker />} path="/track-coach" />
+                        <Route element={<SolicitudesSmoker />} path="/Dashboard-Smoker/track-coach" />
                         <Route element={<CreateProfileUser />} path="/question-profile-smoker" />
                         <Route element={<CreateConsumProfile />} path="/question-config-smoker" />
                         <Route element={<CreateProfileCoach />} path="/question-profile-coach" />

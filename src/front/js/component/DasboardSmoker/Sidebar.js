@@ -22,7 +22,7 @@ const Sidebar = () => {
                     <li onClick={() => navigate("/Dashboard-Smoker/coaches")}>
                         <FaClipboardList /> Lista de Coaches
                     </li>
-                    <li onClick={() => navigate("/Dashboard-Smoker/solicitudes")}>
+                    <li onClick={() => navigate("/Dashboard-Smoker/track-coach")}>
                         <FaBell /> Solicitudes
                     </li>
                     <li onClick={() => navigate("/Dashboard-Smoker/mensajes")}>
