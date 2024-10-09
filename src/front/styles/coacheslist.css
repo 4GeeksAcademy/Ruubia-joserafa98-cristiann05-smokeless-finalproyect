@@ -1,0 +1,90 @@
+/* Estilo global del body */
+body {
+    margin: 0; /* Quita el margen por defecto */
+    padding: 0; /* Quita el padding por defecto */
+    min-height: 100vh; /* Altura mínima de la página */
+    display: flex;
+    flex-direction: column;
+    font-family: 'Arial', sans-serif;
+    background-image: linear-gradient(to bottom, #0a1f36, #0b0d12); /* Fondo degradado */
+    background-repeat: no-repeat; /* Evita que el fondo se repita */
+    background-size: cover; /* Asegura que el fondo cubra todo el espacio */
+}
+
+/* Ajustes en la clase container */
+.container {
+    flex: 1; /* Permite que el contenedor crezca para llenar el espacio restante */
+    display: flex;
+    flex-direction: column; /* Asegura que el contenido se disponga en columna */
+    align-items: center; /* Centra el contenido horizontalmente */
+    justify-content: flex-start; /* Empieza desde arriba */
+    padding: 20px; /* Agrega un espaciado */
+}
+
+/* Estilos para las tarjetas */
+.card {
+    background-color: #222; /* Fondo oscuro de la tarjeta */
+    border: none; /* Sin borde */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para las tarjetas */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
+}
+
+/* Efecto hover en la tarjeta */
+.card:hover {
+    transform: scale(1.05); /* Aumentar ligeramente el tamaño al pasar el ratón */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Sombra más intensa al hacer hover */
+}
+
+/* Estilos para las imágenes de las tarjetas */
+.card-img-top {
+    border-top-left-radius: 10px; /* Bordes redondeados en la parte superior */
+    border-top-right-radius: 10px; /* Bordes redondeados en la parte superior */
+    height: 200px; /* Altura fija para la imagen */
+    object-fit: cover; /* Ajustar la imagen sin deformar */
+}
+
+/* Estilos del cuerpo de la tarjeta */
+.card-body {
+    color: #e8e8e8; /* Color del texto */
+}
+
+/* Títulos de las tarjetas */
+.card-title {
+    font-size: 1.5rem; /* Tamaño del texto del título */
+    font-weight: bold; /* Negrita */
+}
+
+/* Espaciado entre los botones */
+.btn {
+    margin-top: 10px; /* Espacio superior entre botones */
+    padding: 10px 20px; /* Aumenta el tamaño de los botones */
+}
+
+/* Estilo del campo de búsqueda */
+.form-control {
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+/* Estilo del mensaje de alerta */
+.alert {
+    margin-bottom: 20px; /* Espacio inferior para la alerta */
+}
+
+/* Estilo del encabezado */
+h1 {
+    color: #e8e8e8; /* Color del texto */
+    font-size: 2.5rem; /* Tamaño del encabezado */
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .col-md-4 {
+        flex: 0 0 100%; /* Tarjetas ocupan el 100% en pantallas pequeñas */
+        max-width: 100%; /* Asegúrate de que no haya desbordamiento */
+    }
+
+    h1 {
+        font-size: 2rem; /* Tamaño del título más pequeño en móviles */
+    }
+}

@@ -1,75 +1,14 @@
-/* index.css */
-
+/* CSS Global para Fondo Infinito */
 body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    font-family: 'Arial', sans-serif;
-    transition: background-image 0.5s ease-in-out, color 0.5s ease-in-out; /* Transición suave para el fondo y color */
-    background-image: linear-gradient(to bottom, #0a1f36, #0b0d12); /* Fondo por defecto (modo oscuro) */
-    color: white; /* Color de texto en modo oscuro */
-    transition: background-color 0.5s ease, color 0.5s ease;
+    margin: 0; /* Eliminar márgenes por defecto */
+    padding: 0; /* Eliminar padding por defecto */
+    min-height: 100vh; /* Asegurarse de que el body tenga al menos la altura de la ventana */
+    display: flex; /* Usar flexbox para alinear el contenido */
+    flex-direction: column; /* Organizar los elementos en columna */
+    justify-content: flex-start; /* Alinear el contenido al inicio */
+    font-family: 'Arial', sans-serif; /* Fuente de la aplicación */
+    background-image: linear-gradient(to bottom, #0a1f36, #0b0d12); /* Degradado de fondo */
+    background-repeat: no-repeat; /* Evitar que el fondo se repita */
+    background-attachment: fixed; /* Mantener el fondo fijo para un efecto infinito */
+    background-size: cover; /* Asegurar que el fondo cubra todo el espacio */
 }
-
-/* Modo oscuro */
-body.dark {
-    background-image: linear-gradient(to bottom, #0a1f36, #0b0d12);
-    color: white; /* Color de texto en modo oscuro */
-}
-
-/* Modo claro */
-body.light {
-    background-image: linear-gradient(to bottom, #ffffff, #f0f0f0);
-    color: #333; /* Color de texto en modo claro */
-}
-
-/* Navbar */
-.navbar {
-    position: fixed; /* Fija el navbar en la parte superior */
-    top: 0;
-    left: 0;
-    right: 0; /* Ocupa todo el ancho */
-    padding: 1rem; /* Espaciado interno */
-    z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
-}
-
-/* Estilos para los elementos del navbar */
-.navbar .nav-item {
-    color: white; /* Color de texto por defecto */
-}
-
-body.light .navbar .nav-item {
-    color: #333; /* Cambia a color oscuro en modo claro */
-}
-
-/* Estilos de los idiomas */
-.language-selector {
-    display: flex;
-    justify-content: center; /* Centra el contenido */
-    margin-top: 0.5rem; /* Espacio en la parte superior */
-}
-
-.language-selector .language {
-    margin: 0 0.5rem; /* Espaciado entre los elementos */
-    cursor: pointer; /* Cambia el cursor para indicar que es clickeable */
-}
-
-/* Colores según el tema */
-body.dark .language {
-    color: rgba(243, 244, 246, 1); /* Color claro en modo oscuro */
-}
-
-body.light .language {
-    color: rgba(0, 0, 0, 1); /* Color oscuro en modo claro */
-}
-
-/* Estilos adicionales según sea necesario */
-
-#map {
-    height: 100vh; /* Ajusta esto según sea necesario */
-    width: 100%;
-  }
-  

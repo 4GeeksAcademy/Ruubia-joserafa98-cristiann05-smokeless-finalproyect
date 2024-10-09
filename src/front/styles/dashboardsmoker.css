@@ -1,0 +1,344 @@
+/* Estructura general del dashboard */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f9fafb;
+}
+
+.user-dashboard-container { /* Cambiado el nombre de la clase */
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Sidebar Moderno */
+.user-sidebar { /* Cambiado el nombre de la clase */
+    width: 250px;
+    background-color: #1f2937;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-sidebar h2 {
+    font-size: 18px;
+    color: #e5e7eb;
+    margin-bottom: 20px;
+}
+
+.user-sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.user-sidebar ul li {
+    display: flex;
+    align-items: center;
+    padding: 12px 10px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.user-sidebar ul li svg {
+    margin-right: 12px;
+    color: #9ca3af;
+    font-size: 1.2rem; /* Tamaño de iconos ajustado */
+}
+
+.user-sidebar ul li:hover {
+    background-color: #374151;
+}
+
+/* Main Layout */
+.user-main-layout {
+    margin-left: 250px;
+    display: flex;
+    flex-direction: column;
+    background-color: #f9fafb;
+    padding: 20px;
+    height: 100vh;
+    width: calc(100vw - 250px);
+    box-sizing: border-box;
+}
+
+/* Header */
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f3f4f6;
+    padding: 15px;
+    border-bottom: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.user-header-title {
+    font-size: 22px;
+    color: #111827;
+    font-weight: 500;
+}
+
+.user-header-button {
+    padding: 10px 20px;
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.user-header-button:hover {
+    background-color: #dc2626;
+}
+
+/* Main Content */
+.user-main-content {
+    flex-grow: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-main-content h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    color: #111827;
+}
+
+.user-main-content p {
+    font-size: 18px;
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+/* Modern Buttons */
+.btn { 
+    display: inline-block;
+    padding: 12px 25px;
+    margin: 8px;
+    font-size: 16px;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary { 
+    background-color: #3b82f6;
+    color: white;
+}
+
+.btn-info { 
+    background-color: #10b981;
+    color: white;
+}
+
+.btn-secondary { 
+    background-color: #9ca3af;
+    color: white;
+}
+
+.btn-primary:hover { 
+    background-color: #2563eb;
+}
+
+.btn-info:hover { 
+    background-color: #059669;
+}
+
+.btn-secondary:hover { 
+    background-color: #6b7280;
+}
+
+/* Hover effects */
+.btn-primary:hover, .btn-info:hover, .btn-secondary:hover {
+    opacity: 0.9;
+}
+
+/* Estilos para el logo del usuario */
+.user-profile {
+    margin-top: auto; /* Para empujar el logo hacia abajo */
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.user-profile-icon {
+    width: 50px; /* Ancho del icono de usuario */
+    height: 50px; /* Alto del icono de usuario */
+    border-radius: 50%; /* Hacer que el icono sea redondo */
+    border: 2px solid #fff; /* Borde blanco alrededor */
+}
+
+/* Estilos para la imagen de usuario */
+.user-profile img {
+    width: 150px; /* Ancho de la imagen */
+    height: 150px; /* Alto de la imagen */
+    border-radius: 50%; /* Hacer que la imagen sea redonda */
+    border: 3px solid #3b82f6; /* Borde azul alrededor de la imagen */
+    margin-bottom: 20px; /* Espacio debajo de la imagen */
+}
+
+/* Estilos para el menú desplegable */
+.dropdown-menu {
+    position: absolute; /* Para que el menú se superponga */
+    bottom: 70px; /* Espacio desde el logo */
+    left: 20px; /* Alineado con el logo */
+    background-color: #444; /* Color de fondo del menú */
+    border-radius: 5px; /* Esquinas redondeadas */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Sombra */
+    z-index: 1; /* Asegura que esté sobre otros elementos */
+    padding: 10px; /* Espaciado interno */
+}
+
+.dropdown-item {
+    padding: 10px 20px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s; /* Transición suave */
+}
+
+.dropdown-item:hover {
+    background-color: #555; /* Color al pasar el mouse */
+}
+
+/* Loader mientras se carga el perfil */
+.user-profile .loading {
+    font-size: 18px; /* Tamaño de fuente del loader */
+    color: #6b7280; /* Color del texto del loader */
+    text-align: center; /* Centrar el texto */
+}
+
+/* Mensaje de error */
+.user-profile .error {
+    font-size: 18px; /* Tamaño de fuente para el error */
+    color: #ef4444; /* Color rojo para el error */
+    text-align: center; /* Centrar el texto */
+}
+
+/* Estilos generales del perfil de usuario */
+.user-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar los elementos en el contenedor */
+    background-color: #ffffff; /* Fondo blanco para el perfil */
+    padding: 20px;
+    border-radius: 10px; /* Esquinas redondeadas */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    margin: 20px auto; /* Centrar el perfil en la página */
+    width: 80%; /* Ancho del contenedor del perfil */
+    max-width: 600px; /* Máximo ancho para pantallas grandes */
+}
+
+/* Título del perfil */
+.user-profile h2 {
+    font-size: 24px; /* Tamaño de fuente para el título */
+    color: #111827; /* Color del texto */
+    margin-bottom: 20px; /* Espacio debajo del título */
+}
+
+/* Estilos para los detalles del usuario */
+.user-profile p {
+    font-size: 16px; /* Tamaño de fuente para los detalles */
+    color: #374151; /* Color del texto para detalles */
+    margin: 5px 0; /* Espacio superior e inferior entre párrafos */
+}
+
+/* Estilos para los títulos de los detalles */
+.user-profile p strong {
+    color: #111827; /* Color para el texto destacado */
+}
+
+/* Sidebar */
+.user-sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh; /* Asegura que la barra de navegación ocupe toda la altura de la pantalla */
+}
+
+.custom-logo-container {
+    position: relative; /* Para posicionar el dropdown relativo al contenedor */
+    display: inline-block; /* Para alinear correctamente el contenido */
+}
+
+.logo-image {
+    width: 50px; /* Ajusta según sea necesario */
+    height: auto;
+    cursor: pointer; /* Cambia el cursor al pasar sobre la imagen */
+    border-radius: 8px; /* Bordes redondeados para el logo */
+}
+
+/* Estilo general del contenedor del dashboard */
+.user-dashboard-container {
+    display: flex;
+    height: 100vh;
+    background-color: #f8f9fa; /* Color de fondo suave */
+}
+
+/* Estilo para el contenedor principal que envuelve el contenido y el sidebar */
+.user-main-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+/* Estilo para el contenido principal donde se muestra el perfil */
+.user-main-content {
+    flex: 1;
+    padding: 20px;
+    background-color: #ffffff; /* Fondo blanco para el contenido */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+
+/* Estilo para el encabezado (título) del perfil */
+.user-main-content h2 {
+    font-size: 1.8rem; /* Tamaño del texto */
+    color: #343a40; /* Color del texto */
+    margin-bottom: 1rem; /* Margen inferior */
+}
+
+/* Contenedor de los datos del perfil */
+.user-profile-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar contenido */
+}
+
+/* Estilo para la imagen de perfil */
+.profile-image {
+    width: 120px; /* Ancho de la imagen */
+    height: 120px; /* Altura de la imagen */
+    border-radius: 50%; /* Bordes redondeados */
+    margin-bottom: 15px; /* Espacio inferior */
+    border: 2px solid #ced4da; /* Borde claro */
+}
+
+/* Estilo para los textos del perfil */
+.user-profile-content p {
+    font-size: 1rem; /* Tamaño del texto */
+    color: #495057; /* Color del texto */
+    margin: 5px 0; /* Margen superior e inferior */
+}
+
+/* Estilo para los títulos en negrita (etiquetas de información) */
+.user-profile-content p strong {
+    font-weight: bold; /* Negrita para etiquetas */
+}
+
+
