@@ -60,7 +60,7 @@ const ControlPanelSmoker = () => {
             <button className="btn btn-info mt-3" onClick={() => navigate("/control-panel-coach/map")}>
                 View Coach Map
             </button>
-
+            <button className="btn btn-secondary ml-3" onClick={() => navigate("/track-coach")}>Solicitudes</button>
             <button className="btn btn-primary mt-3" onClick={handleViewCoaches}>
                 Contratar Coaches Disponibles
             </button>

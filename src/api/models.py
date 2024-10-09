@@ -108,6 +108,7 @@ class Solicitud(db.Model):
             "id_usuario": self.id_usuario,
             "nombre_usuario": self.user.nombre_usuario, 
             "id_coach": self.id_coach,
+            "nombre_coach": self.coach.nombre_coach if self.coach else None,
             "fecha_solicitud": self.fecha_solicitud.strftime("%d/%m/%Y") if self.fecha_solicitud else None,
             "estado": self.estado,
             "fecha_respuesta": self.fecha_respuesta.strftime("%d/%m/%Y") if self.fecha_respuesta else None,
