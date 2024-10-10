@@ -103,25 +103,33 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(smokerData),
                     });
-
+            
                     const data = await response.json();
                     console.log("Datos recibidos en loginSmoker:", data);
-
+            
                     if (response.ok) {
-                        localStorage.setItem('token', data.token);
-
+                        // Almacena el token
+                        localStorage.setItem('jwtToken', data.token);
+            
+                        // Almacena el ID del usuario
+                        localStorage.setItem('userId', data.user_id || null); // Almacena el ID aquí
+            
+                        // Actualiza el estado del usuario con la información recibida
                         setStore({
                             loggedInUser: {
-                                id: data.user_id || null, // Asegúrate de que este valor sea correcto
+                                id: data.user_id || null,
                                 email: data.email_usuario || '',
-                                nombre: data.nombre_usuario || '',
-                                genero: data.genero_usuario || '',
-                                cumpleaños: data.nacimiento_usuario || '',
-                                foto_usuario: data.foto_usuario || '',
+                                nombre: data.nombre_usuario || '', // Asegúrate de que el servidor envíe este dato
+                                genero: data.genero_usuario || '', // Asegúrate de que el servidor envíe este dato
+                                cumpleaños: data.nacimiento_usuario || '', // Asegúrate de que el servidor envíe este dato
+                                foto_usuario: data.foto_usuario || '', // Asegúrate de que el servidor envíe este dato
                             },
                             isAuthenticated: true,
                         });
-
+            
+                        // Log para verificar el estado del store después de la actualización
+                        console.log("Estado del store después del login:", getStore());
+            
                         return true;
                     } else {
                         console.error("Error en el login:", data.msg);
@@ -134,10 +142,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false;
                 }
             },
-
-
-
-
+            
+            
+            
             // Actualizar el perfil
             updateProfile: async (userId, updatedData) => {
                 try {
@@ -361,8 +368,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             // Login del coach
-             // Login del coach
-             loginCoach: async (coachData) => {
+            loginCoach: async (coachData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/login-coach`, {
                         method: "POST",
@@ -375,6 +381,12 @@ const getState = ({ getStore, getActions, setStore }) => {
                     if (response.ok) {
                         const data = await response.json();
                         console.log("Coach logueado:", data);
+
+                         // Almacena el token
+                         localStorage.setItem('jwtTokenCoach', data.token);
+
+                         // Almacena el ID del usuario
+                         localStorage.setItem('coachId', data.coach_id || null); // Almacena el ID aquí
 
                         // Establecer el estado de autenticación
                         setStore({
@@ -433,7 +445,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             // Logout
             logoutCoach: () => {
-                localStorage.removeItem('token');
+                localStorage.removeItem('jwtTokenCoach');
                 setStore({
                     loggedInCoach: null,
                     isAuthenticated: false,
