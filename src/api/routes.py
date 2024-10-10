@@ -848,24 +848,6 @@ def delete_mensaje(mensaje_id):
 
     return jsonify({"message": "Mensaje eliminado correctamente"}), 200
 
-@api.route('/mensajes/vaciar/<int:user_id>/<int:coach_id>', methods=['DELETE'])
-@jwt_required()  # Se requiere autenticación JWT
-def vaciar_mensajes(user_id, coach_id):
-    # Filtrar los mensajes del usuario que coinciden con el coach
-    mensajes_usuario = Mensajes.query.filter_by(id_usuario=user_id, id_coach=coach_id).all()
-
-    if not mensajes_usuario:
-        return jsonify({"error": "No hay mensajes del usuario para eliminar"}), 404
-
-    # Eliminar solo los mensajes del usuario
-    for mensaje in mensajes_usuario:
-        db.session.delete(mensaje)
-
-    db.session.commit()
-
-    return jsonify({"message": "Los mensajes del usuario han sido eliminados correctamente."}), 200
-
-
     
 if __name__ == '__main__':
     app = create_app()

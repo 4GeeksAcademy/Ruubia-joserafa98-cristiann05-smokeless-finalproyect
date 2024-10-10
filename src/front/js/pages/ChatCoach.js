@@ -1,27 +1,66 @@
-import React, { useEffect, useState } from 'react';
-import { useStore } from '../store/appContext';
+import React, { useEffect, useState, useContext } from 'react';
+import { Context } from '../store/appContext'; // Asegúrate de que este sea el path correcto
+import { useNavigate } from 'react-router-dom';
+import '../../styles/chatsmoker.css';
 
 const ChatCoach = () => {
-    const { store } = useStore();
+    const { store, actions } = useContext(Context); // Usar el contexto
+    const navigate = useNavigate(); 
     const [mensajes, setMensajes] = useState([]);
     const [contenido, setContenido] = useState('');
+    const [selectedSmokerId, setSelectedSmokerId] = useState(null); // Estado para el smoker seleccionado
 
     useEffect(() => {
         const token = localStorage.getItem('jwtTokenCoach'); 
-        const userId = localStorage.getItem('userId');
         const coachId = localStorage.getItem('coachId');
 
-        if (!token || !userId || !coachId) {
+        if (!token || !coachId) {
             console.error('Faltan datos necesarios.');
+            navigate('/login'); // Redirigir al login si faltan datos
             return;
         }
 
-        console.log(`Token Coach: ${token}, User ID: ${userId}, Coach ID: ${coachId}`);
-
-        // Función para obtener los mensajes del servidor
-        const fetchMensajes = async () => {
+        // Fetch para obtener todos los smokers y solicitudes
+        const fetchData = async () => {
             try {
-                const response = await fetch(`${process.env.BACKEND_URL}/api/mensajes/${userId}/${coachId}`, {
+                await actions.getAllSmokers(); // Asegúrate de que este nombre coincida
+                await actions.getAllSolicitudes(); // Obtener todas las solicitudes
+            } catch (error) {
+                console.error("Error al obtener los datos:", error);
+            }
+        };
+
+        fetchData();
+    }, [actions, navigate]);
+
+    // Filtrar solicitudes aprobadas
+    const approvedSolicitudes = (store.solicitudes || []).filter(solicitud => 
+        solicitud.estado === true && 
+        solicitud.fecha_respuesta !== null && 
+        solicitud.id_coach === store.loggedInUser.id // Asegúrate de que `id_coach` está en la estructura correcta
+    );
+
+    // Log para depuración
+    console.log("Solicitudes aprobadas:", approvedSolicitudes);
+
+    // Extraer IDs de smokers aprobados
+    const approvedSmokerIds = approvedSolicitudes.map(solicitud => solicitud.id_usuario);
+    
+    // Filtrar smokers aprobados
+    const approvedSmokers = (store.smoker || []).filter(smoker => approvedSmokerIds.includes(smoker.id));
+
+    // Log para depuración
+    console.log("Smokers aprobados:", approvedSmokers);
+
+    useEffect(() => {
+        const fetchMensajes = async () => {
+            if (!selectedSmokerId) return; // Evita la carga si no hay smoker seleccionado
+            
+            const token = localStorage.getItem('jwtTokenCoach'); 
+            const coachId = localStorage.getItem('coachId');
+
+            try {
+                const response = await fetch(`${process.env.BACKEND_URL}/api/mensajes/${selectedSmokerId}/${coachId}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -31,43 +70,41 @@ const ChatCoach = () => {
 
                 if (response.ok) {
                     const mensajesData = await response.json();
-                    console.log('Mensajes recibidos por el coach:', mensajesData);
                     setMensajes(mensajesData);
                 } else {
-                    console.error('Error al obtener mensajes del coach', response.status);
+                    console.error('Error al obtener mensajes', response.status);
                 }
             } catch (error) {
                 console.error('Error en la conexión:', error);
             }
         };
 
-        // Llamar a la función para obtener mensajes inicialmente
         fetchMensajes();
+        const intervalId = setInterval(fetchMensajes, 5000); // Actualiza cada 5 segundos
 
-        // Configurar la actualización periódica
-        const intervalId = setInterval(fetchMensajes, 5000); // Actualizar cada 5 segundos
-
-        return () => clearInterval(intervalId); // Limpiar el intervalo al desmontar el componente
-    }, []);
+        return () => clearInterval(intervalId);
+    }, [selectedSmokerId]); // Dependiendo del smoker seleccionado
 
     const handleSendMensaje = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('jwtTokenCoach'); 
-        const userId = localStorage.getItem('userId');
         const coachId = localStorage.getItem('coachId');
 
-        if (!token || !userId || !coachId) {
+        if (!token || !coachId || !selectedSmokerId) {
             console.error('Faltan datos necesarios para enviar el mensaje.');
             return;
         }
 
+        if (!contenido.trim()) {
+            console.error('El contenido del mensaje no puede estar vacío.');
+            return;
+        }
+
         const nuevoMensaje = {
-            id_usuario: userId,
+            id_usuario: selectedSmokerId,
             id_coach: coachId,
             contenido,
         };
-
-        console.log('Nuevo Mensaje del Coach:', nuevoMensaje);
 
         try {
             const response = await fetch(`${process.env.BACKEND_URL}/api/mensajes`, {
@@ -80,67 +117,61 @@ const ChatCoach = () => {
             });
 
             if (response.ok) {
-                setContenido('');
+                setContenido(''); // Limpiar el campo de contenido
+                setMensajes((prevMensajes) => [...prevMensajes, { ...nuevoMensaje, id: Date.now() }]); // Agregar el nuevo mensaje
             } else {
                 const errorResponse = await response.json();
-                console.error('Error al enviar el mensaje del coach:', errorResponse);
+                console.error('Error al enviar el mensaje:', errorResponse);
             }
         } catch (error) {
             console.error('Error en la conexión:', error);
         }
     };
 
-    // Función para eliminar un mensaje
-    const handleDeleteMensaje = async (mensajeId) => {
-        const token = localStorage.getItem('jwtTokenCoach'); 
-
-        if (!token) {
-            console.error('Token no encontrado para eliminar el mensaje.');
-            return;
-        }
-
-        try {
-            const response = await fetch(`${process.env.BACKEND_URL}/api/mensajes/${mensajeId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                // Actualizar la lista de mensajes después de eliminar
-                setMensajes((prevMensajes) => prevMensajes.filter((msg) => msg.id !== mensajeId));
-            } else {
-                const errorResponse = await response.json();
-                console.error('Error al eliminar el mensaje del coach:', errorResponse);
-            }
-        } catch (error) {
-            console.error('Error en la conexión al eliminar el mensaje del coach:', error);
-        }
-    };
-
     return (
         <div className="chat-container">
-            <h2>Chat con tu Smoker</h2>
-            <div className="messages">
-                {mensajes.map((mensaje) => (
-                    <div key={mensaje.id} className={`message ${mensaje.id_usuario === store.loggedInUser.id ? 'sent' : 'received'}`}>
-                        <p>{mensaje.contenido}</p>
-                        <button onClick={() => handleDeleteMensaje(mensaje.id)} className="delete-button">Eliminar</button>
-                    </div>
-                ))}
-            </div>
-            <form onSubmit={handleSendMensaje}>
-                <input
-                    type="text"
-                    value={contenido}
-                    onChange={(e) => setContenido(e.target.value)}
-                    placeholder="Escribe tu mensaje..."
-                    required
-                />
-                <button type="submit">Enviar</button>
-            </form>
+            <main>
+                <h2>Chat con tu Smoker</h2>
+                
+                {/* Lista de Smokers Aprobados */}
+                <div className="smokers-list">
+                    <h3>Smokers Aprobados</h3>
+                    {approvedSmokers.length > 0 ? (
+                        <ul>
+                            {approvedSmokers.map((smoker) => (
+                                <li key={smoker.id} onClick={() => setSelectedSmokerId(smoker.id)} className="smoker-item">
+                                    {smoker.nombre} {/* Cambia a la propiedad correcta para mostrar el nombre */}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No tienes smokers aprobados.</p>
+                    )}
+                </div>
+
+                <div className="messages">
+                    {mensajes.length > 0 ? (
+                        mensajes.map((mensaje) => (
+                            <div key={mensaje.id} className={`message ${mensaje.id_usuario === store.loggedInUser.id ? 'sent' : 'received'}`}>
+                                <p>{mensaje.contenido}</p>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No hay mensajes para mostrar.</p>
+                    )}
+                </div>
+
+                <form onSubmit={handleSendMensaje} className="message-input">
+                    <input
+                        type="text"
+                        value={contenido}
+                        onChange={(e) => setContenido(e.target.value)}
+                        placeholder="Escribe tu mensaje..."
+                        required
+                    />
+                    <button type="submit">Enviar</button>
+                </form>
+            </main>
         </div>
     );
 };
