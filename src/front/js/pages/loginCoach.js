@@ -33,6 +33,14 @@ const LoginCoach = () => {
             if (loginResponse && loginResponse.coach_id) {
                 console.log("Login exitoso, coach ID:", loginResponse.coach_id);
 
+                const coachId = localStorage.getItem('coachId'); // Obtén el ID desde localStorage
+            console.log("ID almacenado en localStorage:", coachId); // Verifica que se almacene correctamente
+
+            // Almacena el token desde localStorage o llama a getToken
+            const tokenCoach = localStorage.getItem('jwtTokenCoach') || await actions.getToken(); 
+            localStorage.setItem('jwtTokenCoach', tokenCoach); // Almacena el token
+            console.log("Token almacenado en localStorage:", localStorage.getItem('jwtTokenCoach')); // Verifica que se almacene correctamente
+
                 // Cargar información del coach después de iniciar sesión
                 const coachInfo = await actions.getCoachInfo(loginResponse.coach_id);
 

@@ -13,7 +13,7 @@ const DashboardSmoker = () => {
 
     useEffect(() => {
         const checkToken = () => {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("jwtToken");
             if (!token) {
                 navigate('/');
             } else {

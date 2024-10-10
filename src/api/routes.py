@@ -773,6 +773,99 @@ def get_coach_info(coach_id):
         return jsonify(coach.serialize()), 200  # Retorna la información del coach
     except Exception as e:
         return jsonify({"error": str(e)}), 500  # Maneja cualquier excepción
+
+
+# MENSAJES USUARIO Y COACH 
+@api.route('/mensajes', methods=['GET'])
+@jwt_required()  # Se requiere autenticación JWT
+def get_all_mensajes():
+    mensajes = Mensajes.query.all()
+    return jsonify([mensaje.serialize() for mensaje in mensajes]), 200
+
+@api.route('/mensajes/<int:user_id>/<int:coach_id>', methods=['GET'])
+@jwt_required()  # Se requiere autenticación JWT
+def get_mensajes_by_user_and_coach(user_id, coach_id):
+    mensajes = Mensajes.query.filter(
+        (Mensajes.id_usuario == user_id) & (Mensajes.id_coach == coach_id)
+    ).all()
+    if not mensajes:
+        return jsonify({"error": "No se encontraron mensajes"}), 404
+    return jsonify([mensaje.serialize() for mensaje in mensajes]), 200
+
+@api.route('/mensajes', methods=['POST'])
+@jwt_required()  # Se requiere autenticación JWT
+def create_mensaje():
+    body = request.get_json()
+
+    # Validaciones
+    if not body.get('id_usuario') and not body.get('id_coach'):
+        return jsonify({"error": "Debe proporcionar id_usuario o id_coach"}), 400
+
+    if not body.get('contenido'):
+        return jsonify({"error": "El contenido del mensaje no puede estar vacío"}), 400
+
+    # Crear un nuevo mensaje
+    nuevo_mensaje = Mensajes(
+        id_usuario=body.get('id_usuario'),
+        id_coach=body.get('id_coach'),
+        contenido=body.get('contenido'),
+        fecha_envio=datetime.utcnow()
+    )
+
+    db.session.add(nuevo_mensaje)
+    db.session.commit()
+
+    return jsonify(nuevo_mensaje.serialize()), 201
+
+@api.route('/mensajes/<int:mensaje_id>', methods=['PUT'])
+@jwt_required()  # Se requiere autenticación JWT
+def update_mensaje(mensaje_id):
+    mensaje = Mensajes.query.get(mensaje_id)
+    if mensaje is None:
+        return jsonify({"error": "Mensaje no encontrado"}), 404
+
+    body = request.get_json()
+
+    # Actualizar el contenido o el estado de visto
+    if 'contenido' in body:
+        mensaje.contenido = body['contenido']
+    if 'visto' in body:
+        mensaje.visto = body['visto']
+
+    db.session.commit()
+
+    return jsonify(mensaje.serialize()), 200
+
+@api.route('/mensajes/<int:mensaje_id>', methods=['DELETE'])
+@jwt_required()  # Se requiere autenticación JWT
+def delete_mensaje(mensaje_id):
+    mensaje = Mensajes.query.get(mensaje_id)
+    if mensaje is None:
+        return jsonify({"error": "Mensaje no encontrado"}), 404
+
+    db.session.delete(mensaje)
+    db.session.commit()
+
+    return jsonify({"message": "Mensaje eliminado correctamente"}), 200
+
+@api.route('/mensajes/vaciar/<int:user_id>/<int:coach_id>', methods=['DELETE'])
+@jwt_required()  # Se requiere autenticación JWT
+def vaciar_mensajes(user_id, coach_id):
+    # Filtrar los mensajes del usuario que coinciden con el coach
+    mensajes_usuario = Mensajes.query.filter_by(id_usuario=user_id, id_coach=coach_id).all()
+
+    if not mensajes_usuario:
+        return jsonify({"error": "No hay mensajes del usuario para eliminar"}), 404
+
+    # Eliminar solo los mensajes del usuario
+    for mensaje in mensajes_usuario:
+        db.session.delete(mensaje)
+
+    db.session.commit()
+
+    return jsonify({"message": "Los mensajes del usuario han sido eliminados correctamente."}), 200
+
+
     
 if __name__ == '__main__':
     app = create_app()

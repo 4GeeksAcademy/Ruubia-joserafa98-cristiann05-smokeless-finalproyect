@@ -26,6 +26,7 @@ const ControlPanelCoach = () => {
             {/* <button className="btn btn-primary">Manage Profile</button> */}
             <button className="btn btn-primary ml-3" onClick={() => navigate(`/coach-profile/${store.loggedInCoach.id}`)}>View My Profile</button>
             <button className="btn btn-secondary ml-3" onClick={() => navigate("/track-client")}>Track Clients</button>
+            <button className="btn btn-secondary ml-3" onClick={() => navigate("/Dashboard-Coach/mensajes")}>Mensajes</button>
             <button className="btn btn-info mt-3" onClick={() => navigate("/control-panel-coach/map")}>
                 View Coach Map
             </button>

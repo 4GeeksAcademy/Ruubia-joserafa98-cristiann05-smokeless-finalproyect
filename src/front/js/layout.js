@@ -24,6 +24,8 @@ import ApprovedCoaches from "./pages/coachapprove";
 import SolicitudesSmoker from "./pages/SolicitudesSmoker";
 import CoachProfile from "./pages/CoachProfile";
 import UserProfile from "./pages/ViewProfileSmoker";
+import ChatSmoker from "./pages/ChatSmoker";
+import ChatCoach from "./pages/ChatCoach";
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
@@ -60,6 +62,8 @@ const Layout = () => {
                         <Route element={<SmokerCard />} path="/my-clients" /> 
                         <Route element={<ApprovedCoaches />} path="/approved-coaches" />
                         <Route element={<CoachProfile />} path="/coach-profile/:coachId" />
+                        <Route element={<ChatSmoker />} path="/Dashboard-Smoker/mensajes" />
+                        <Route element={<ChatCoach />} path="/Dashboard-Coach/mensajes" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                 </ScrollToTop>
