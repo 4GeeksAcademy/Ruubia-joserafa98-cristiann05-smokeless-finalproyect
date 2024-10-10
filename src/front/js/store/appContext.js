@@ -25,7 +25,7 @@ const injectContext = (PassedComponent) => {
         useEffect(() => {
             const fetchData = async () => {
                 try {
-                    await state.actions.getAllsmoker(); // Obtener la lista de fumadores
+                    await state.actions.getAllSmokers(); // Obtener la lista de fumadores
                     const coachId = state.store.coachId;
                     if (coachId) {
                         await state.actions.getCoach(coachId); // Obtener información del coach

@@ -1,29 +1,62 @@
-import React, { useEffect, useState } from 'react';
-import { useStore } from '../store/appContext';
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate aquí
+import React, { useEffect, useState, useContext } from 'react';
+import { Context } from '../store/appContext'; // Importa el contexto
+import { useNavigate } from 'react-router-dom';
 import '../../styles/chatsmoker.css';
-import Sidebar from "../component/DasboardSmoker/Sidebar"; // Asegúrate de que la ruta sea correcta
-import Header from "../component/DasboardSmoker/Header"; // Asegúrate de que la ruta sea correcta
+import Sidebar from "../component/DasboardSmoker/Sidebar"; 
+import Header from "../component/DasboardSmoker/Header"; 
 
 const ChatSmoker = () => {
-    const { store } = useStore();
-    const navigate = useNavigate(); // Obtén navigate aquí
+    const { store, actions } = useContext(Context); // Usar el contexto
+    const navigate = useNavigate(); 
     const [mensajes, setMensajes] = useState([]);
     const [contenido, setContenido] = useState('');
+    const [selectedCoachId, setSelectedCoachId] = useState(null); // Estado para el coach seleccionado
 
     useEffect(() => {
         const token = localStorage.getItem('jwtToken');
         const userId = localStorage.getItem('userId');
-        const coachId = localStorage.getItem('coachId');
 
-        if (!token || !userId || !coachId) {
+        if (!token || !userId) {
             console.error('Faltan datos necesarios.');
+            navigate('/login'); // Redirigir al login si faltan datos
             return;
         }
 
-        const fetchMensajes = async () => {
+        // Fetch para obtener todos los coaches y solicitudes
+        const fetchData = async () => {
             try {
-                const response = await fetch(`${process.env.BACKEND_URL}/api/mensajes/${userId}/${coachId}`, {
+                await actions.getAllCoaches(); // Obtener todos los coaches
+                await actions.getAllSolicitudes(); // Obtener todas las solicitudes
+            } catch (error) {
+                console.error("Error al obtener los datos:", error);
+            }
+        };
+
+        fetchData();
+    }, [actions, navigate]);
+
+    // Filtrar las solicitudes aprobadas del usuario
+    const approvedSolicitudes = store.solicitudes.filter(solicitud => 
+        solicitud.estado === true && 
+        solicitud.fecha_respuesta !== null && 
+        solicitud.id_usuario === store.loggedInUser.id
+    );
+
+    // Extraer los IDs de los coaches aprobados
+    const approvedCoachIds = approvedSolicitudes.map(solicitud => solicitud.id_coach);
+    
+    // Filtrar los coaches aprobados
+    const approvedCoaches = store.coaches.filter(coach => approvedCoachIds.includes(coach.id));
+
+    useEffect(() => {
+        const fetchMensajes = async () => {
+            if (!selectedCoachId) return; // Evita la carga si no hay coach seleccionado
+            
+            const token = localStorage.getItem('jwtToken');
+            const userId = localStorage.getItem('userId');
+
+            try {
+                const response = await fetch(`${process.env.BACKEND_URL}/api/mensajes/${userId}/${selectedCoachId}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -43,25 +76,29 @@ const ChatSmoker = () => {
         };
 
         fetchMensajes();
-        const intervalId = setInterval(fetchMensajes, 1000);
+        const intervalId = setInterval(fetchMensajes, 5000); // Actualiza cada 5 segundos
 
         return () => clearInterval(intervalId);
-    }, [store]);
+    }, [selectedCoachId]); // Dependiendo del coach seleccionado
 
     const handleSendMensaje = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('jwtToken');
         const userId = localStorage.getItem('userId');
-        const coachId = localStorage.getItem('coachId');
 
-        if (!token || !userId || !coachId) {
+        if (!token || !userId || !selectedCoachId) {
             console.error('Faltan datos necesarios para enviar el mensaje.');
+            return;
+        }
+
+        if (!contenido.trim()) {
+            console.error('El contenido del mensaje no puede estar vacío.');
             return;
         }
 
         const nuevoMensaje = {
             id_usuario: userId,
-            id_coach: coachId,
+            id_coach: selectedCoachId,
             contenido,
         };
 
@@ -76,7 +113,8 @@ const ChatSmoker = () => {
             });
 
             if (response.ok) {
-                setContenido('');
+                setContenido(''); // Limpiar el campo de contenido
+                setMensajes((prevMensajes) => [...prevMensajes, { ...nuevoMensaje, id: Date.now() }]); // Agregar el nuevo mensaje
             } else {
                 const errorResponse = await response.json();
                 console.error('Error al enviar el mensaje:', errorResponse);
@@ -86,50 +124,41 @@ const ChatSmoker = () => {
         }
     };
 
-    const handleVaciarMensajes = async () => {
-        const token = localStorage.getItem('jwtToken');
-        const userId = localStorage.getItem('userId');
-        const coachId = localStorage.getItem('coachId');
-
-        if (!token || !userId || !coachId) {
-            console.error('Faltan datos necesarios para vaciar los mensajes.');
-            return;
-        }
-
-        try {
-            const response = await fetch(`${process.env.BACKEND_URL}/api/mensajes/vaciar/${userId}/${coachId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                setMensajes((prevMensajes) => prevMensajes.filter((msg) => msg.id_usuario !== userId));
-                console.log('Todos los mensajes del usuario han sido eliminados correctamente.');
-            } else {
-                const errorResponse = await response.json();
-                console.error('Error al vaciar los mensajes:', errorResponse);
-            }
-        } catch (error) {
-            console.error('Error en la conexión al vaciar los mensajes:', error);
-        }
-    };
-
     return (
         <div className="chat-container">
-            <Sidebar navigate={navigate} /> {/* Pasa navigate al componente Sidebar */}
+            <Sidebar navigate={navigate} />
             <Header />
             <main>
                 <h2>Chat con tu Coach</h2>
-                <div className="messages">
-                    {mensajes.map((mensaje) => (
-                        <div key={mensaje.id} className={`message ${mensaje.id_usuario === store.loggedInUser.id ? 'sent' : 'received'}`}>
-                            <p>{mensaje.contenido}</p>
-                        </div>
-                    ))}
+                
+                {/* Lista de Coaches Aprobados */}
+                <div className="coaches-list">
+                    <h3>Coaches Aprobados</h3>
+                    {approvedCoaches.length > 0 ? (
+                        <ul>
+                            {approvedCoaches.map((coach) => (
+                                <li key={coach.id} onClick={() => setSelectedCoachId(coach.id)} className="coach-item">
+                                    {coach.nombre_coach} {/* Cambia a la propiedad correcta para mostrar el nombre */}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No tienes coaches aprobados.</p>
+                    )}
                 </div>
+
+                <div className="messages">
+                    {mensajes.length > 0 ? (
+                        mensajes.map((mensaje) => (
+                            <div key={mensaje.id} className={`message ${mensaje.id_usuario === store.loggedInUser.id ? 'sent' : 'received'}`}>
+                                <p>{mensaje.contenido}</p>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No hay mensajes para mostrar.</p>
+                    )}
+                </div>
+
                 <form onSubmit={handleSendMensaje} className="message-input">
                     <input
                         type="text"
@@ -140,7 +169,6 @@ const ChatSmoker = () => {
                     />
                     <button type="submit">Enviar</button>
                 </form>
-                <button onClick={handleVaciarMensajes} className="vaciar-button">Vaciar Chat</button>
             </main>
         </div>
     );

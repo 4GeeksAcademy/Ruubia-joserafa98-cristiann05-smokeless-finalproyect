@@ -33,17 +33,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             setStore: (newStore) => setStore((prevStore) => ({ ...prevStore, ...newStore })),
 
-            getAllsmoker: async () => {
+            getAllSmokers: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/smoker`);
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const data = await response.json();
-                    console.log("Data received from API:", data); 
+                    console.log("Data received from API:", data); // Verifica aquí
                     setStore({ smoker: data });
                 } catch (error) {
-                    console.error("Error fetching smoker:", error);
+                    console.error("Error fetching smokers:", error);
                 }
             },
             
@@ -618,9 +618,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
 
-            // solicitudes
-
-
+            //solicitudes
             getAllSolicitudes: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/solicitudes`);
@@ -628,6 +626,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         throw new Error("Error en la respuesta del servidor");
                     }
                     const data = await response.json();
+                    console.log("Data received from solicitudes:", data); // Verifica aquí
                     setStore({ solicitudes: data }); // Guarda todas las solicitudes en el store
                 } catch (error) {
                     console.error("Error fetching solicitudes:", error);
@@ -715,6 +714,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error deleting solicitud:", error);
                 }
             },
+
+            
             getTiposConsumo: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo`);
