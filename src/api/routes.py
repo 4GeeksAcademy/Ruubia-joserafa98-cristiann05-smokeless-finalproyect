@@ -748,7 +748,7 @@ def protected():
 
     return jsonify({
         "msg": "Acceso permitido",
-        "user": user.serialize()
+        "user": user.serialize()  # Asegúrate de que tu modelo tenga un método serialize() que devuelva los datos necesarios
     }), 200
 
 # Obtener la información de un usuario por ID (GET)
@@ -848,10 +848,20 @@ def delete_mensaje(mensaje_id):
 
     return jsonify({"message": "Mensaje eliminado correctamente"}), 200
 
+@api.route('/mensajes/offline/<int:coach_id>', methods=['GET'])
+@jwt_required()
+def get_mensajes_offline(coach_id):
+    # Obtén todos los mensajes donde el id_coach coincida
+    mensajes = Mensajes.query.filter(Mensajes.id_coach == coach_id, Mensajes.visto == False).all()
+    
+    # Devuelve los mensajes que no han sido vistos
+    return jsonify([mensaje.serialize() for mensaje in mensajes]), 200
+
     
 if __name__ == '__main__':
     app = create_app()
     with app.app_context():
         db.create_all()  # Crea las tablas de la base de datos
     app.run(debug=True)
+
 

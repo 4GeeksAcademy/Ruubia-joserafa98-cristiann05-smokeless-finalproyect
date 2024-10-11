@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Context } from '../store/appContext'; // Importa el contexto
 import { useNavigate } from 'react-router-dom';
-import '../../styles/chatsmoker.css';
 import Sidebar from "../component/DasboardSmoker/Sidebar"; 
 import Header from "../component/DasboardSmoker/Header"; 
 
@@ -18,7 +17,7 @@ const ChatSmoker = () => {
 
         if (!token || !userId) {
             console.error('Faltan datos necesarios.');
-            navigate('/login'); // Redirigir al login si faltan datos
+            navigate('/login-smoker'); // Redirigir al login si faltan datos
             return;
         }
 
@@ -33,7 +32,7 @@ const ChatSmoker = () => {
         };
 
         fetchData();
-    }, [actions, navigate]);
+    }, [navigate]);
 
     // Filtrar las solicitudes aprobadas del usuario
     const approvedSolicitudes = store.solicitudes.filter(solicitud => 
@@ -76,7 +75,7 @@ const ChatSmoker = () => {
         };
 
         fetchMensajes();
-        const intervalId = setInterval(fetchMensajes, 5000); // Actualiza cada 5 segundos
+        const intervalId = setInterval(fetchMensajes, 2000); // Actualiza cada 5 segundos
 
         return () => clearInterval(intervalId);
     }, [selectedCoachId]); // Dependiendo del coach seleccionado
@@ -125,53 +124,80 @@ const ChatSmoker = () => {
     };
 
     return (
-        <div className="chat-container">
+        <div className="container-fluid d-flex">
             <Sidebar navigate={navigate} />
             <Header />
-            <main>
-                <h2>Chat con tu Coach</h2>
-                
-                {/* Lista de Coaches Aprobados */}
-                <div className="coaches-list">
-                    <h3>Coaches Aprobados</h3>
-                    {approvedCoaches.length > 0 ? (
-                        <ul>
-                            {approvedCoaches.map((coach) => (
-                                <li key={coach.id} onClick={() => setSelectedCoachId(coach.id)} className="coach-item">
-                                    {coach.nombre_coach} {/* Cambia a la propiedad correcta para mostrar el nombre */}
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>No tienes coaches aprobados.</p>
-                    )}
-                </div>
-
-                <div className="messages">
-                    {mensajes.length > 0 ? (
-                        mensajes.map((mensaje) => (
-                            <div key={mensaje.id} className={`message ${mensaje.id_usuario === store.loggedInUser.id ? 'sent' : 'received'}`}>
-                                <p>{mensaje.contenido}</p>
+            <main className="flex-grow-1 p-3">
+                <h2 className="mb-4">Chat con tu Coach</h2>
+                <div className="row">
+                    {/* Lista de Coaches Aprobados */}
+                    <div className="col-md-4 col-lg-3 mb-4">
+                        <h3>Coaches Aprobados</h3>
+                        {approvedCoaches.length > 0 ? (
+                            <ul className="list-group">
+                                {approvedCoaches.map((coach) => (
+                                    <li
+                                        key={coach.id}
+                                        onClick={() => setSelectedCoachId(coach.id)}
+                                        className={`list-group-item ${coach.id === selectedCoachId ? 'active' : ''}`}
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        {coach.nombre_coach}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>No tienes coaches aprobados.</p>
+                        )}
+                    </div>
+    
+                    {/* Ventana de chat */}
+                    <div className="col-md-8 col-lg-9">
+                        {selectedCoachId ? (
+                            <div className="card">
+                                <div className="card-header">
+                                    Chat con {approvedCoaches.find(coach => coach.id === selectedCoachId)?.nombre_coach}
+                                </div>
+                                <div className="card-body" style={{ maxHeight: '400px', overflowY: 'scroll' }}>
+                                    {mensajes.length > 0 ? (
+                                        mensajes.map((mensaje) => (
+                                            <div
+                                                key={mensaje.id}
+                                                className={`message ${mensaje.id_usuario === store.loggedInUser.id ? 'sent' : 'received'}`}
+                                                style={{ marginBottom: '0.5rem' }}
+                                            >
+                                                <p className={`p-2 rounded ${mensaje.id_usuario === store.loggedInUser.id ? 'bg-primary text-white' : 'bg-light text-dark'}`}>
+                                                    {mensaje.contenido}
+                                                </p>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p>No hay mensajes para mostrar.</p>
+                                    )}
+                                </div>
+    
+                                <div className="card-footer">
+                                    <form onSubmit={handleSendMensaje} className="d-flex">
+                                        <input
+                                            type="text"
+                                            value={contenido}
+                                            onChange={(e) => setContenido(e.target.value)}
+                                            placeholder="Escribe tu mensaje..."
+                                            required
+                                            className="form-control me-2"
+                                        />
+                                        <button type="submit" className="btn btn-primary">Enviar</button>
+                                    </form>
+                                </div>
                             </div>
-                        ))
-                    ) : (
-                        <p>No hay mensajes para mostrar.</p>
-                    )}
+                        ) : (
+                            <p>Selecciona un coach para iniciar una conversación.</p>
+                        )}
+                    </div>
                 </div>
-
-                <form onSubmit={handleSendMensaje} className="message-input">
-                    <input
-                        type="text"
-                        value={contenido}
-                        onChange={(e) => setContenido(e.target.value)}
-                        placeholder="Escribe tu mensaje..."
-                        required
-                    />
-                    <button type="submit">Enviar</button>
-                </form>
             </main>
         </div>
-    );
-};
+    );    
+};    
 
 export default ChatSmoker;
