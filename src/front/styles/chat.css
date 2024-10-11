@@ -1,0 +1,97 @@
+/* Contenedor principal del chat */
+.chat-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh; /* Ocupa toda la altura de la ventana */
+}
+
+/* Estilo para el sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #007bff;
+    padding: 20px;
+    color: white;
+}
+
+/* Estilo para el encabezado */
+.header {
+    background-color: #343a40;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+/* Estilo para el área principal */
+main {
+    flex: 1;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+/* Lista de coaches aprobados */
+.coaches-list {
+    margin-bottom: 20px;
+}
+
+/* Estilo de los items de coaches */
+.coach-item {
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.coach-item:hover {
+    background-color: #e0e0e0; /* Cambia el color al pasar el mouse */
+}
+
+/* Estilo para los mensajes */
+.messages {
+    margin-bottom: 20px;
+}
+
+.message {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    max-width: 70%; /* Limita el ancho de los mensajes */
+}
+
+.sent {
+    background-color: #007bff;
+    color: white;
+    align-self: flex-end; /* Alinea a la derecha */
+}
+
+.received {
+    background-color: #f1f1f1;
+    color: black;
+    align-self: flex-start; /* Alinea a la izquierda */
+}
+
+/* Estilo para el input del mensaje */
+.message-input {
+    display: flex;
+}
+
+.message-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.message-input button {
+    padding: 10px;
+    border: none;
+    background-color: #28a745; /* Verde */
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.message-input button:hover {
+    background-color: #218838; /* Verde oscuro */
+}

@@ -28,6 +28,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             userInfo: null,
             coachInfo: null,
             solicitudes: [],
+            consejo: []
         },
         actions: {
 
@@ -728,6 +729,52 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error fetching tipos de consumo:", error);
                 }
             },
+
+            generarConsejo: async (userId) => {
+                try {
+                    const apiKey = process.env.REACT_APP_OPENAI_API_KEY; // Accede a la clave de API
+            
+                    // Verifica si la clave API es correcta
+            
+                    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey}`, // Usa la clave de API aquí
+                        },
+                        body: JSON.stringify({
+                            model: 'gpt-3.5-turbo', // o el modelo que desees usar
+                            messages: [
+                                {
+                                    role: 'user',
+                                    content: `Soy un fumador que ha estado fumando durante ${userId.tiempo_fumando} años. Fumo ${userId.numero_cigarrillos} cigarrillos al día y consumo de forma ${userId.periodicidad_consumo}. ¿Puedes darme un consejo sobre cómo dejar de fumar?`
+                                }
+                            ]
+                        }),
+                    });
+        
+                    if (!response.ok) {
+                        const errorDetails = await response.text(); // Captura el texto de error
+                        throw new Error(`HTTP error! status: ${response.status}, details: ${errorDetails}`);
+                    }
+        
+                    const data = await response.json();
+                    console.log("Consejo recibido de la API:", data);
+            
+                    // Actualiza el consejo en el store
+                    setStore({
+                        ...getStore(),
+                        loggedInUser: {
+                            ...getStore().loggedInUser,
+                            consejo: data.choices[0].message.content
+                        }
+                    });
+                    
+                } catch (error) {
+                    console.error("Error fetching consejo:", error.message);
+                }
+            }
+                 
         },
     };
 };

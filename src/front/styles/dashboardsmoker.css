@@ -1,20 +1,21 @@
-/* Estructura general del dashboard */
+/* Estilo global */
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
     font-family: 'Roboto', sans-serif;
     background-color: #f9fafb;
+    color: #333; /* Color de texto por defecto */
 }
 
-.user-dashboard-container { /* Cambiado el nombre de la clase */
+.user-dashboard-container {
     display: flex;
     height: 100vh;
     width: 100vw;
 }
 
 /* Sidebar Moderno */
-.user-sidebar { /* Cambiado el nombre de la clase */
+.user-sidebar {
     width: 250px;
     background-color: #1f2937;
     color: white;
@@ -25,7 +26,8 @@ html, body {
     position: fixed;
     top: 0;
     left: 0;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+    transition: width 0.3s; /* Transición para la barra lateral */
 }
 
 .user-sidebar h2 {
@@ -45,17 +47,18 @@ html, body {
     padding: 12px 10px;
     cursor: pointer;
     border-radius: 8px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, padding-left 0.3s; /* Añadido padding para efecto al pasar */
 }
 
 .user-sidebar ul li svg {
     margin-right: 12px;
     color: #9ca3af;
-    font-size: 1.2rem; /* Tamaño de iconos ajustado */
+    font-size: 1.2rem;
 }
 
 .user-sidebar ul li:hover {
     background-color: #374151;
+    padding-left: 15px; /* Efecto de desplazamiento al pasar el mouse */
 }
 
 /* Main Layout */
@@ -70,35 +73,8 @@ html, body {
     box-sizing: border-box;
 }
 
-/* Header */
-.user-header {
-    display: flex;
-    justify-content: space-between;
-    background-color: #f3f4f6;
-    padding: 15px;
-    border-bottom: 1px solid #e5e7eb;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.user-header-title {
-    font-size: 22px;
-    color: #111827;
-    font-weight: 500;
-}
-
-.user-header-button {
-    padding: 10px 20px;
-    background-color: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
 .user-header-button:hover {
-    background-color: #dc2626;
+    background-color: #2563eb;
 }
 
 /* Main Content */
@@ -107,8 +83,9 @@ html, body {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    background-color: #ffffff; /* Fondo blanco para el contenido */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
 }
 
 .user-main-content h1 {
@@ -262,12 +239,13 @@ html, body {
     color: #111827; /* Color para el texto destacado */
 }
 
-/* Sidebar */
+/* Estilos adicionales */
 .user-sidebar {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 100vh; /* Asegura que la barra de navegación ocupe toda la altura de la pantalla */
+    padding-top: 20px; /* Espacio en la parte superior */
 }
 
 .custom-logo-container {
@@ -281,64 +259,3 @@ html, body {
     cursor: pointer; /* Cambia el cursor al pasar sobre la imagen */
     border-radius: 8px; /* Bordes redondeados para el logo */
 }
-
-/* Estilo general del contenedor del dashboard */
-.user-dashboard-container {
-    display: flex;
-    height: 100vh;
-    background-color: #f8f9fa; /* Color de fondo suave */
-}
-
-/* Estilo para el contenedor principal que envuelve el contenido y el sidebar */
-.user-main-layout {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-}
-
-/* Estilo para el contenido principal donde se muestra el perfil */
-.user-main-content {
-    flex: 1;
-    padding: 20px;
-    background-color: #ffffff; /* Fondo blanco para el contenido */
-    border-radius: 8px; /* Bordes redondeados */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
-}
-
-/* Estilo para el encabezado (título) del perfil */
-.user-main-content h2 {
-    font-size: 1.8rem; /* Tamaño del texto */
-    color: #343a40; /* Color del texto */
-    margin-bottom: 1rem; /* Margen inferior */
-}
-
-/* Contenedor de los datos del perfil */
-.user-profile-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centrar contenido */
-}
-
-/* Estilo para la imagen de perfil */
-.profile-image {
-    width: 120px; /* Ancho de la imagen */
-    height: 120px; /* Altura de la imagen */
-    border-radius: 50%; /* Bordes redondeados */
-    margin-bottom: 15px; /* Espacio inferior */
-    border: 2px solid #ced4da; /* Borde claro */
-}
-
-/* Estilo para los textos del perfil */
-.user-profile-content p {
-    font-size: 1rem; /* Tamaño del texto */
-    color: #495057; /* Color del texto */
-    margin: 5px 0; /* Margen superior e inferior */
-}
-
-/* Estilo para los títulos en negrita (etiquetas de información) */
-.user-profile-content p strong {
-    font-weight: bold; /* Negrita para etiquetas */
-}
-
-
