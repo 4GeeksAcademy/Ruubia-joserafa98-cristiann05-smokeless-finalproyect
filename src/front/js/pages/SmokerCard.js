@@ -10,7 +10,7 @@ const SmokerCard = () => {
         const fetchSmokersAndSolicitudes = async () => {
             try {
                 // Llamar a la acción de obtener smokers y solicitudes
-                await actions.getAllsmoker();
+                await actions.getAllSmokers(); // Usa el nombre exacto que definiste en el flux
                 await actions.getAllSolicitudes();
             } catch (error) {
                 setError("Error al obtener los datos");
