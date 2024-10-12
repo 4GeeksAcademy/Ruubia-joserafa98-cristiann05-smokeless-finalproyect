@@ -50,3 +50,12 @@ body {
 .align-self-end {
     align-self: flex-end; /* Para alinear correctamente el contenido en la parte inferior */
 }
+.card {
+    background-color: white !important; /* O el color que prefieras */
+    transition: box-shadow 0.3s ease; /* Suaviza la transición */
+}
+
+.card:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5) !important; 
+}
+
