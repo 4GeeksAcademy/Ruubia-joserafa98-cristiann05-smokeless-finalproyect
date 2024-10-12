@@ -8,11 +8,11 @@ import Navbar from "../component/navbar";
 
 export const Home = ({ toggleTheme }) => {
     const [theme, setTheme] = useState(() => {
-        return localStorage.getItem('theme') || 'light'; // Cambiar el valor predeterminado a 'light'
+        return localStorage.getItem('theme') || 'light'; // Valor predeterminado 'light'
     });
 
     useEffect(() => {
-        const text = "Bienvenido a Smokeless";
+        const text = "Deja de fumar para siempre.";
         const container = document.getElementById("animatedText");
 
         // Crear spans para cada letra
@@ -45,57 +45,124 @@ export const Home = ({ toggleTheme }) => {
                 }, delay);
             });
 
-            setTimeout(() => animateLetters(!forward), 4000);
+            setTimeout(() => animateLetters(!forward), 4000); // Ciclo para la animación
         }
 
-        animateLetters();
+        animateLetters(); // Iniciar animación
     }, []);
 
     const handleThemeToggle = () => {
-        const newTheme = theme === 'dark' ? 'light' : 'dark'; // Alterna el tema
+        const newTheme = theme === 'dark' ? 'light' : 'dark'; // Alternar tema
         setTheme(newTheme);
-        localStorage.setItem('theme', newTheme); // Guarda el tema en localStorage
+        localStorage.setItem('theme', newTheme); // Guardar en localStorage
         toggleTheme(); // Llama a la función proporcionada para alternar el tema global
     };
 
     return (
         <>
-            <Navbar toggleTheme={handleThemeToggle} theme={theme} /> {/* Pasa el tema actual al Navbar */}
-            <div className={`container ${theme}`}>
-                <div className="animated-text" id="animatedText"></div>
+            <Navbar toggleTheme={handleThemeToggle} theme={theme} className="mb-5" />
+            <div className={`pt-5 pb-4 pt-lg-56 pb-lg-0 mt-n40 position-relative gradient-bottom-right start-indigo middle-purple end-yellow ${theme}`}>
+                <div className="container">
+                    <div className="row align-items-center g-10">
+                        <div className="col-lg-8 col-md-12 mt-5">
+                            <h1 className="ls-tight fw-bolder display-4 text-white mb-4 mt-4 text-wrap">
+                                <div id="animatedText"></div> {/* Animación de letras */}
+                            </h1>
+                            <p className="w-xl-75 lead text-white text-wrap">
+                                "Nuestros coaches especializados utilizan técnicas personalizadas y herramientas probadas para ayudarte a dejar de fumar de forma efectiva y definitiva. Sin importar tu nivel de consumo, estamos aquí para guiarte en cada paso del camino hacia una vida sin cigarrillos."
+                            </p>
+                        </div>
+                        <div className="col-lg-6 col-md-12 align-self-end">
+                            <div className="hstack gap-3 justify-content-lg-end mt-4">
+                                <Link to="/signup-smoker">
+                                    <button className={`register-button btn btn-light ${theme}`}>
+                                        REGISTRARSE COMO FUMADOR
+                                    </button>
+                                </Link>
+                                <Link to="/signup-coach">
+                                    <button className={`register-button btn btn-light ${theme}`}>
+                                        REGISTRARSE COMO COACH
+                                    </button>
+                                </Link>
+                                <Link to="/login-selection">
+                                    <button className="btn btn-outline-light">
+                                        YA TENGO UNA CUENTA
+                                    </button>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
 
-                <div className="button-container">
-                    <Link to="/signup-smoker">
-                        <button className={`register-button ${theme}`}>
-                            REGISTRARSE COMO FUMADOR
-                        </button>
-                    </Link>
-                    <Link to="/signup-coach">
-                        <button className={`register-button ${theme}`}>
-                            REGISTRARSE COMO COACH
-                        </button>
-                    </Link>
+                    <div className="mt-5 text-center">
+                        <Atropos
+                            className="my-atropos"
+                            activeOffset={40}
+                            shadowScale={1.05}
+                        >
+                            <img className="atropos-image" src={foto} data-atropos-offset="0" alt="3D Effect" />
+                        </Atropos>
+                    </div>
                 </div>
-
-                <div className="mt-4">
-                    <Link to="/login-selection">
-                        <button className="create-custom-button">
-                            YA TENGO UNA CUENTA
-                        </button>
-                    </Link>
-                </div>
-
-                <div className="mt-5">
-                    <Atropos
-                        className="my-atropos"
-                        activeOffset={40}
-                        shadowScale={1.05}
-                    >
-                        <img className="atropos-image" src={foto} data-atropos-offset="0" alt="3D Effect" />
-                    </Atropos>
+            </div>
+           {/* Nuevo segmento "How it works" */}
+           <div className="mt-2 py-20 pt-lg-32 bg-dark rounded-bottom-4 overflow-hidden position-relative z-1">
+                <div className="container mw-screen-xl">
+                    <div className="row">
+                        <div className="col-lg-6 col-md-10">
+                            <h5 className="h5 mb-5 text-uppercase text-primary">how it works</h5>
+                            <h1 className="display-4 font-display text-white fw-bolder lh-tight mb-4">Comienza tu camino hoy</h1>
+                            <p className="text-lg text-white text-opacity-75">Aquí puedes poner un texto descriptivo largo sobre el proceso y cómo los usuarios pueden beneficiarse de tus servicios.</p>
+                        </div>
+                    </div>
+                    <div className="row g-6 g-lg-20 my-10">
+                        <div className="col-md-4">
+                            <div className="card shadow-none border-0">
+                                <div className="card-body p-7">
+                                    <div className="mt-4 mb-7 mx-3">
+                                        <div className="icon icon-shape text-white bg-primary rounded-circle text-lg" style={{ width: '60px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <i className="fa-solid fa-ban-smoking"></i>
+                                        </div>
+                                    </div>
+                                    <div className="pt-2 pb-3">
+                                        <h5 className="h3 font-display fw-bold mb-3">Texto de prueba 1</h5>
+                                        <p className="text-light">Nos aseguramos de que nuestro código no solo sea eficiente y robusto, sino también altamente adaptable e intuitivo para los desarrolladores.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-md-4">
+                            <div className="card shadow-none border-0">
+                                <div className="card-body p-7">
+                                    <div className="mt-4 mb-7 mx-3">
+                                        <div className="icon icon-shape text-white bg-primary rounded-circle text-lg" style={{ width: '60px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <i className="fa-solid fa-lightbulb"></i>
+                                        </div>
+                                    </div>
+                                    <div className="pt-2 pb-3">
+                                        <h5 className="h3 font-display fw-bold mb-3">Texto de prueba 2</h5>
+                                        <p className="text-light">Asegúrate de que tu código siga los principios de la programación funcional y de que esté bien documentado.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-md-4">
+                            <div className="card shadow-none border-0">
+                                <div className="card-body p-7">
+                                    <div className="mt-4 mb-7 mx-3">
+                                        <div className="icon icon-shape text-white bg-primary rounded-circle text-lg" style={{ width: '60px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <i className="fa-solid fa-chart-line"></i>
+                                        </div>
+                                    </div>
+                                    <div className="pt-2 pb-3">
+                                        <h5 className="h3 font-display fw-bold mb-3">Texto de prueba 3</h5>
+                                        <p className="text-light">Fomenta un entorno de colaboración en tu equipo para facilitar la creación de código más limpio y eficiente.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>
     );
 };
-
