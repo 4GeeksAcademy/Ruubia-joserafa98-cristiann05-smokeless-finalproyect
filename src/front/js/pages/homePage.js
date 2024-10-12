@@ -111,7 +111,7 @@ export const Home = ({ toggleTheme }) => {
                         <div className="col-lg-6 col-md-10">
                             <h5 className="h5 mb-5 text-uppercase text-primary">how it works</h5>
                             <h1 className="display-4 font-display text-white fw-bolder lh-tight mb-4">Comienza tu camino hoy</h1>
-                            <p className="text-lg text-white text-opacity-75">Aquí puedes poner un texto descriptivo largo sobre el proceso y cómo los usuarios pueden beneficiarse de tus servicios.</p>
+                            <p className="text-lg text-white text-opacity-75">Dejar de fumar es un viaje transformador que no solo mejora tu salud, sino que también revitaliza tu vida. Imagina disfrutar de una vida llena de energía, libre de humos y con la claridad mental que mereces. En Smokeless, te acompañamos en este camino hacia el bienestar, brindándote el apoyo y las herramientas necesarias para alcanzar tus metas y disfrutar de un futuro más saludable y pleno.</p>
                         </div>
                     </div>
                     <div className="row g-6 g-lg-20 my-10">
@@ -124,8 +124,8 @@ export const Home = ({ toggleTheme }) => {
                                         </div>
                                     </div>
                                     <div className="pt-2 pb-3">
-                                        <h5 className="h3 font-display fw-bold mb-3">Texto de prueba 1</h5>
-                                        <p className="text-light">Nos aseguramos de que nuestro código no solo sea eficiente y robusto, sino también altamente adaptable e intuitivo para los desarrolladores.</p>
+                                        <h5 className="h3 font-display fw-bold mb-3">Toma la decisión.</h5>
+                                        <p className="text-light">El primer paso hacia una vida sin humo comienza con una decisión valiente: ¡dejar de fumar! Reconocer la necesidad de un cambio es fundamental para transformar tu vida. Al registrarte en nuestra plataforma, no solo te comprometes contigo mismo, sino que también te abres a un mundo de posibilidades.</p>
                                     </div>
                                 </div>
                             </div>
@@ -139,8 +139,8 @@ export const Home = ({ toggleTheme }) => {
                                         </div>
                                     </div>
                                     <div className="pt-2 pb-3">
-                                        <h5 className="h3 font-display fw-bold mb-3">Texto de prueba 2</h5>
-                                        <p className="text-light">Asegúrate de que tu código siga los principios de la programación funcional y de que esté bien documentado.</p>
+                                        <h5 className="h3 font-display fw-bold mb-3">Conecta con los mejores profesionales</h5>
+                                        <p className="text-light">te ofrecemos la oportunidad de conectar con coaches especializados que comprenden tus desafíos y están dedicados a guiarte en tu camino para liberarte del tabaco. Estos profesionales cuentan con una variedad de técnicas adaptadas a tus necesidades, asegurando un apoyo personalizado y efectivo.</p>
                                     </div>
                                 </div>
                             </div>
@@ -154,8 +154,8 @@ export const Home = ({ toggleTheme }) => {
                                         </div>
                                     </div>
                                     <div className="pt-2 pb-3">
-                                        <h5 className="h3 font-display fw-bold mb-3">Texto de prueba 3</h5>
-                                        <p className="text-light">Fomenta un entorno de colaboración en tu equipo para facilitar la creación de código más limpio y eficiente.</p>
+                                        <h5 className="h3 font-display fw-bold mb-3">Disfruta de una Vida Sin Humos</h5>
+                                        <p className="text-light">Únete a nuestra comunidad y comienza a disfrutar de beneficios inmediatos! Desde más energía hasta una mejor calidad de vida, cada día sin fumar es un paso hacia un futuro más brillante. ¡Regístrate y empieza tu transformación hoy!</p>
                                     </div>
                                 </div>
                             </div>
