@@ -11,16 +11,10 @@ export const Home = ({ toggleTheme }) => {
         return localStorage.getItem('theme') || 'light'; // Valor predeterminado 'light'
     });
 
-    const handleThemeToggle = () => {
-        const newTheme = theme === 'dark' ? 'light' : 'dark'; // Alternar tema
-        setTheme(newTheme);
-        localStorage.setItem('theme', newTheme); // Guardar en localStorage
-        toggleTheme(); // Llama a la función proporcionada para alternar el tema global
-    };
 
     return (
         <>
-            {/* <Navbar toggleTheme={handleThemeToggle} theme={theme} className="mb-5" /> */}
+            <Navbar />
             <div className={`pt-5 pb-4 pt-lg-56 pb-lg-0 mt-n40 position-relative gradient-bottom-right start-indigo middle-purple end-yellow ${theme}`}>
                 <div className="container">
                     <div className="row align-items-center g-10">
@@ -72,7 +66,7 @@ export const Home = ({ toggleTheme }) => {
                         </div>
                     </div>
 
-                    <div className="row g-6 g-lg-20" style={{ marginTop: '-170px', marginBottom: '20px' }}> 
+                    <div className="row g-6 g-lg-20" style={{ marginTop: '-170px', marginBottom: '20px' }}>
                         <div className="col-md-4">
                             <div className="card shadow-none border-0">
                                 <div className="card-body p-7">
@@ -93,7 +87,7 @@ export const Home = ({ toggleTheme }) => {
                                 <div className="card-body p-7">
                                     <div className="mt-4 mb-7 mx-3">
                                         <div className="icon icon-shape text-white bg-primary rounded-circle text-lg" style={{ width: '60px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <i class="fa-solid fa-handshake fa-2x"></i>
+                                            <i className="fa-solid fa-handshake fa-2x"></i>
                                         </div>
                                     </div>
                                     <div className="pt-2 pb-3">
@@ -108,7 +102,7 @@ export const Home = ({ toggleTheme }) => {
                                 <div className="card-body p-7">
                                     <div className="mt-4 mb-7 mx-3">
                                         <div className="icon icon-shape text-white bg-primary rounded-circle text-lg" style={{ width: '60px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <i class="fa-solid fa-face-laugh-wink fa-2x"></i>
+                                            <i className="fa-solid fa-face-laugh-wink fa-2x"></i>
                                         </div>
                                     </div>
                                     <div className="pt-2 pb-3">
@@ -133,7 +127,7 @@ export const Home = ({ toggleTheme }) => {
                             <p className="lead mb-5">Únete a una comunidad de expertos dispuestos a ayudar a los demás...</p>
                         </div>
                     </div>
-    
+
                     <div className="section-step-lg">
                         <div className="row justify-content-between align-items-center">
                             {/* Columna izquierda: Título, Subtítulo y Lista */}
@@ -145,8 +139,8 @@ export const Home = ({ toggleTheme }) => {
                                 <ul className="list-unstyled mt-6 mb-2">
                                     <li className="py-2 list-item mb-3">
                                         <div className="d-flex align-items-center">
-                                            <div style={{  display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                                                <i class="fa-solid fa-circle-check fa-2x mx-4"></i>
+                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
                                             </div>
                                             <div>
                                                 <p className="fw-semibold">Conecta con Fumadores en Tu Área: Expande tu red y ayuda a quienes más lo necesitan.</p>
@@ -155,8 +149,8 @@ export const Home = ({ toggleTheme }) => {
                                     </li>
                                     <li className="py-2 list-item mb-3">
                                         <div className="d-flex align-items-center">
-                                            <div style={{  display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                                                 <i class="fa-solid fa-circle-check fa-2x mx-4"></i>
+                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
                                             </div>
                                             <div>
                                                 <p className="fw-semibold">Herramientas Avanzadas para el Éxito: Aprovecha recursos innovadores para guiar a tus clientes en su camino hacia una vida sin humo.</p>
@@ -165,8 +159,8 @@ export const Home = ({ toggleTheme }) => {
                                     </li>
                                     <li className="py-2 list-item mb-3">
                                         <div className="d-flex align-items-center">
-                                            <div style={{  display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                                                <i class="fa-solid fa-circle-check fa-2x mx-4"></i>
+                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
                                             </div>
                                             <div>
                                                 <p className="fw-semibold">Chatea y Ofrece Soporte Personalizado: Brinda consejos y motivación a través de chats directos, adaptando tu enfoque a cada fumador.</p>
@@ -176,12 +170,12 @@ export const Home = ({ toggleTheme }) => {
                                 </ul>
                             </div>
                             <div className="col-lg-6">
-                                <img src="https://via.placeholder.com/500x400" className="img-fluid rounded highlight-image" alt="Imagen de prueba" />
+                                <img src="https://media.istockphoto.com/id/1728008421/es/foto/profesor-mentor-estudiante-universitario.jpg?s=1024x1024&w=is&k=20&c=HcpELb7Ql-NTrM2oDfy5I-5xITivpldfqWoB06kxgfU=" className="img-fluid rounded highlight-image" alt="Imagen de prueba" />
                             </div>
                         </div>
                     </div>
-                 </div>
-         </div>
+                </div>
+            </div>
 
             <div className="py-20 pt-lg-32 pb-lg-20">
                 <div className="container mw-screen-xl">
@@ -189,9 +183,9 @@ export const Home = ({ toggleTheme }) => {
                         <div className="section-step-lg">
                             <div className="row justify-content-between align-items-center">
                                 <div className="col-lg-6">
-                                    <img src="https://via.placeholder.com/500x400" className="img-fluid rounded highlight-image" alt="Imagen de prueba" />
+                                    <img src="https://media.istockphoto.com/id/1783743772/es/foto/oradora-femenina-dando-una-presentaci%C3%B3n-durante-un-seminario-de-negocios-en-el-centro-de.jpg?s=1024x1024&w=is&k=20&c=BCXkREMj6sFVgEeEKF7lff-ikLE_drUxvRb6dggRuME=" className="img-fluid rounded highlight-image" alt="Imagen de prueba" />
                                 </div>
-                              
+
                                 <div className="col-lg-5 mb-7 mb-lg-0">
                                     <h5 className="h5 mb-3 text-uppercase fw-bolder text-primary">Impulsa el cambio hacia un futuro sin humo...</h5>
                                     <h1 className="ls-tight font-display text-dark fw-bolder mb-3">AYUDA A LAS PERSONAS A ALCANZAR SUS METAS Y DEJAR DE FUMAR DE MANERA EFECTIVA.</h1>
@@ -200,18 +194,18 @@ export const Home = ({ toggleTheme }) => {
                                     <ul className="list-unstyled mt-6 mb-5">
                                         <li className="py-2 list-item mb-3">
                                             <div className="d-flex align-items-center">
-                                                <div style={{  display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                                                    <i class="fa-solid fa-circle-check fa-2x mx-4"></i>
+                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
                                                 </div>
                                                 <div>
                                                     <p className="fw-semibold">Crea un entorno positivo donde los fumadores puedan compartir sus experiencias.</p>
                                                 </div>
                                             </div>
                                         </li>
-                                         <li className="py-2 list-item mb-3">
+                                        <li className="py-2 list-item mb-3">
                                             <div className="d-flex align-items-center">
-                                                <div style={{  display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                                                    <i class="fa-solid fa-circle-check fa-2x mx-4"></i>
+                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
                                                 </div>
                                                 <div>
                                                     <p className="fw-semibold"> Mantén el compromiso con tus clientes a través de sesiones de seguimiento.</p>
@@ -220,8 +214,8 @@ export const Home = ({ toggleTheme }) => {
                                         </li>
                                         <li className="py-2 list-item mb-3">
                                             <div className="d-flex align-items-center">
-                                                <div style={{  display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                                                    <i class="fa-solid fa-circle-check fa-2x mx-4"></i>
+                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
                                                 </div>
                                                 <div>
                                                     <p className="fw-semibold">Utiliza Nuestras herramientas interactivas.</p>
@@ -244,7 +238,7 @@ export const Home = ({ toggleTheme }) => {
                                 <h1 className="ls-tight fw-bolder display-4 mb-5 text-white">¿Estás listo para comenzar?</h1>
                                 <p className="lead text-white opacity-8 mb-10">¡Da el primer paso hacia tu futuro libre de humo y descubre un mundo de oportunidades! Regístrate ahora y comienza tu transformación.</p>
                                 <div className="mx-n2">
-                                    <button className="btn btn-primary" onClick={() => window.location.href='/signup'}>
+                                    <button className="btn btn-primary" onClick={() => window.location.href = '/signup-smoker'}>
                                         Comienza tu travesía hoy
                                     </button>
                                 </div>
@@ -253,7 +247,57 @@ export const Home = ({ toggleTheme }) => {
                     </div>
                 </div>
             </div>
+            <footer className="pt-24 pb-10">
+                <div className="container mw-screen-xl">
+                    <div className="row">
+                        <div className="col">
+                            <div className="pe-5" style={{ textAlign: 'center' }}>
+                                <h3 className="h2 text-heading fw-semibold lh-lg mb-0" style={{ fontSize: '1rem' }}>
+                                    Este proyecto fue creado por
+                                </h3>
+                                <h2 className="h2 text-heading fw-semibold lh-lg mb-3" style={{ fontSize: '2rem' }}>
+                                    Los FullStackers
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div className="row mt-2 mb-7">
+                        <div className="col">
+                            <ul className="nav mx-n4">
+                                <li className="nav-item">
+                                    <Link to="/" className="nav-link text-lg text-muted text-primary-hover">
+                                        <i className="fa-brands fa-github fa-2x"></i>
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link to="/" className="nav-link text-lg text-muted text-primary-hover">
+                                        <i className="fa-brands fa-instagram fa-2x"></i>
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link to="/" className="nav-link text-lg text-muted text-primary-hover">
+                                        <i className="fa-brands fa-facebook fa-2x"></i>
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link to="/" className="nav-link text-lg text-muted text-primary-hover">
+                                        <i className="fa-brands fa-linkedin fa-2x"></i>
+                                    </Link>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="row">
+                        <div className="col-auto">
+                            <p className="text-sm text-muted">
+                                © Copyright 2023 FullStackers - Joserafa98, cristiann05 & Ruubia.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </>
     );
 }    

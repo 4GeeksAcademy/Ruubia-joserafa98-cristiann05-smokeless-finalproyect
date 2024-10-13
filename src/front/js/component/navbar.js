@@ -1,70 +1,45 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import logo from '../../img/logos/logoblanco.png'; // Ajusta según sea necesario
-import { Link } from 'react-router-dom'; // Asegúrate de importar Link
+import { Link } from 'react-router-dom';
 import "../../styles/navbar.css";
-import '../../styles/switch.css';
 
 const Navbar = () => {
-    const [language, setLanguage] = useState(() => {
-        return localStorage.getItem('language') || "Spanish";
-    });
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const icons = {
-        english: "🇬🇧",
-        spanish: "🇪🇸",
-        french: "🇫🇷",
-        german: "🇩🇪",
-        italian: "🇮🇹"
+    // Definir la función toggleMenu
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+        console.log("Menu open state:", !isMenuOpen); // Para verificar el estado
     };
-
-    const listItems = ["English", "Spanish", "French", "German", "Italian"];
-
-    const handleItemClick = (language) => {
-        setLanguage(language);
-        localStorage.setItem('language', language);
-    };
-
-    useEffect(() => {
-        setLanguage(localStorage.getItem('language') || "Spanish");
-    }, []);
 
     return (
-        <nav className="navbar">
-            <div className="logo-container">
-                <Link to="/"> {/* Enlace al logo */}
-                    <img 
-                        src={logo} 
-                        alt="Logo" 
-                        className="logo" 
-                    />
+        <nav className="navbar-container">
+            {/* Logo e ícono del menú hamburguesa */}
+            <div className="navbar-header">
+                <Link to="/" className="logo-container">
+                    <img src={logo} alt="Logo" className="logo" />
                 </Link>
+                <button className="navbar-toggler" onClick={toggleMenu}>
+                    &#9776;
+                </button>
             </div>
-            <div className="navbar-controls">
-                <div className="dropdown">
-                    <button
-                        className="btn btn-secondary dropdown-toggle"
-                        type="button"
-                        id="dropdownMenuButton"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                    >
-                        <span className="dropdown-title-icon">{icons[language.toLowerCase()]}</span>
-                        <span className="dropdown-title">{language}</span>
-                    </button>
-
-                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        {listItems.map((item) => (
-                            <li key={item}>
-                                <button
-                                    className="dropdown-item"
-                                    onClick={() => handleItemClick(item)}
-                                >
-                                    <span className="text-truncate">{icons[item.toLowerCase()]} {item}</span>
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+    
+            {/* Menú desplegable */}
+            <div className={`menu-container ${isMenuOpen ? 'open' : ''}`}>
+                <ul className="menu-list">
+                    <li className="menu-item">
+                        <Link className="nav-link" to="/">Product</Link>
+                    </li>
+                    <li className="menu-item">
+                        <Link className="nav-link" to="/">Dashboard</Link>
+                    </li>
+                    <li className="menu-item">
+                        <Link className="btn btn-white" id="button" to="/signup-smoker">Get Started</Link> {/* Ruta actualizada */}
+                    </li>
+                    <li className="menu-item">
+                        <Link className="btn btn-white"  id="button" to="/login-smoker">Login</Link>
+                    </li>
+                </ul>
             </div>
         </nav>
     );
