@@ -26,6 +26,7 @@ import CoachProfile from "./pages/CoachProfile";
 import UserProfile from "./pages/ViewProfileSmoker";
 import ChatSmoker from "./pages/ChatSmoker";
 import ChatCoach from "./pages/ChatCoach";
+import AdviceSmoker from "./pages/AdviceSmoker";
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
@@ -64,6 +65,7 @@ const Layout = () => {
                         <Route element={<CoachProfile />} path="/coach-profile/:coachId" />
                         <Route element={<ChatSmoker />} path="/Dashboard-Smoker/mensajes" />
                         <Route element={<ChatCoach />} path="/Dashboard-Coach/mensajes" />
+                        <Route element={<AdviceSmoker />} path="/Dashboard-Smoker/consejos" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                 </ScrollToTop>

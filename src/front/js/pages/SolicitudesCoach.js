@@ -29,7 +29,7 @@ const SolicitudesCoach = () => {
 
         // Cleanup en caso de que el componente se desmonte
         return () => clearInterval(intervalId);
-    }, [store.loggedInCoach, actions]);
+    }, []);
 
     const handleUpdate = async (solicitudId, updatedData) => {
         try {

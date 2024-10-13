@@ -1,0 +1,92 @@
+/* homePage.css */
+
+/* Estilo global */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Contenedor principal */
+.gradient-bottom-right {
+    background: linear-gradient(to right, #4A90E2, #9013FE); /* Ajusta el gradiente según sea necesario */
+    padding: 60px 15px; /* Espaciado en el contenedor principal */
+}
+
+
+/* Ajustes para el texto en pantallas grandes */
+@media (min-width: 1200px) {
+    .display-3 {
+        font-size: 4rem; /* Aumenta el tamaño de fuente para pantallas grandes */
+    }
+    .lead {
+        font-size: 1.5rem; /* Aumenta el tamaño del texto para mejor legibilidad */
+    }
+    .container {
+        max-width: 1200px; /* Asegúrate de que el contenedor tenga un ancho máximo adecuado */
+    }
+}
+
+/* Estilo para botones */
+.register-button {
+    padding: 10px 20px; /* Añadir algo de padding para un mejor aspecto */
+    font-size: 1.1rem; /* Aumentar el tamaño de fuente de los botones */
+}
+
+/* Efecto de imagen en Atropos */
+.my-atropos {
+    max-width: 100%; /* Asegúrate de que la imagen no exceda el contenedor */
+    height: auto; /* Mantiene la relación de aspecto */
+}
+
+/* Espaciado adicional */
+.mt-5 {
+    margin-top: 3rem; /* Ajusta el margen superior según sea necesario */
+}
+
+/* Otros estilos globales que puedas necesitar */
+.text-white {
+    color: #fff !important; /* Asegúrate de que el texto sea blanco */
+}
+
+.align-self-end {
+    align-self: flex-end; /* Para alinear correctamente el contenido en la parte inferior */
+}
+.card {
+    background-color: white !important; /* O el color que prefieras */
+    transition: box-shadow 0.3s ease; /* Suaviza la transición */
+}
+
+.card:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5) !important; 
+}
+.list-item {
+    padding: 17px 40px;
+    border-radius: 50px;
+    cursor: pointer;
+    border: 0;
+    background-color: white;
+    box-shadow: rgb(0 0 0 / 5%) 0 0 8px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-size: 15px;
+    transition: all 0.5s ease;
+}
+
+.list-item:hover {
+    letter-spacing: 3px;
+    background-color: hsl(261deg 80% 48%);
+    color: hsl(0, 0%, 100%);
+    box-shadow: rgb(93 24 220) 0px 7px 29px 0px;
+}
+
+.highlight-image {
+    transition: transform 0.3s ease; /* Transición suave */
+}
+
+.highlight-image:hover {
+    transform: scale(1.05); /* Aumenta el tamaño de la imagen al hacer hover */
+}
+
+.nav-item {
+    align-items: center; /* Centra verticalmente los elementos dentro del item */
+}
