@@ -4,6 +4,7 @@ import { Context } from "../store/appContext";
 import '../../styles/signups.css'; // Asegúrate de agregar estilos personalizados aquí si es necesario
 import Navbar from '../component/navbar';
 import logo from '../../img/logos/logoblanco.png';
+import logoOscuro from '../../img/logos/logonegro.png';
 
 const SignupSmoker = () => {
     const { actions } = useContext(Context);
@@ -73,7 +74,7 @@ const SignupSmoker = () => {
                     <div className="w-md-50 mx-auto px-10 px-md-0 py-10">
                         <div className="mb-10">
                             <a className="d-inline-block d-lg-none mb-10" href="/pages/dashboard.html">
-                                <img src="path-to-your-logo.png" alt="Logo" className="h-rem-10" />
+                                <img src={logoOscuro} alt="Logo Oscuro" className="logo" />
                             </a>
                             <h1 className="ls-tight fw-bolder h1">Sign up here</h1> 
                         </div>

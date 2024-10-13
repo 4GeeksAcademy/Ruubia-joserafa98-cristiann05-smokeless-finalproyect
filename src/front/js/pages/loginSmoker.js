@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '../store/appContext';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../component/navbar';
+import logo from '../../img/logos/logoblanco.png';
+import logoOscuro from '../../img/logos/logonegro.png';
 
 // Componente que maneja el login
 const LoginSmoker = () => {
@@ -9,6 +10,7 @@ const LoginSmoker = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const [error, setError] = useState('');
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -72,50 +74,82 @@ const LoginSmoker = () => {
 
     return (
         <>
-            <Navbar />
-            <div className="form-container">
-                <p className="title">Iniciar sesión</p>
-                <form className="form" onSubmit={handleLogin}>
-                    <div className="input-group">
-                        <label htmlFor="email">Correo electrónico</label>
-                        <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            placeholder="Ingrese su correo electrónico"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
+        <div className="row g-0 justify-content-center gradient-bottom-right start-purple middle-indigo end-pink">
+            <div className="col-md-6 col-lg-5 col-xl-5 position-fixed start-0 top-0 vh-100 overflow-y-hidden d-none d-lg-flex flex-lg-column">
+                <div className="p-12 py-xl-10 px-xl-20">
+                    {/* Aquí puedes colocar tu logo */}
+                    <div className="d-block">
+                        <img src={logo} alt="Logo" className="logo" />
                     </div>
-                    <div className="input-group">
-                        <label htmlFor="password">Contraseña</label>
-                        <input
-                            type="password"
-                            name="password"
-                            id="password"
-                            placeholder="Ingrese su contraseña"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                        <div className="forgot">
-                            <a rel="noopener noreferrer" href="#">¿Olvidaste tu contraseña?</a>
-                        </div>
+
+                    {/* Ajustes en el título y subtítulo */}
+                    <div className="mt-16 text-center px-4"> {/* Añadí text-center y padding lateral */}
+                        <h1 className="ls-tight fw-bolder display-3 text-white mb-5"> {/* display-3 para hacerlo más grande */}
+                            ¡TU CAMINO HACIA UNA VIDA SIN TABACO!
+                        </h1>
+                        <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.5rem', marginBottom: '2rem' }}> {/* Aumenta el tamaño del subtítulo */}
+                        Inicia sesión para acceder a tus herramientas, consejos personalizados y el apoyo que necesitas para dejar de fumar. ¡Tu nueva vida te espera!
+                        </p>
                     </div>
-                    <button className="sign" type="submit">Iniciar sesión</button>
-                </form>
-                <div className="social-message">
-                    <div className="line"></div>
-                    <p className="message">Inicia sesión con cuentas sociales</p>
-                    <div className="line"></div>
                 </div>
-                <div className="social-icons">
-                    {/* Botones de inicio de sesión social aquí */}
+
+                <div className="mt-auto ps-16 ps-xl-20">
+                    <img 
+                        src="https://images.pexels.com/photos/3767418/pexels-photo-3767418.jpeg?auto=compress&cs=tinysrgb&w=600" 
+                        className="img-fluid rounded-top-start-4 custom-img" 
+                        alt="Side Image" 
+                    />
                 </div>
             </div>
-        </>
-    );
+
+            <div className="col-12 col-md-12 col-lg-7 offset-lg-5 min-vh-100 overflow-y-auto d-flex flex-column justify-content-center position-relative bg-body rounded-top-start-lg-4 rounded shadow-soft-5">
+                <div className="w-md-50 mx-auto px-10 px-md-0 py-10">
+                    <div className="mb-10">
+                        <a className="d-inline-block d-lg-none mb-10" href="/pages/dashboard.html">
+                            <img src={logoOscuro} alt="Logo Oscuro" className="logo" />
+                        </a>
+                        <h1 className="ls-tight fw-bolder h1">Log in here</h1> 
+                    </div>
+
+                    {error && <div className="alert alert-danger">{error}</div>}
+                    <form className="form" onSubmit={handleLogin} style={{ fontSize: '1.25rem' }}> {/* Cambiado a handleLogin */}
+                        <div className="group mb-4">
+                            <i className="fa-regular fa-envelope icon"></i>
+                            <input
+                                type="email"
+                                name="email"
+                                id="email"
+                                className="input"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Correo electrónico"
+                                required
+                                style={{ height: '60px', fontSize: '1.25rem' }}
+                            />
+                        </div>
+
+                        <div className="group mb-4">
+                            <i className="fa-solid fa-lock icon"></i>
+                            <input
+                                type="password"
+                                name="password"
+                                id="password"
+                                className="input"
+                                placeholder="Contraseña"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                style={{ height: '60px', fontSize: '1.25rem' }}
+                            />
+                        </div>
+
+                        <button className="btn btn-dark w-100" type="submit" style={{ fontSize: '1.25rem', padding: '15px' }}>Iniciar sesión</button> {/* Cambiado el texto del botón */}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </>
+);
 };
 
 export default LoginSmoker;
