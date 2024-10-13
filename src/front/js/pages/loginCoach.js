@@ -92,8 +92,8 @@ const LoginCoach = () => {
                     </div>
 
                     {/* Ajustes en el título y subtítulo */}
-                    <div className="mt-16 text-center px-4"> {/* Añadí text-center y padding lateral */}
-                        <h1 className="ls-tight fw-bolder display-3 text-white mb-5"> {/* display-3 para hacerlo más grande */}
+                    <div className="mt-16 text-center px-5"> {/* Añadí text-center y padding lateral */}
+                        <h1 className="ls-tight fw-bolder display-4 text-white mb-4"> {/* display-3 para hacerlo más grande */}
                             ¡INICIA SESIÓN Y CONTINÚA TRANSFORMANDO VIDAS!
                         </h1>
                         <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.5rem', marginBottom: '2rem' }}> {/* Aumenta el tamaño del subtítulo */}
