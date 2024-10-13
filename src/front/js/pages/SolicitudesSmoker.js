@@ -1,10 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
+import Sidebar from "../component/DasboardSmoker/Sidebar"; // Asegúrate de que la ruta sea correcta
+import Header from "../component/DasboardSmoker/Header"; // Asegúrate de que la ruta sea correcta
 
 const SolicitudesSmoker = () => {
     const { store, actions } = useContext(Context);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [displayCount, setDisplayCount] = useState(8); // Cantidad inicial de solicitudes a mostrar
+    const [isDarkMode, setIsDarkMode] = useState(true); // Modo oscuro como predeterminado
 
     useEffect(() => {
         const fetchSolicitudes = async () => {
@@ -21,109 +25,92 @@ const SolicitudesSmoker = () => {
         };
 
         fetchSolicitudes();
-    }, []);
+    }, [store.loggedInUser, actions]);
 
     // Filtrar solicitudes en función del usuario logueado (smoker)
     const solicitudesEnEspera = store.solicitudes.filter(solicitud =>
         solicitud.id_usuario === store.loggedInUser.id && solicitud.estado === false && solicitud.fecha_respuesta === null
     );
-    
+
     const solicitudesAprobadas = store.solicitudes.filter(solicitud =>
         solicitud.id_usuario === store.loggedInUser.id && solicitud.estado === true
     );
-    
+
     const solicitudesRechazadas = store.solicitudes.filter(solicitud =>
         solicitud.id_usuario === store.loggedInUser.id && solicitud.estado === false && solicitud.fecha_respuesta !== null
     );
-    
+
+    // Controla la carga de más solicitudes
+    const loadMore = () => {
+        setDisplayCount(prevCount => prevCount + 4);
+    };
+
+    const toggleTheme = () => {
+        setIsDarkMode(!isDarkMode); // Alterna entre modo oscuro y claro
+    };
 
     return (
-        <div className="container mt-5 bg-light">
-            <h2 className="text-center text-dark mb-4">Mis Solicitudes</h2>
-            {loading ? (
-                <p className="text-center text-dark">Cargando solicitudes...</p>
-            ) : error ? (
-                <p className="text-center text-danger">{error}</p>
-            ) : (
-                <>
-                    {/* Solicitudes en Espera */}
-                    <h3 className="text-dark">Solicitudes en Espera</h3>
-                    {solicitudesEnEspera.length > 0 ? (
-                        <table className="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Coach</th>
-                                    <th>Comentarios</th>
-                                    <th>Fecha de Solicitud</th>
-                                    <th>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {solicitudesEnEspera.map((solicitud) => (
-                                    <tr key={solicitud.id}>
-                                        <td>{solicitud.nombre_coach}</td>
-                                        <td>{solicitud.comentarios}</td>
-                                        <td>{solicitud.fecha_solicitud ? new Date(solicitud.fecha_solicitud).toLocaleString() : 'No disponible'}</td>
-                                        <td>En espera de respuesta</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p>No hay solicitudes en espera.</p>
-                    )}
+        <div className={`flex min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
+            <Sidebar isDarkMode={isDarkMode} toggleTheme={toggleTheme} /> {/* Sidebar con el modo oscuro */}
 
-                    {/* Solicitudes Aprobadas */}
-                    <h3 className="text-dark">Solicitudes Aprobadas</h3>
-                    {solicitudesAprobadas.length > 0 ? (
-                        <table className="table table-success">
-                            <thead>
-                                <tr>
-                                    <th>Coach</th>
-                                    <th>Comentarios</th>
-                                    <th>Fecha de Solicitud</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+            <div className="md:ml-64 flex-1">
+                <Header onLogout={() => actions.logoutsmoker()} isDarkMode={isDarkMode} toggleTheme={toggleTheme} /> {/* Header */}
+
+                <div className="user-main-content p-6"> {/* Contenido principal */}
+                    <h2 className="text-center text-gray-200 mb-4">Mis Solicitudes</h2>
+                    {loading ? (
+                        <p className="text-center text-gray-400">Cargando solicitudes...</p>
+                    ) : error ? (
+                        <p className="text-center text-red-500">{error}</p>
+                    ) : (
+                        <>
+                            {/* Solicitudes en Espera */}
+                            <h3 className="text-gray-200 mb-3">Solicitudes en Espera</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                                {solicitudesEnEspera.slice(0, displayCount).map((solicitud) => (
+                                    <div key={solicitud.id} className="bg-gray-800 p-4 rounded-lg shadow-md">
+                                        <h4 className="font-bold text-lg">{solicitud.nombre_coach}</h4>
+                                        <p className="text-gray-300">{solicitud.comentarios}</p>
+                                        <p className="text-sm text-gray-400">Fecha de Solicitud: {solicitud.fecha_solicitud ? new Date(solicitud.fecha_solicitud).toLocaleString('es-ES') : 'No disponible'}</p>
+                                        <p className="text-red-500">Estado: En espera de respuesta</p>
+                                    </div>
+                                ))}
+                            </div>
+                            {solicitudesEnEspera.length > displayCount && (
+                                <div className="text-center mb-6">
+                                    <button onClick={loadMore} className="bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+                                        Leer Más
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Solicitudes Aprobadas */}
+                            <h3 className="text-gray-200 mb-3">Solicitudes Aprobadas</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                                 {solicitudesAprobadas.map((solicitud) => (
-                                    <tr key={solicitud.id}>
-                                        <td>{solicitud.nombre_coach}</td>
-                                        <td>{solicitud.comentarios}</td>
-                                        <td>{new Date(solicitud.fecha_solicitud).toLocaleString()}</td>
-                                    </tr>
+                                    <div key={solicitud.id} className="bg-green-800 p-4 rounded-lg shadow-md">
+                                        <h4 className="font-bold text-lg">{solicitud.nombre_coach}</h4>
+                                        <p className="text-gray-300">{solicitud.comentarios}</p>
+                                        <p className="text-sm text-gray-400">Fecha de Solicitud: {new Date(solicitud.fecha_solicitud).toLocaleString('es-ES')}</p>
+                                    </div>
                                 ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p>No hay solicitudes aprobadas.</p>
-                    )}
+                            </div>
 
-                    {/* Solicitudes Rechazadas */}
-                    <h3 className="text-dark">Solicitudes Rechazadas</h3>
-                    {solicitudesRechazadas.length > 0 ? (
-                        <table className="table table-danger">
-                            <thead>
-                                <tr>
-                                    <th>Coach</th>
-                                    <th>Comentarios</th>
-                                    <th>Fecha de Solicitud</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                            {/* Solicitudes Rechazadas */}
+                            <h3 className="text-gray-200 mb-3">Solicitudes Rechazadas</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                                 {solicitudesRechazadas.map((solicitud) => (
-                                    <tr key={solicitud.id}>
-                                        <td>{solicitud.nombre_coach}</td>
-                                        <td>{solicitud.comentarios}</td>
-                                        <td>{new Date(solicitud.fecha_solicitud).toLocaleString()}</td>
-                                    </tr>
+                                    <div key={solicitud.id} className="bg-red-800 p-4 rounded-lg shadow-md">
+                                        <h4 className="font-bold text-lg">{solicitud.nombre_coach}</h4>
+                                        <p className="text-gray-300">{solicitud.comentarios}</p>
+                                        <p className="text-sm text-gray-400">Fecha de Solicitud: {new Date(solicitud.fecha_solicitud).toLocaleString('es-ES')}</p>
+                                    </div>
                                 ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p>No hay solicitudes rechazadas.</p>
+                            </div>
+                        </>
                     )}
-                </>
-            )}
+                </div>
+            </div>
         </div>
     );
 };

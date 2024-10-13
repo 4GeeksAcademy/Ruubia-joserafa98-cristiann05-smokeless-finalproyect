@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
-import Sidebar from "../component/DasboardSmoker/Sidebar";
-import Header from "../component/DasboardSmoker/Header";
 import { Context } from "../store/appContext"; 
-import '../../styles/dashboardsmoker.css';
 
 const UserProfile = () => {
     const { userId } = useParams();
@@ -84,9 +81,7 @@ const UserProfile = () => {
 
     return (
         <div className="user-dashboard-container">
-            <Sidebar />
             <div className="user-main-layout">
-                <Header onLogout={() => actions.logoutsmoker()} />
                 <div className="user-main-content">
                     <h2 className="text-center mb-4">Perfil de Usuario</h2>
                     <div className="user-profile-content">

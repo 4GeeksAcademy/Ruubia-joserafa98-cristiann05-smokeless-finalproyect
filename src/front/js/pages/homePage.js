@@ -1,21 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import "../../styles/homePage.css"; // CSS global
 import Atropos from 'atropos/react'; // Importa Atropos
 import 'atropos/css'; // Importa los estilos de Atropos
 import foto from '../../img/logos/imagenesweb/prueba.png';
 import Navbar from "../component/navbar";
+import '../../styles/homePage.css';
 
-export const Home = ({ toggleTheme }) => {
-    const [theme, setTheme] = useState(() => {
-        return localStorage.getItem('theme') || 'light'; // Valor predeterminado 'light'
-    });
-
+export const Home = () => {
 
     return (
         <>
-            <div className={`pt-5 pb-4 pt-lg-56 pb-lg-0 mt-n40 position-relative gradient-bottom-right start-indigo middle-purple end-yellow ${theme}`}>
-            <Navbar />
+            <div className={`pt-5 pb-4 pt-lg-56 pb-lg-0 mt-n40 position-relative gradient-bottom-right start-indigo middle-purple end-yellow`}>
+                <Navbar />
                 <div className="container">
                     <div className="row align-items-center g-10">
                         <div className="col-lg-8 col-md-12 mt-5">
@@ -29,12 +25,12 @@ export const Home = ({ toggleTheme }) => {
                         <div className="col-lg-6 col-md-12 align-self-end">
                             <div className="hstack gap-3 justify-content-lg-end mt-4">
                                 <Link to="/signup-smoker">
-                                    <button className={`register-button btn btn-light ${theme}`}>
+                                    <button className={`register-button btn btn-light`}>
                                         REGISTRARSE COMO FUMADOR
                                     </button>
                                 </Link>
                                 <Link to="/signup-coach">
-                                    <button className={`register-button btn btn-light ${theme}`}>
+                                    <button className={`register-button btn btn-light`}>
                                         REGISTRARSE COMO COACH
                                     </button>
                                 </Link>
@@ -251,7 +247,8 @@ export const Home = ({ toggleTheme }) => {
                 <div className="container mw-screen-xl">
                     <div className="row">
                         <div className="col">
-                            <div className="pe-5" style={{ textAlign: 'center' }}>
+                            <div className="pe-6 ml-5" style={{ textAlign: 'center' }}>
+
                                 <h3 className="h2 text-heading fw-semibold lh-lg mb-0" style={{ fontSize: '1rem' }}>
                                     Este proyecto fue creado por
                                 </h3>
@@ -262,8 +259,9 @@ export const Home = ({ toggleTheme }) => {
                         </div>
                     </div>
 
-                    <div className="row mt-2 mb-7">
-                        <div className="col">
+                    {/* Redes sociales centradas */}
+                    <div className="row mt-2 mb-7 justify-content-center">
+                        <div className="col-auto">
                             <ul className="nav mx-n4">
                                 <li className="nav-item">
                                     <Link to="/" className="nav-link text-lg text-muted text-primary-hover">
@@ -289,15 +287,18 @@ export const Home = ({ toggleTheme }) => {
                         </div>
                     </div>
 
-                    <div className="row">
+                    {/* Texto de copyright centrado */}
+                    <div className="row justify-content-center">
                         <div className="col-auto">
-                            <p className="text-sm text-muted">
+                            <p className="text-sm text-muted text-center">
                                 © Copyright 2023 FullStackers - Joserafa98, cristiann05 & Ruubia.
                             </p>
                         </div>
                     </div>
+
                 </div>
             </footer>
+
         </>
     );
-}    
+};

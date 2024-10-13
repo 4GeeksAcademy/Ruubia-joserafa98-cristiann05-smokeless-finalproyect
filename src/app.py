@@ -11,10 +11,12 @@ from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 from cloudinary_config import configure_cloudinary
+from datetime import timedelta
+
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, create_refresh_token
 from flask_jwt_extended import JWTManager
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -48,6 +50,8 @@ app.register_blueprint(api, url_prefix='/api')
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = "ehfuiwfh78923gh4f98ch9423hd204dh9fv2hf29cj20i84hv298vh0v2089h29hv02vf442"
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)  # Duración del access token
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)  # Duración del refresh token
 jwt = JWTManager(app)
 
 # Handle/serialize errors like a JSON object

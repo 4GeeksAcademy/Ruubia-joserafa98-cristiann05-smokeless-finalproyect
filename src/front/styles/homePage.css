@@ -87,3 +87,6 @@ body {
     transform: scale(1.05); /* Aumenta el tamaño de la imagen al hacer hover */
 }
 
+.nav-item {
+    align-items: center; /* Centra verticalmente los elementos dentro del item */
+}
