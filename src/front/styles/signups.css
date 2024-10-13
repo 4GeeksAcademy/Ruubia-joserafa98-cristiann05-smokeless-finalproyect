@@ -1,137 +1,55 @@
-.form-container {
-    width: 320px;
-    border-radius: 0.75rem;
-    background-color: rgba(17, 24, 39, 1);
-    padding: 2rem;
-    color: rgba(243, 244, 246, 1);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-  
-.title {
-    text-align: center;
-    font-size: 1.5rem;
-    line-height: 2rem;
-    font-weight: 700;
-}
-  
-.form {
-    margin-top: 1.5rem;
-}
-  
-.input-group {
-    margin-top: 0.25rem;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-}
-  
-.input-group label {
-    display: block;
-    color: rgba(156, 163, 175, 1);
-    margin-bottom: 4px;
-}
-  
-.input-group input {
-    width: 100%;
-    border-radius: 0.375rem;
-    border: 1px solid rgba(55, 65, 81, 1);
-    outline: 0;
-    background-color: rgba(17, 24, 39, 1);
-    padding: 0.75rem 1rem;
-    color: rgba(243, 244, 246, 1);
-}
-  
-.input-group input:focus {
-    border-color: rgba(167, 139, 250);
-}
-  
-.sign {
-    display: block;
-    width: 100%;
-    background-color: rgba(167, 139, 250, 1);
-    padding: 0.75rem;
-    text-align: center;
-    color: rgba(17, 24, 39, 1);
-    border: none;
-    border-radius: 0.375rem;
-    font-weight: 600;
-    margin-top: 20px;
-}
-  
-.social-message {
+/* Grupo general */
+.group {
     display: flex;
     align-items: center;
-    padding-top: 1rem;
-}
+    position: relative;
+    margin-bottom: 1rem; /* Margen inferior ajustado */
+  }
   
-.line {
-    height: 1px;
-    flex: 1 1 0%;
-    background-color: rgba(55, 65, 81, 1);
-}
+  /* Estilos del input */
+  .input {
+    width: 100%;
+    padding-left: 3rem; /* Ajustado para acomodar el ícono */
+    border: 2px solid transparent;
+    border-radius: 10px;
+    background-color: #f8fafc;
+    color: #0d0c22;
+    transition: 0.5s ease;
+  }
   
-.social-message .message {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    color: rgba(156, 163, 175, 1);
-}
+  /* Placeholder del input */
+  .input::placeholder {
+    color: #94a3b8;
+  }
   
-.social-icons {
-    display: flex; /* Mantener el layout en fila */
-    justify-content: center; /* Centrar los iconos */
-    gap: 0px; /* Espacio entre los iconos */
-}
-
-.social-icons .icon {
-    border: none; /* Sin borde */
-    background-color: transparent; /* Sin fondo */
-    padding: 0; /* Eliminar padding */
-    cursor: pointer; /* Cambiar cursor a puntero */
-}
-
-.social-icons .icon svg {
-    height: 1.5rem; /* Ajusta el tamaño del icono según tus necesidades */
-    width: 1.5rem; /* Ajusta el tamaño del icono según tus necesidades */
-    fill: #fff; /* Color del icono */
-}
-
+  /* Efecto hover y focus */
+  .input:focus, .input:hover {
+    outline: none;
+    border-color: rgba(129, 140, 248);
+    background-color: #fff;
+    box-shadow: 0 0 0 5px rgba(129, 140, 248, 0.3);
+  }
   
-.signup {
-    text-align: center;
-    font-size: 0.75rem;
-    line-height: 1rem;
-    color: rgba(156, 163, 175, 1);
+  /* Estilos del ícono */
+  .icon {
+    position: absolute;
+    left: 0.75rem;
+    font-size: 1.5rem; /* Tamaño ajustado del ícono */
+    color: #94a3b8;
+  
+    /* Centrando el ícono verticalmente */
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .custom-img {
+    max-width: 350px; /* Controla el tamaño de la imagen */
+    border-radius: 10px; /* Aplica bordes redondeados */
+    position: relative; /* Asegura que esté en la posición correcta */
+    bottom: 0;
+    left: 0; /* Cambiado de right: 0; a left: 0; */
+    transition: transform 0.3s ease; /* Transición suave para el zoom */
 }
 
-.back-button {
-    position: fixed; /* Mantener en una posición fija */
-    bottom: 20px; /* Distancia desde el fondo de la ventana */
-    left: 50%; /* Centrar horizontalmente */
-    transform: translateX(-50%); /* Ajustar para centrar */
-    padding: 12px 24px; /* Espaciado interno del botón */
-    background-color: #007BFF; /* Color de fondo */
-    color: white; /* Color del texto */
-    border: none; /* Sin borde */
-    border-radius: 5px; /* Bordes redondeados */
-    cursor: pointer; /* Cambiar el cursor al pasar sobre el botón */
-    font-size: 16px; /* Tamaño de fuente */
-    font-weight: bold; /* Negrita para el texto */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    transition: background-color 0.3s, transform 0.3s; /* Transiciones suaves */
+.custom-img:hover {
+  transform: scale(1.1); /* Aumenta el tamaño al 110% al pasar el mouse */
 }
-
-.back-button:hover {
-    background-color: #0056b3; /* Color de fondo al pasar el cursor */
-    transform: translateX(-50%) scale(1.05); /* Efecto de escalado al pasar el cursor */
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
-}
-
-.back-button:active {
-    background-color: #004494; /* Color al hacer clic */
-    transform: translateX(-50%) scale(0.95); /* Efecto de reducción al hacer clic */
-}
-
