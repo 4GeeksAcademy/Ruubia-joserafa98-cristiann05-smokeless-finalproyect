@@ -5,12 +5,12 @@ const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: [
-    './src/front/js/index.js'
+    './src/front/js/index.js' // Asegúrate de que este archivo esté importando tu CSS
   ],
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'public'),
-    publicPath: '/'
+    publicPath: '/',
   },
   module: {
     rules: [
@@ -37,12 +37,9 @@ module.exports = {
         // Rule for handling CSS and SCSS files
         test: /\.(css|scss)$/,
         use: [
-          {
-            loader: 'style-loader', // Creates style nodes from JS strings
-          },
-          {
-            loader: 'css-loader', // Translates CSS into CommonJS
-          },
+          'style-loader', // Creates style nodes from JS strings
+          'css-loader', // Translates CSS into CommonJS
+          'postcss-loader' // Add postcss-loader to process Tailwind CSS
         ],
       },
       {

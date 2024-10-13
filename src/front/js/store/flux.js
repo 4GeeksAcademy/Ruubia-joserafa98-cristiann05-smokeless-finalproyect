@@ -46,7 +46,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error fetching smokers:", error);
                 }
             },
-            
+
 
             getSmoker: async (userId) => {
                 try {
@@ -60,7 +60,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error fetching smoker:", error);
                 }
             },
-            
+
             signupSmoker: async (smokerData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/signup-smoker`, {
@@ -94,6 +94,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 
             // Login de Smoker
+            // Login de Smoker
             loginSmoker: async (smokerData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/login-smoker`, {
@@ -103,33 +104,34 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(smokerData),
                     });
-            
+
                     const data = await response.json();
                     console.log("Datos recibidos en loginSmoker:", data);
-            
+
                     if (response.ok) {
-                        // Almacena el token
+                        // Almacena el token y el refresh token
                         localStorage.setItem('jwtToken', data.token);
-            
+                        localStorage.setItem('refreshToken', data.refresh_token); // Almacena el refresh token
+
                         // Almacena el ID del usuario
-                        localStorage.setItem('userId', data.user_id || null); // Almacena el ID aquí
-            
+                        localStorage.setItem('userId', data.user_id || null);
+
                         // Actualiza el estado del usuario con la información recibida
                         setStore({
                             loggedInUser: {
                                 id: data.user_id || null,
                                 email: data.email_usuario || '',
                                 nombre: data.nombre_usuario || '', // Asegúrate de que el servidor envíe este dato
-                                genero: data.genero_usuario || '', // Asegúrate de que el servidor envíe este dato
-                                cumpleaños: data.nacimiento_usuario || '', // Asegúrate de que el servidor envíe este dato
-                                foto_usuario: data.foto_usuario || '', // Asegúrate de que el servidor envíe este dato
+                                genero: data.genero_usuario || '',
+                                cumpleaños: data.nacimiento_usuario || '',
+                                foto_usuario: data.foto_usuario || '',
                             },
                             isAuthenticated: true,
                         });
-            
+
                         // Log para verificar el estado del store después de la actualización
                         console.log("Estado del store después del login:", getStore());
-            
+
                         return true;
                     } else {
                         console.error("Error en el login:", data.msg);
@@ -142,9 +144,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false;
                 }
             },
-            
-            
-            
+
+
+
             // Actualizar el perfil
             updateProfile: async (userId, updatedData) => {
                 try {
@@ -285,12 +287,12 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const url = `${process.env.BACKEND_URL}/api/coaches/${coachId}`;
                     console.log("Fetching coach data from URL:", url); // Verifica la URL
-            
+
                     const response = await fetch(url);
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`); // Manejar errores HTTP
                     }
-                    
+
                     const data = await response.json();
                     if (data) {
                         console.log("Coach data received:", data); // Verifica los datos recibidos
@@ -302,7 +304,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error fetching coach:", error);
                 }
             },
-            
+
 
             // Actualizar el perfil del coach
             updateProfileCoach: async (coachId, coachData) => {
@@ -382,11 +384,11 @@ const getState = ({ getStore, getActions, setStore }) => {
                         const data = await response.json();
                         console.log("Coach logueado:", data);
 
-                         // Almacena el token
-                         localStorage.setItem('jwtTokenCoach', data.token);
+                        // Almacena el token
+                        localStorage.setItem('jwtTokenCoach', data.token);
 
-                         // Almacena el ID del usuario
-                         localStorage.setItem('coachId', data.coach_id || null); // Almacena el ID aquí
+                        // Almacena el ID del usuario
+                        localStorage.setItem('coachId', data.coach_id || null); // Almacena el ID aquí
 
                         // Establecer el estado de autenticación
                         setStore({
@@ -679,9 +681,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                     if (!response.ok) {
                         throw new Error("Error al actualizar la solicitud");
                     }
-            
+
                     const data = await response.json();
-            
+
                     setStore((prevStore) => ({
                         ...prevStore,
                         solicitudes: prevStore.solicitudes.map((solicitud) =>
@@ -692,7 +694,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error updating solicitud:", error);
                 }
             },
-            
+
 
 
             // Eliminar una solicitud específica
@@ -715,7 +717,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            
+
             getTiposConsumo: async () => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/tiposconsumo`);

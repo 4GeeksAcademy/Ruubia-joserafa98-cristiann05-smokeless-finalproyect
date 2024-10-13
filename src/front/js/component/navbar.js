@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import logo from '../../img/logos/logoblanco.png'; // Ajusta según sea necesario
 import { Link } from 'react-router-dom'; // Asegúrate de importar Link
 import "../../styles/navbar.css";
-import '../../styles/switch.css';
 
 const Navbar = () => {
     const [language, setLanguage] = useState(() => {

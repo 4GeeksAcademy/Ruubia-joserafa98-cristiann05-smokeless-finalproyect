@@ -20,6 +20,9 @@ const CreateConsumProfile = () => {
             setNumeroCigarrillos(store.loggedInUser.numero_cigarrillos || "");
             setPeriodicidadConsumo(store.loggedInUser.periodicidad_consumo || "diaria");
             setTiempoFumando(store.loggedInUser.tiempo_fumando || "");
+
+            // Almacenar el usuario en localStorage
+            localStorage.setItem('loggedInUser', JSON.stringify(store.loggedInUser)); // Guardar en localStorage
         }
     }, [store.loggedInUser]);
 
@@ -52,7 +55,12 @@ const CreateConsumProfile = () => {
         const success = await actions.updateConsumptionProfile(store.loggedInUser.id, updatedData);
         if (success) {
             alert("Información de consumo actualizada con éxito");
-            navigate('/Dashboard-Smoker'); // Redirige al formulario de perfil
+
+            // Actualizar los datos almacenados en localStorage después del éxito
+            const updatedUser = { ...store.loggedInUser, ...updatedData };
+            localStorage.setItem('loggedInUser', JSON.stringify(updatedUser)); // Guardar datos actualizados en localStorage
+
+            navigate('/Dashboard-Smoker'); // Redirige al dashboard
         } else {
             alert("Error al actualizar la información de consumo");
         }

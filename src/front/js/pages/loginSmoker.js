@@ -8,6 +8,7 @@ const LoginSmoker = () => {
     const { actions, store } = useStore();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
@@ -33,12 +34,55 @@ const LoginSmoker = () => {
             localStorage.setItem('jwtToken', token); // Almacena el token
             console.log("Token almacenado en localStorage:", localStorage.getItem('jwtToken')); // Verifica que se almacene correctamente
             
+            // Almacena el refresh token
+            const refreshToken = localStorage.getItem('refreshToken'); // Almacena el refresh token
+            if (refreshToken) {
+                localStorage.setItem('refreshToken', refreshToken);
+            }
+
+            // Verifica si es la primera vez que inicia sesión y almacena la fecha de registro
+            const isFirstLogin = !localStorage.getItem('fechaRegistro'); // Si no existe la fecha, es el primer login
+            if (isFirstLogin) {
+                const fechaRegistro = new Date().toISOString(); // Fecha actual en formato ISO
+                localStorage.setItem('fechaRegistro', fechaRegistro); // Almacena la fecha de registro
+                console.log("Fecha de registro almacenada:", fechaRegistro); // Verifica que se almacene correctamente
+            }
+
             // Llama a getUserInfo para obtener información del usuario después del login
             if (userId) {
-                actions.getUserInfo(userId);
+                await actions.getUserInfo(userId);
             }
         } else {
+            // Manejo de error
+            setErrorMessage("Error en el inicio de sesión. Verifica tu correo electrónico y contraseña.");
             console.error("Error en el login");
+        }
+    };
+
+    // Función para refrescar el token
+    const refreshToken = async () => {
+        const storedRefreshToken = localStorage.getItem('refreshToken');
+        if (!storedRefreshToken) return;
+
+        try {
+            const response = await fetch(`${process.env.BACKEND_URL}/api/refresh-token`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${storedRefreshToken}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('jwtToken', data.access_token); // Almacena el nuevo token de acceso
+                console.log("Token de acceso refrescado:", data.access_token);
+            } else {
+                console.error("Error al refrescar el token");
+                // Manejo adicional si el refresh token es inválido o ha expirado
+            }
+        } catch (error) {
+            console.error("Error en la solicitud de refresco de token:", error);
         }
     };
 
@@ -69,6 +113,12 @@ const LoginSmoker = () => {
             }
         }
     }, [store.userInfo, navigate]); // Verifica cuando userInfo cambia
+
+    // Configura un intervalo para refrescar el token cada 15 minutos
+    useEffect(() => {
+        const interval = setInterval(refreshToken, 15 * 60 * 1000); // 15 minutos
+        return () => clearInterval(interval); // Limpieza al desmontar el componente
+    }, []);
 
     return (
         <>
@@ -103,6 +153,7 @@ const LoginSmoker = () => {
                             <a rel="noopener noreferrer" href="#">¿Olvidaste tu contraseña?</a>
                         </div>
                     </div>
+                    {errorMessage && <p className="error-message">{errorMessage}</p>}
                     <button className="sign" type="submit">Iniciar sesión</button>
                 </form>
                 <div className="social-message">

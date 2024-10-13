@@ -1,14 +1,3 @@
-/* CSS Global para Fondo Infinito */
-body {
-    margin: 0; /* Eliminar márgenes por defecto */
-    padding: 0; /* Eliminar padding por defecto */
-    min-height: 100vh; /* Asegurarse de que el body tenga al menos la altura de la ventana */
-    display: flex; /* Usar flexbox para alinear el contenido */
-    flex-direction: column; /* Organizar los elementos en columna */
-    justify-content: flex-start; /* Alinear el contenido al inicio */
-    font-family: 'Arial', sans-serif; /* Fuente de la aplicación */
-    background-image: linear-gradient(to bottom, #0a1f36, #0b0d12); /* Degradado de fondo */
-    background-repeat: no-repeat; /* Evitar que el fondo se repita */
-    background-attachment: fixed; /* Mantener el fondo fijo para un efecto infinito */
-    background-size: cover; /* Asegurar que el fondo cubra todo el espacio */
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
