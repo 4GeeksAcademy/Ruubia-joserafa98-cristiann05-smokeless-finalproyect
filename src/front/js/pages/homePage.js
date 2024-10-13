@@ -14,8 +14,8 @@ export const Home = ({ toggleTheme }) => {
 
     return (
         <>
-            <Navbar />
             <div className={`pt-5 pb-4 pt-lg-56 pb-lg-0 mt-n40 position-relative gradient-bottom-right start-indigo middle-purple end-yellow ${theme}`}>
+            <Navbar />
                 <div className="container">
                     <div className="row align-items-center g-10">
                         <div className="col-lg-8 col-md-12 mt-5">
