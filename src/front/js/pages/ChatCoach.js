@@ -1,15 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../store/appContext';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from "../component/DashboardCoach/SiderbarCoach";
+import Header from "../component/DashboardCoach/HeaderCoach";
 
 const ChatCoach = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const [mensajes, setMensajes] = useState([]);
     const [contenido, setContenido] = useState('');
-    const [selectedSolicitud, setSelectedSolicitud] = useState(null); // Solicitud seleccionada
+    const [selectedSolicitud, setSelectedSolicitud] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [activeNavItem, setActiveNavItem] = useState('Chat');
+    const [isDarkMode, setIsDarkMode] = useState(true);
 
     useEffect(() => {
         const token = localStorage.getItem('jwtToken');
@@ -43,7 +47,6 @@ const ChatCoach = () => {
         return () => clearInterval(intervalId);
     }, [store.loggedInCoach, actions, navigate]);
 
-    // Filtrar las solicitudes aprobadas del coach actual
     const solicitudesAprobadas = store.solicitudes.filter(solicitud =>
         solicitud.id_coach === store.loggedInCoach?.id && solicitud.estado === true
     );
@@ -76,7 +79,7 @@ const ChatCoach = () => {
         };
 
         fetchMensajes();
-        const intervalId = setInterval(fetchMensajes, 2000); 
+        const intervalId = setInterval(fetchMensajes, 2000);
 
         return () => clearInterval(intervalId);
     }, [selectedSolicitud]);
@@ -124,78 +127,92 @@ const ChatCoach = () => {
         }
     };
 
+    const handleNavigation = (item) => {
+        setActiveNavItem(item.name);
+        navigate(item.path); // Navegación a la ruta correspondiente
+    };
+
     return (
-        <div className="chat-container d-flex">
-            {/* Bandeja de entrada - Lista de usuarios */}
-            <div className="inbox-list" style={{ width: '30%', borderRight: '1px solid #ccc', padding: '1rem', overflowY: 'auto' }}>
-                <h3>Solicitudes Aprobadas</h3>
-                {loading ? (
-                    <p>Cargando solicitudes aprobadas...</p>
-                ) : error ? (
-                    <p className="text-danger">{error}</p>
-                ) : (
-                    <ul className="list-group">
-                        {solicitudesAprobadas.length > 0 ? (
-                            solicitudesAprobadas.map((solicitud) => (
-                                <li
-                                    key={solicitud.id}
-                                    onClick={() => setSelectedSolicitud(solicitud)} 
-                                    className={`list-group-item ${solicitud.id === selectedSolicitud?.id ? 'active' : ''}`}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <strong>{solicitud.nombre_usuario}</strong> {/* Solo el nombre del usuario */}
-                                </li>
-                            ))
+        <div className={`flex min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
+            <Sidebar
+                active={activeNavItem}
+                isDarkMode={isDarkMode}
+                handleNavigation={handleNavigation}
+            />
+            <div className="flex-1 md:ml-64">
+                <Header onLogout={() => actions.logout()} isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
+                <div className="chat-container d-flex p-6">
+                    <div className="inbox-list" style={{ width: '30%', borderRight: '1px solid #ccc', padding: '1rem', overflowY: 'auto' }}>
+                        <h3>Solicitudes Aprobadas</h3>
+                        {loading ? (
+                            <p>Cargando solicitudes aprobadas...</p>
+                        ) : error ? (
+                            <p className="text-danger">{error}</p>
                         ) : (
-                            <p>No hay solicitudes aprobadas.</p>
+                            <ul className="list-group">
+                                {solicitudesAprobadas.length > 0 ? (
+                                    solicitudesAprobadas.map((solicitud) => (
+                                        <li
+                                            key={solicitud.id}
+                                            onClick={() => setSelectedSolicitud(solicitud)}
+                                            className={`list-group-item ${solicitud.id === selectedSolicitud?.id ? 'active' : ''}`}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            <strong>{solicitud.nombre_usuario}</strong>
+                                        </li>
+                                    ))
+                                ) : (
+                                    <p>No hay solicitudes aprobadas.</p>
+                                )}
+                            </ul>
                         )}
-                    </ul>
-                )}
-            </div>
+                    </div>
 
-            {/* Ventana de chat */}
-            <div className="chat-window" style={{ width: '70%', padding: '1rem', overflowY: 'auto' }}>
-                {selectedSolicitud ? (
-                    <>
-                        <h4>Chat con {selectedSolicitud.nombre_usuario}</h4>
-                        <div className="messages" style={{ maxHeight: '400px', overflowY: 'scroll', marginBottom: '1rem' }}>
-                            {mensajes.length > 0 ? (
-                                mensajes.map((mensaje) => (
-                                    <div
-                                        key={mensaje.id}
-                                        className={`message ${mensaje.id_usuario === selectedSolicitud.id_usuario ? 'sent' : 'received'}`}
-                                        style={{ marginBottom: '0.5rem' }}
-                                    >
-                                        <p style={{
-                                            padding: '0.5rem',
-                                            backgroundColor: mensaje.id_usuario === selectedSolicitud.id_usuario ? '#d1ecf1' : '#f8f9fa',
-                                            color: '#000',
-                                            borderRadius: '8px'
-                                        }}>
-                                            {mensaje.contenido}
-                                        </p>
-                                    </div>
-                                ))
-                            ) : (
-                                <p>No hay mensajes para mostrar.</p>
-                            )}
-                        </div>
+                    <div className="chat-window" style={{ width: '70%', padding: '1rem', overflowY: 'auto' }}>
+                        {selectedSolicitud ? (
+                            <>
+                                <h4>Chat con {selectedSolicitud.nombre_usuario}</h4>
+                                <div className="messages" style={{ maxHeight: '400px', overflowY: 'scroll', marginBottom: '1rem' }}>
+                                    {mensajes.length > 0 ? (
+                                        mensajes.map((mensaje) => (
+                                            <div
+                                                key={mensaje.id}
+                                                className={`message ${mensaje.id_usuario === selectedSolicitud.id_usuario ? 'sent' : 'received'}`}
+                                                style={{ marginBottom: '0.5rem' }}
+                                            >
+                                                <p style={{
+                                                    padding: '0.5rem',
+                                                    backgroundColor: mensaje.id_usuario === selectedSolicitud.id_usuario ? '#d1ecf1' : '#f8f9fa',
+                                                    color: '#000',
+                                                    borderRadius: '8px'
+                                                }}>
+                                                    {mensaje.contenido}
+                                                </p>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p>No hay mensajes para mostrar.</p>
+                                    )}
+                                </div>
 
-                        <form onSubmit={handleSendMensaje} style={{ display: 'flex', gap: '1rem' }}>
-                            <input
-                                type="text"
-                                value={contenido}
-                                onChange={(e) => setContenido(e.target.value)}
-                                placeholder="Escribe tu mensaje..."
-                                required
-                                style={{ flex: 1, padding: '0.5rem' }}
-                            />
-                            <button type="submit" className="btn btn-primary">Enviar</button>
-                        </form>
-                    </>
-                ) : (
-                    <p>Selecciona un usuario para iniciar una conversación.</p>
-                )}
+                                <form onSubmit={handleSendMensaje} style={{ display: 'flex', gap: '1rem' }}>
+                                    <input
+                                        type="text"
+                                        value={contenido}
+                                        onChange={(e) => setContenido(e.target.value)}
+                                        placeholder="Escribe tu mensaje..."
+                                        required
+                                        className={`flex-1 p-2 rounded ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-black'}`}
+                                    />
+                                    <button type="submit" className="btn btn-primary">Enviar</button>
+                                </form>
+
+                            </>
+                        ) : (
+                            <p>Selecciona un usuario para iniciar una conversación.</p>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );

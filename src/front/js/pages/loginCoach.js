@@ -62,7 +62,7 @@ const LoginCoach = () => {
 
                     if (hasRequiredInfo) {
                         console.log("Redirigiendo a panel de control de coach..."); // Log para verificar
-                        navigate("/control-panel-coach"); // Redirigir al panel de control de coach
+                        navigate("/Dashboard-Coach"); // Redirigir al panel de control de coach
                     } else {
                         console.log("Faltan datos, redirigiendo a completar información...");
                         navigate("/question-profile-coach"); // Redirigir a la página para completar información

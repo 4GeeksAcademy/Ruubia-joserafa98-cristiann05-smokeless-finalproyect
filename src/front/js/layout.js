@@ -8,7 +8,7 @@ import LoginSmoker from "./pages/loginSmoker";
 import DasboardSmoker from "./pages/DashboardSmoker";
 import SignupCoach from "./pages/signupCoach";
 import LoginCoach from "./pages/loginCoach";
-import ControlPanelCoach from "./pages/controlPanelCoach";
+import CoachDashboard from "./pages/DashboardCoach";
 import injectContext from "./store/appContext";
 import CreateProfileUser from "./pages/createProfile-user";
 import CreateConsumProfile from "./pages/ConfiguracionConsumo";
@@ -28,6 +28,8 @@ import ChatSmoker from "./pages/ChatSmoker";
 import ChatCoach from "./pages/ChatCoach";
 import AdviceSmoker from "./pages/AdviceSmoker";
 import UserSettings from "./component/DasboardSmoker/UserSettings";
+import ListaClientesAprobados from "./pages/ApprovedClientsList";
+import CoachSettings from "./component/DashboardCoach/CoachSettings";
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
@@ -47,15 +49,15 @@ const Layout = () => {
                         <Route element={<DasboardSmoker />} path="/Dashboard-Smoker" />
                         <Route element={<SignupCoach />} path="/signup-coach" />
                         <Route element={<LoginCoach />} path="/login-coach" />
-                        <Route element={<ControlPanelCoach />} path="/control-panel-coach" />
+                        <Route element={<CoachDashboard />} path="/Dashboard-coach" />
                         <Route element={<SolicitudesSmoker />} path="/Dashboard-Smoker/solicitudes" />
-                        <Route element={<SolicitudesCoach />} path="/track-client" />
+                        <Route element={<SolicitudesCoach />} path="/Dashboard-Coach/solicitudes" />
                         <Route element={<SolicitudesSmoker />} path="/Dashboard-Smoker/track-coach" />
                         <Route element={<CreateProfileUser />} path="/question-profile-smoker" />
                         <Route element={<CreateConsumProfile />} path="/question-config-smoker" />
                         <Route element={<CreateProfileCoach />} path="/question-profile-coach" />
                         <Route element={<LoginSelection />} path="/login-selection" />
-                        <Route element={<ViewProfileCoach />} path="/coach-details/:coachId" />
+                        <Route element={<ViewProfileCoach />} path="/Dashboard-Coach/coach-profile/:coachId" />
                         <Route element={<ViewProfileSmoker />} path="/Dashboard-Smoker/smoker-profile/:userId" />
                         <Route element={<CoachAddress />} path="/question-address-coach" />
                         <Route element={<CoachesList />} path="/Dashboard-Smoker/coaches" />
@@ -68,6 +70,8 @@ const Layout = () => {
                         <Route element={<ChatCoach />} path="/Dashboard-Coach/mensajes" />
                         <Route element={<AdviceSmoker />} path="/Dashboard-Smoker/consejos" />
                         <Route element={<UserSettings />} path="/Dashboard-Smoker/configuracion/:userId" />
+                        <Route element={<CoachSettings />} path="/Dashboard-coach/configuracion/:coachId" />
+                        <Route element={<ListaClientesAprobados />} path="/Dashboard-coach/clientes" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                 </ScrollToTop>
