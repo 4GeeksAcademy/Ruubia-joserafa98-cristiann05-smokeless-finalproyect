@@ -29,7 +29,8 @@ body {
 /* Estilo para botones */
 .register-button {
     padding: 10px 20px; /* Añadir algo de padding para un mejor aspecto */
-    font-size: 1.1rem; /* Aumentar el tamaño de fuente de los botones */
+    font-size: 1.1rem; 
+    border-radius: 50px;
 }
 
 /* Efecto de imagen en Atropos */
