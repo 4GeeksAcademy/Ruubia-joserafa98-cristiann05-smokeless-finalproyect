@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useStore } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 import "../../styles/CreateProfileUser.css"; // Importar el CSS específico
+import logo from '../../img/logos/logoblanco.png';
+import logoOscuro from '../../img/logos/logonegro.png';
 
 const CreateProfileUser = () => {
     const { store, actions } = useStore(); // Acceso al store y acciones
@@ -80,66 +82,116 @@ const CreateProfileUser = () => {
     }
 
     return (
-        <>
-            <div className="profile-form">
-                <h2 className="form-title">Actualizar Perfil</h2>
-                <form onSubmit={handleSubmit}>
-                    {/* Input de Nombre */}
-                    <div className="form-group">
-                        <label>Nombre de Usuario:</label>
-                        <input
-                            type="text"
-                            value={nombre_usuario}
-                            onChange={(e) => setnombre_usuario(e.target.value)} // Esto es esencial para que el input no esté bloqueado
-                            required
-                        />
+            <>
+                <div className="row g-0 justify-content-center gradient-bottom-right start-purple middle-indigo end-pink">
+                    <div className="col-md-6 col-lg-5 col-xl-5 position-fixed start-0 top-0 vh-100 overflow-y-hidden d-none d-lg-flex flex-lg-column">
+                        <div className="p-12 py-xl-10 px-xl-20">
+                            {/* Aquí puedes colocar tu logo */}
+                            <div className="d-block">
+                                <img src={logo} alt="Logo" className="logo" />
+                            </div>
+        
+                            {/* Ajustes en el título y subtítulo */}
+                            <div className="mt-16 text-center px-5">
+                                <h1 className="ls-tight fw-bolder display-4 text-white mb-3">
+                                    ¡Cuentanos más de ti!
+                                </h1>
+                                <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.5rem', marginBottom: '2rem' }}>
+                                Ayudanos a conocerte mejor. Estos detalles básicos harán que tu experiencia sea única y personalizada en cada paso del camino.
+                                </p>
+                            </div>
+                        </div>
+        
+                    
                     </div>
-
-                    {/* Selección de Género */}
-                    <div className="form-group">
-                        <label>Género:</label>
-                        <select
-                            value={genero}
-                            onChange={(e) => setGenero(e.target.value)} // Permitir cambiar el valor del género
-                            required
-                        >
-                            <option value="masculino">Masculino</option>
-                            <option value="femenino">Femenino</option>
-                        </select>
+        
+                    <div className="col-12 col-md-12 col-lg-7 offset-lg-5 min-vh-100 overflow-y-auto d-flex flex-column justify-content-center position-relative bg-body rounded-top-start-lg-4 rounded shadow-soft-5">
+                        <div className="w-md-50 mx-auto px-10 px-md-0 py-10">
+                            <div className="mb-10">
+                                <a className="d-inline-block d-lg-none mb-10" href="/pages/dashboard.html">
+                                    <img src={logoOscuro} alt="Logo Oscuro" className="logo" />
+                                </a>
+                                <h1 className="ls-tight fw-bolder h1">Actualizar Perfil</h1> 
+                            </div>
+        
+                            {error && <div className="alert alert-danger">{error}</div>}
+                            
+                            {/* Formulario para actualizar el perfil */}
+                            <form className="form" onSubmit={handleSubmit} style={{ fontSize: '1.25rem' }}> 
+                                
+                                {/* Input de Nombre de Usuario */}
+                                <div className="group mb-4">
+                                    <i className="fa-regular fa-user icon"></i>
+                                    <input
+                                        type="text"
+                                        name="nombre_usuario"
+                                        id="nombre_usuario"
+                                        className="input"
+                                        value={nombre_usuario}
+                                        onChange={(e) => setnombre_usuario(e.target.value)}
+                                        placeholder="Nombre de Usuario"
+                                        required
+                                        style={{ height: '60px', fontSize: '1.25rem' }}
+                                    />
+                                </div>
+        
+                                {/* Selección de Género */}
+                                <div className="group mb-4">
+                                    <i className="fa-solid fa-venus-mars icon"></i>
+                                    <select
+                                        name="genero"
+                                        id="genero"
+                                        className="input"
+                                        value={genero}
+                                        onChange={(e) => setGenero(e.target.value)}
+                                        required
+                                        style={{ height: '60px', fontSize: '1.25rem' }}
+                                    >
+                                        <option value="" disabled>Seleccionar Género</option>
+                                        <option value="masculino">Masculino</option>
+                                        <option value="femenino">Femenino</option>
+                                    </select>
+                                </div>
+        
+                                {/* Input de Fecha de Nacimiento */}
+                                <div className="group mb-4">
+                                    <i className="fa-regular fa-calendar icon"></i>
+                                    <input
+                                        type="date"
+                                        name="cumpleaños"
+                                        id="cumpleaños"
+                                        className="input"
+                                        value={cumpleaños}
+                                        onChange={(e) => setCumpleaños(e.target.value)}
+                                        required
+                                        style={{ height: '60px', fontSize: '1.25rem' }}
+                                    />
+                                </div>
+        
+                                {/* Input para Subir Foto */}
+                                <div className="group mb-4">
+                                    <i className="fa-solid fa-camera icon"></i>
+                                    <input
+                                        type="file"
+                                        name="foto"
+                                        id="foto"
+                                        className="input"
+                                        onChange={handleImageUpload}
+                                        style={{ height: '60px', fontSize: '1.25rem' }}
+                                    />
+                                </div>
+        
+                                {/* Botón de enviar */}
+                                <button className="btn btn-dark w-100" type="submit" style={{ fontSize: '1.25rem', padding: '15px' }}>
+                                    Actualizar Perfil
+                                </button>
+                            </form>
+                        </div>
                     </div>
-
-                    {/* Input de Fecha de Nacimiento */}
-                    <div className="form-group">
-                        <label>Cumpleaños:</label>
-                        <input
-                            type="date"
-                            value={cumpleaños}
-                            onChange={(e) => setCumpleaños(e.target.value)} // Esto permite que el input de fecha sea editable
-                            required
-                        />
-                    </div>
-
-                    {/* Input para Subir Foto */}
-                    <div className="form-group">
-                        <label>Foto de Perfil:</label>
-                        <input
-                            type="file"
-                            onChange={handleImageUpload} // Manejo de archivos
-                        />
-                    </div>
-
-                    {error && <p className="error-message">{error}</p>}
-                    <button type="submit" className="submit-button">Actualizar Perfil</button>
-                </form>
-            </div>
-            <button
-                className="back-button"
-                onClick={() => navigate(-1)} // Navegar hacia atrás
-            >
-                Volver Atrás
-            </button>
-        </>
-    );
-};
+        
+                </div>
+            </>
+        );
+    }        
 
 export default CreateProfileUser;

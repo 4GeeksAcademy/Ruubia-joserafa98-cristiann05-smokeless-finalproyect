@@ -15,7 +15,7 @@ export const Home = () => {
                 <div className="container">
                     <div className="row align-items-center g-10">
                         <div className="col-lg-8 col-md-12 mt-5">
-                            <h1 className="ls-tight fw-bolder display-4 text-white mb-4 mt-4 text-wrap" style={{ fontSize: '6rem' }}> {/* Ajusta el tamaño aquí */}
+                            <h1 className="ls-tight fw-bolder display-4 text-white mb-4 mt-4 text-wrap" style={{ marginTop: '10px',fontSize: '6rem' }}> {/* Ajusta el tamaño aquí */}
                                 Deja de fumar para siempre...
                             </h1>
                             <p className="w-xl-75 lead text-white text-wrap">
@@ -67,9 +67,8 @@ export const Home = () => {
                             <div className="card shadow-none border-0">
                                 <div className="card-body p-7">
                                     <div className="mt-4 mb-7 mx-3">
-                                        <div className="icon icon-shape text-white bg-primary rounded-circle text-lg" style={{ width: '60px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <i className="fa-solid fa-ban-smoking fa-2x"></i>
-                                        </div>
+                        
+                                        
                                     </div>
                                     <div className="pt-2 pb-3">
                                         <h5 className="h3 font-display fw-bold text-dark mb-3">Toma la decisión.</h5>
@@ -82,9 +81,7 @@ export const Home = () => {
                             <div className="card shadow-none border-0">
                                 <div className="card-body p-7">
                                     <div className="mt-4 mb-7 mx-3">
-                                        <div className="icon icon-shape text-white bg-primary rounded-circle text-lg" style={{ width: '60px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <i className="fa-solid fa-handshake fa-2x"></i>
-                                        </div>
+                                    
                                     </div>
                                     <div className="pt-2 pb-3">
                                         <h5 className="h3 font-display fw-bold text-dark  mb-3">Conecta con los mejores profesionales</h5>
@@ -97,9 +94,8 @@ export const Home = () => {
                             <div className="card shadow-none border-0">
                                 <div className="card-body p-7">
                                     <div className="mt-4 mb-7 mx-3">
-                                        <div className="icon icon-shape text-white bg-primary rounded-circle text-lg" style={{ width: '60px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <i className="fa-solid fa-face-laugh-wink fa-2x"></i>
-                                        </div>
+                                        
+                                    
                                     </div>
                                     <div className="pt-2 pb-3">
                                         <h5 className="h3 font-display  text-dark fw-bold mb-3">Disfruta de una Vida Sin Humos</h5>

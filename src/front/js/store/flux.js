@@ -93,8 +93,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-
-            // Login de Smoker
             // Login de Smoker
             loginSmoker: async (smokerData) => {
                 try {
@@ -146,7 +144,30 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
+            getUserInfo: async (userId) => { // Accept userId as a parameter
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/user_info/${userId}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                        },
+                    });
 
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log("Información del usuario:", data);
+                        setStore({ userInfo: data }); // Actualiza el store con la información del usuario
+                        return data;
+                    } else {
+                        console.error("Error fetching user info:", response.statusText);
+                        return null;
+                    }
+                } catch (error) {
+                    console.error("Error fetching user info:", error);
+                    return null;
+                }
+            },
 
             // Actualizar el perfil
             updateProfile: async (userId, updatedData) => {

@@ -1,48 +1,42 @@
-import React, { useState } from "react";
-import logo from '../../img/logos/logoblanco.png'; // Ajusta según sea necesario
+import React from "react";
 import { Link } from 'react-router-dom';
-import "../../styles/navbar.css";
+import { Home, BarChart2, LogIn, UserPlus } from 'lucide-react';
+import logoimagen from '../../img/logos/logoblanco.png';
 
-const Navbar = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-    // Definir la función toggleMenu
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-        console.log("Menu open state:", !isMenuOpen); // Para verificar el estado
-    };
-
-    return (
-        <nav className="navbar-container">
-            {/* Logo e ícono del menú hamburguesa */}
-            <div className="navbar-header">
-                <Link to="/" className="logo-container">
-                    <img src={logo} alt="Logo" className="logo" />
-                </Link>
-                <button className="navbar-toggler" onClick={toggleMenu}>
-                    &#9776;
-                </button>
-            </div>
-    
-            {/* Menú desplegable */}
-            <div className={`menu-container ${isMenuOpen ? 'open' : ''}`}>
-                <ul className="menu-list">
-                    <li className="menu-item">
-                        <Link className="nav-link" to="/">Product</Link>
-                    </li>
-                    <li className="menu-item">
-                        <Link className="nav-link" to="/">Dashboard</Link>
-                    </li>
-                    <li className="menu-item">
-                        <Link className="btn btn-white" id="button" to="/signup-smoker">Get Started</Link> {/* Ruta actualizada */}
-                    </li>
-                    <li className="menu-item">
-                        <Link className="btn btn-white"  id="button" to="/login-smoker">Login</Link>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    );
-};
-
-export default Navbar;
+export default function Navbar() {
+  return (
+    <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-80 backdrop-filter backdrop-blur-lg rounded-full shadow-2xl px-8 py-4 z-50">
+      <div className="flex items-center justify-between space-x-8">
+        <Link to="/" className="flex items-center space-x-2">
+          <img src={logoimagen} alt="Logo" className="w-12 h-12" />
+        </Link>
+        <ul className="flex items-center space-x-8">
+          <li>
+            <Link to="/" className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200">
+              <Home className="w-5 h-5" />
+              <span className="text-sm font-medium">Product</span>
+            </Link>
+          </li>
+          <li>
+            <Link to="/" className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200">
+              <BarChart2 className="w-5 h-5" />
+              <span className="text-sm font-medium">Dashboard</span>
+            </Link>
+          </li>
+          <li>
+            <Link to="/signup-smoker" className="flex items-center space-x-2 bg-white hover:bg-gray-200 text-black font-semibold py-2 px-4 rounded-full transition-colors duration-200 text-sm">
+              <UserPlus className="w-4 h-4" />
+              <span>Get Started</span>
+            </Link>
+          </li>
+          <li>
+            <Link to="/login-selection" className="flex items-center space-x-2 bg-transparent hover:bg-white hover:bg-opacity-10 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200 border border-white text-sm">
+              <LogIn className="w-4 h-4" />
+              <span>Login</span>
+            </Link>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  );
+}
