@@ -27,6 +27,7 @@ import UserProfile from "./pages/ViewProfileSmoker";
 import ChatSmoker from "./pages/ChatSmoker";
 import ChatCoach from "./pages/ChatCoach";
 import AdviceSmoker from "./pages/AdviceSmoker";
+import UserSettings from "./component/DasboardSmoker/UserSettings";
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
@@ -55,7 +56,7 @@ const Layout = () => {
                         <Route element={<CreateProfileCoach />} path="/question-profile-coach" />
                         <Route element={<LoginSelection />} path="/login-selection" />
                         <Route element={<ViewProfileCoach />} path="/coach-details/:coachId" />
-                        <Route element={<ViewProfileSmoker />} path="/Dashboard-Smoker/user-profile/:userId" />
+                        <Route element={<ViewProfileSmoker />} path="/Dashboard-Smoker/smoker-profile/:userId" />
                         <Route element={<CoachAddress />} path="/question-address-coach" />
                         <Route element={<CoachesList />} path="/Dashboard-Smoker/coaches" />
                         <Route element={<UserProfile />} path="/user-profile/:userId" />
@@ -66,6 +67,7 @@ const Layout = () => {
                         <Route element={<ChatSmoker />} path="/Dashboard-Smoker/mensajes" />
                         <Route element={<ChatCoach />} path="/Dashboard-Coach/mensajes" />
                         <Route element={<AdviceSmoker />} path="/Dashboard-Smoker/consejos" />
+                        <Route element={<UserSettings />} path="/Dashboard-Smoker/configuracion/:userId" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                 </ScrollToTop>

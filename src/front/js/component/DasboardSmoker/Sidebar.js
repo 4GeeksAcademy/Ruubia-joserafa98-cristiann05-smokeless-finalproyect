@@ -9,7 +9,7 @@ const navItems = [
   { name: 'Lista de Coaches', icon: Users, path: '/Dashboard-Smoker/coaches' },
   { name: 'Solicitudes', icon: FileQuestion, path: '/Dashboard-Smoker/solicitudes' },
   { name: 'Mensajes', icon: MessageSquare, path: '/Dashboard-Smoker/mensajes' },
-  { name: 'Consejos', icon: Lightbulb, path: '/tips' },
+  { name: 'Consejos', icon: Lightbulb, path: '/Dashboard-Smoker/consejos' },
 ];
 
 export default function Sidebar({ active, isDarkMode }) {

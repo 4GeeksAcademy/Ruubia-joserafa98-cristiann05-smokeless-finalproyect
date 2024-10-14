@@ -1,23 +1,61 @@
-import React, { useState, useEffect } from 'react';
-import { Sun, Moon, Bell, User, Settings, LogOut, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Sun, Moon, User, Settings, LogOut, ChevronDown } from 'lucide-react';
+import { useStore } from '../../store/appContext'; // Importa el store
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate para la navegación
 
-export default function Header({ active, isDarkMode, toggleTheme, hasNewNotification, notifications }) {
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+export default function Header({ active, isDarkMode, toggleTheme }) {
+  const { actions } = useStore(); // Accede a las acciones del store
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-
-  const toggleNotifications = () => {
-    setIsNotificationsOpen(!isNotificationsOpen);
-  };
+  const profileRef = useRef(null); // Crea una referencia para el menú de perfil
+  const navigate = useNavigate(); // Inicializa useNavigate
 
   const toggleProfile = () => {
     setIsProfileOpen(!isProfileOpen);
   };
 
+  // Cerrar el menú si se hace clic fuera de él
   useEffect(() => {
-    if (isNotificationsOpen) {
-      hasNewNotification(false); // Resetea el contador cuando se abren las notificaciones
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false); // Cierra el menú si se hace clic fuera
+      }
+    };
+
+    // Añade el listener de clic
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    // Limpia el listener al desmontar el componente
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Lógica para cerrar sesión
+  const handleLogout = () => {
+    actions.logoutsmoker(); // Llama a la acción para cerrar sesión
+    navigate('/'); // Redirige a la página de inicio después de cerrar sesión
+  };
+
+  // Maneja la selección de opciones del menú
+  const handleProfileOptionClick = (option) => {
+    setIsProfileOpen(false); // Cierra el menú
+    const userId = localStorage.getItem('userId'); // Obtiene el ID del usuario desde localStorage
+    switch (option) {
+      case 'profile':
+        if (userId) {
+          navigate(`/Dashboard-Smoker/smoker-profile/${userId}`); 
+        }
+        break;
+      case 'settings':
+        navigate(`/Dashboard-Smoker/configuracion/${userId}`); // Ruta de configuración
+        break;
+      case 'logout':
+        handleLogout(); // Llama a la lógica de cerrar sesión
+        break;
+      default:
+        break;
     }
-  }, [isNotificationsOpen, hasNewNotification]);
+  };
 
   return (
     <header className={`p-4 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-md sticky top-0 z-20`}>
@@ -34,30 +72,7 @@ export default function Header({ active, isDarkMode, toggleTheme, hasNewNotifica
           >
             {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
-          <div className="relative">
-            <button
-              onClick={toggleNotifications}
-              className="p-2 rounded-full bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors duration-200"
-            >
-              <Bell className={`h-5 w-5 ${hasNewNotification ? 'text-red-500' : 'text-gray-300'}`} />
-            </button>
-            {isNotificationsOpen && (
-              <div className={`absolute right-0 mt-2 w-80 rounded-md shadow-lg ${isDarkMode ? 'bg-gray-700' : 'bg-white'} ring-1 ring-black ring-opacity-5 z-50`}>
-                <div className="py-1" role="menu" aria-orientation="vertical">
-                  {notifications.length === 0 ? (
-                    <div className="px-4 py-2 text-sm text-gray-500">No tienes notificaciones.</div>
-                  ) : (
-                    notifications.map((notification, index) => (
-                      <div key={index} className="px-4 py-2 text-sm">
-                        {notification}
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="relative">
+          <div className="relative" ref={profileRef}>
             <button
               onClick={toggleProfile}
               className="flex items-center space-x-2 focus:outline-none"
@@ -68,18 +83,30 @@ export default function Header({ active, isDarkMode, toggleTheme, hasNewNotifica
             {isProfileOpen && (
               <div className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg ${isDarkMode ? 'bg-gray-700' : 'bg-white'} ring-1 ring-black ring-opacity-5 z-50`}>
                 <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                  <a href="#" className={`block px-4 py-2 text-sm ${isDarkMode ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-100'}`} role="menuitem">
+                  <button
+                    onClick={() => handleProfileOptionClick('profile')} // Llama a la función con la opción 'profile'
+                    className={`block w-full text-left px-4 py-2 text-sm ${isDarkMode ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-100'}`}
+                    role="menuitem"
+                  >
                     <User className="inline-block w-4 h-4 mr-2" />
                     Perfil
-                  </a>
-                  <a href="#" className={`block px-4 py-2 text-sm ${isDarkMode ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-100'}`} role="menuitem">
+                  </button>
+                  <button
+                    onClick={() => handleProfileOptionClick('settings')} // Llama a la función con la opción 'settings'
+                    className={`block w-full text-left px-4 py-2 text-sm ${isDarkMode ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-100'}`}
+                    role="menuitem"
+                  >
                     <Settings className="inline-block w-4 h-4 mr-2" />
                     Configuración
-                  </a>
-                  <a href="#" className={`block px-4 py-2 text-sm ${isDarkMode ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-100'}`} role="menuitem">
+                  </button>
+                  <button // Botón de cierre de sesión
+                    onClick={() => handleProfileOptionClick('logout')} // Llama a la función con la opción 'logout'
+                    className={`block w-full text-left px-4 py-2 text-sm ${isDarkMode ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-100'}`}
+                    role="menuitem"
+                  >
                     <LogOut className="inline-block w-4 h-4 mr-2" />
                     Cerrar sesión
-                  </a>
+                  </button>
                 </div>
               </div>
             )}
