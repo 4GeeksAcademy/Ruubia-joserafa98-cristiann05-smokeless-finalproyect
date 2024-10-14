@@ -78,7 +78,7 @@ const CoachAddress = () => {
             const updated = await actions.updateProfileCoach(coachId, coachData);
 
             if (updated) {
-                navigate("/control-panel-coach");
+                navigate("/Dashboard-coach");
             } else {
                 alert("Hubo un problema al actualizar la ubicación del coach.");
             }

@@ -1,17 +1,15 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Context } from "../store/appContext";
-import { useParams, useNavigate } from "react-router-dom";
-import Sidebar from "../component/DasboardSmoker/Sidebar"; // Importa el componente Sidebar
-import Header from "../component/DasboardSmoker/Header"; // Importa el componente Header
+import React, { useEffect, useState, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom"; 
+import { Context } from "../store/appContext"; 
+import Sidebar from "../component/DashboardCoach/SiderbarCoach"; 
+import Header from "../component/DashboardCoach/HeaderCoach"; 
 
 const ViewProfileCoach = () => {
     const { coachId } = useParams(); // Extrae el coachId de la URL
+    const navigate = useNavigate(); // Inicializa useNavigate
     const { store, actions } = useContext(Context);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [alertMessage, setAlertMessage] = useState("");
-    const [isDarkMode, setIsDarkMode] = useState(true); // Modo oscuro
-    const navigate = useNavigate();
 
     // Fetch coach data on mount
     useEffect(() => {
@@ -33,90 +31,61 @@ const ViewProfileCoach = () => {
         fetchCoachData();
     }, [coachId, actions]);
 
-    const handleSendRequest = async () => {
-        const userId = store.loggedInUser?.id;
+    if (loading) {
+        return <p className="text-center text-gray-500">Cargando perfil del coach...</p>;
+    }
 
-        if (!userId) {
-            setAlertMessage("Error: Usuario no autenticado.");
-            return;
-        }
-
-        const solicitudData = {
-            id_usuario: userId,
-            id_coach: coachId,
-            fecha_solicitud: new Date().toLocaleDateString('es-ES'),
-            estado: false,
-            fecha_respuesta: null,
-            comentarios: 'Estoy interesado en el coaching',
-        };
-
-        try {
-            await actions.addSolicitud(solicitudData);
-            setAlertMessage("Solicitud enviada exitosamente!");
-        } catch (error) {
-            console.error("Error al enviar la solicitud:", error);
-            setAlertMessage("Hubo un fallo al enviar la solicitud.");
-        }
-    };
-
-    const toggleTheme = () => {
-        setIsDarkMode(!isDarkMode); // Alterna entre modo oscuro y claro
-    };
+    if (error) {
+        return <p className="text-center text-gray-500">{error}</p>;
+    }
 
     return (
-        <div className={`flex min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
-            <Sidebar active="Ver Perfil del Coach" isDarkMode={isDarkMode} handleNavigation={(item) => navigate(item.path)} /> {/* Sidebar con navegación */}
-
-            <div className="md:ml-64 flex-1">
-                <Header onLogout={() => actions.logoutsmoker()} isDarkMode={isDarkMode} toggleTheme={toggleTheme} /> {/* Header */}
-
-                <div className="user-main-content p-6"> {/* Contenido principal */}
-                    {alertMessage && (
-                        <div className={`alert ${alertMessage.includes("éxitosamente") ? "alert-success" : "alert-danger"}`} role="alert">
-                            {alertMessage}
-                        </div>
-                    )}
-                    <h1 className="text-center text-3xl font-bold mb-4">Detalles del Coach</h1>
-
-                    <button className="btn btn-secondary mb-4" onClick={() => navigate(-1)}>
-                        Volver
-                    </button>
-
-                    {loading ? (
-                        <p className="text-center">Cargando datos del coach...</p>
-                    ) : error ? (
-                        <p className="text-center text-red-500">{error}</p>
-                    ) : (
-                        store.coach && (
-                            <div className="max-w-2xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
-                                <img 
-                                    src={store.coach.foto_coach || "https://via.placeholder.com/300"} 
-                                    alt="Foto del Coach" 
-                                    className="w-full h-64 object-cover" 
-                                />
-                                <div className="p-6">
-                                    <h5 className="text-2xl font-semibold text-center mb-2">{store.coach.nombre_coach || 'Nombre no disponible'}</h5>
-                                    <div className="text-gray-600 text-center mb-4">
-                                        <p><strong>Email:</strong> {store.coach.email_coach || 'No disponible'}</p>
-                                        <p><strong>Género:</strong> {store.coach.genero_coach || 'No especificado'}</p>
-                                        <p><strong>Fecha de Nacimiento:</strong> {store.coach.nacimiento_coach || 'No disponible'}</p>
-                                        <p><strong>Dirección:</strong> {store.coach.direccion || 'No disponible'}</p>
-                                        <p><strong>Descripción:</strong> {store.coach.descripcion_coach || 'No disponible'}</p>
-                                        <p><strong>Precio del Servicio:</strong> {store.coach.precio_servicio ? `$${store.coach.precio_servicio}` : 'No disponible'}</p>
-                                    </div>
-                                    <div className="text-center">
-                                        <button 
-                                            className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition duration-200 hover:bg-blue-700"
-                                            onClick={handleSendRequest}
-                                        >
-                                            Enviar Solicitud
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    )}
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-100 to-blue-300 p-6">
+            <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-lg border border-gray-200">
+                <h2 className="text-center text-3xl font-bold mb-6 text-gray-700">Perfil del Coach</h2>
+                <div className="flex flex-col items-center mb-8">
+                    <img 
+                        src={store.coach.foto_coach || "https://via.placeholder.com/300"} 
+                        alt="Foto del Coach" 
+                        className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-lg mb-4" 
+                    />
                 </div>
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-gray-600 font-semibold">Nombre:</label>
+                        <p className="text-gray-800 text-lg">{store.coach.nombre_coach || 'Nombre no disponible'}</p>
+                    </div>
+                    <div>
+                        <label className="block text-gray-600 font-semibold">Email:</label>
+                        <p className="text-gray-800 text-lg">{store.coach.email_coach || 'No disponible'}</p>
+                    </div>
+                    <div>
+                        <label className="block text-gray-600 font-semibold">Género:</label>
+                        <p className="text-gray-800 text-lg">{store.coach.genero_coach || 'No especificado'}</p>
+                    </div>
+                    <div>
+                        <label className="block text-gray-600 font-semibold">Fecha de Nacimiento:</label>
+                        <p className="text-gray-800 text-lg">{store.coach.nacimiento_coach || 'No disponible'}</p>
+                    </div>
+                    <div>
+                        <label className="block text-gray-600 font-semibold">Dirección:</label>
+                        <p className="text-gray-800 text-lg">{store.coach.direccion || 'No disponible'}</p>
+                    </div>
+                    <div>
+                        <label className="block text-gray-600 font-semibold">Descripción:</label>
+                        <p className="text-gray-800 text-lg">{store.coach.descripcion_coach || 'No disponible'}</p>
+                    </div>
+                    <div>
+                        <label className="block text-gray-600 font-semibold">Precio del Servicio:</label>
+                        <p className="text-gray-800 text-lg">{store.coach.precio_servicio ? `$${store.coach.precio_servicio}` : 'No disponible'}</p>
+                    </div>
+                </div>
+                <button 
+                    onClick={() => navigate(-1)} // Navegar hacia atrás
+                    className="mt-8 w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-500 transition duration-300 transform hover:scale-105 shadow-lg"
+                >
+                    Volver Atrás
+                </button>
             </div>
         </div>
     );

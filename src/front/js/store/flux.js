@@ -193,31 +193,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            getUserInfo: async (userId) => { // Accept userId as a parameter
-                try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/user_info/${userId}`, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${localStorage.getItem("token")}`,
-                        },
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log("Información del usuario:", data);
-                        setStore({ userInfo: data }); // Actualiza el store con la información del usuario
-                        return data;
-                    } else {
-                        console.error("Error fetching user info:", response.statusText);
-                        return null;
-                    }
-                } catch (error) {
-                    console.error("Error fetching user info:", error);
-                    return null;
-                }
-            },
-
 
             updateConsumptionProfile: async (userId, updatedData) => {
                 try {
@@ -370,7 +345,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            // Login del coach
             loginCoach: async (coachData) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/login-coach`, {
@@ -389,7 +363,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         localStorage.setItem('jwtTokenCoach', data.token);
 
                         // Almacena el ID del usuario
-                        localStorage.setItem('coachId', data.coach_id || null); // Almacena el ID aquí
+                        localStorage.setItem('coachId', data.coach_id || null);
 
                         // Establecer el estado de autenticación
                         setStore({
@@ -401,7 +375,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                                 genero: data.genero,
                                 cumpleaños: data.cumpleaños,
                                 foto_coach: data.foto_coach,
-                                isProfileComplete: data.isProfileComplete || false // Asegúrate de que esta propiedad esté disponible
+                                isProfileComplete: data.isProfileComplete || false,
                             }
                         });
 
@@ -416,16 +390,17 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
+            async getToken() {
+                return localStorage.getItem('jwtTokenCoach'); // Devuelve el token del localStorage
+            },
 
-
-            // Obtener información del coach
             getCoachInfo: async (coachId) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/coach_info/${coachId}`, {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",
-                            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                            "Authorization": `Bearer ${localStorage.getItem("jwtTokenCoach")}`, // Usa el token correcto aquí
                         },
                     });
 
@@ -444,9 +419,10 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
+            setCurrentUser: (coachInfo) => {
+                setStore({ loggedInCoach: coachInfo }); // Actualiza el estado global con la información del coach
+            },
 
-
-            // Logout
             logoutCoach: () => {
                 localStorage.removeItem('jwtTokenCoach');
                 setStore({
@@ -455,6 +431,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     coachInfo: null,
                 });
             },
+
 
             // Método para subir la imagen del coach a Cloudinary
             uploadCoachImage: async (file) => {
@@ -636,6 +613,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
+
             // Obtener solicitudes por usuario específico
             getSolicitudesPorUser: async (userId) => {
                 try {
@@ -735,60 +713,69 @@ const getState = ({ getStore, getActions, setStore }) => {
             generarConsejo: async () => {
                 try {
                     // Obtener el ID del usuario desde localStorage
-                    const userId = localStorage.getItem('userId'); // Cambiar para obtener el ID del localStorage
-                    console.log("ID almacenado en localStorage:", userId); // Verifica que se almacene correctamente
-                    
+                    const userId = localStorage.getItem('userId');
+                    console.log("ID almacenado en localStorage:", userId);
+            
                     // Obtener los datos del usuario desde el store
-                    const { loggedInUser } = getStore();
-                    
+                    const { userInfo } = getStore(); // Cambia a userInfo en lugar de loggedInUser
+            
                     // Verifica que los datos del usuario estén completos
-                    if (!loggedInUser.tiempo_fumando || !loggedInUser.numero_cigarrillos || !loggedInUser.periodicidad_consumo) {
+                    if (!userInfo) {
+                        console.error("userInfo es null o undefined. Asegúrate de haber obtenido los datos del usuario.");
+                        alert("No se pudo encontrar información del usuario. Por favor, intenta de nuevo.");
+                        return; // Sale de la función si no hay información del usuario
+                    }
+            
+                    // Asegúrate de que estos valores existan antes de usarlos
+                    const { tiempo_fumando, numero_cigarrillos, periodicidad_consumo } = userInfo;
+            
+                    if (!tiempo_fumando || !numero_cigarrillos || !periodicidad_consumo) {
                         console.error("Los datos del usuario son incompletos.");
-                        alert("Por favor, completa tu información antes de solicitar un consejo."); // Mensaje amigable
+                        alert("Por favor, completa tu información antes de solicitar un consejo.");
                         return; // Sale de la función si los datos no son válidos
                     }
             
-                    const apiKey = process.env.REACT_APP_OPENAI_API_KEY; // Accede a la clave de API
-                    
+                    const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
+            
                     const response = await fetch('https://api.openai.com/v1/chat/completions', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${apiKey}`, // Usa la clave de API aquí
+                            'Authorization': `Bearer ${apiKey}`,
                         },
                         body: JSON.stringify({
-                            model: 'gpt-3.5-turbo', // o el modelo que desees usar
+                            model: 'gpt-3.5-turbo',
                             messages: [
                                 {
                                     role: 'user',
-                                    content: `Soy un fumador que ha estado fumando durante ${loggedInUser.tiempo_fumando} años. Fumo ${loggedInUser.numero_cigarrillos} cigarrillos al día y consumo de forma ${loggedInUser.periodicidad_consumo}. ¿Puedes darme un consejo sobre cómo dejar de fumar?`
+                                    content: `Soy un fumador que ha estado fumando durante ${tiempo_fumando} años. Fumo ${numero_cigarrillos} cigarrillos al día y consumo de forma ${periodicidad_consumo}. ¿Puedes darme un consejo sobre cómo dejar de fumar?`
                                 }
                             ]
                         }),
                     });
             
                     if (!response.ok) {
-                        const errorDetails = await response.text(); // Captura el texto de error
+                        const errorDetails = await response.text();
                         throw new Error(`HTTP error! status: ${response.status}, details: ${errorDetails}`);
                     }
             
                     const data = await response.json();
                     console.log("Consejo recibido de la API:", data);
-                    
+            
                     // Actualiza el consejo en el store
                     setStore({
                         ...getStore(),
-                        loggedInUser: {
-                            ...getStore().loggedInUser,
+                        userInfo: {
+                            ...userInfo,
                             consejo: data.choices[0].message.content
                         }
                     });
-                    
+            
                 } catch (error) {
                     console.error("Error fetching consejo:", error.message);
                 }
-            }            
-                 
+            },
+
         },
     };
 };
