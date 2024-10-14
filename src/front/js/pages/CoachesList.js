@@ -88,8 +88,6 @@ const CoachesList = () => {
             setAlertMessage("Hubo un fallo al enviar la solicitud.");
         }
     };
-    
-    
 
     const handleViewProfile = (coachId) => {
         navigate(`/coach-details/${coachId}`);
@@ -156,7 +154,7 @@ const CoachesList = () => {
                     ) : currentCoaches.length > 0 ? (
                         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {currentCoaches.map((coach) => (
-                                <div className="card text-light bg-gray-800 rounded-lg overflow-hidden shadow-lg" key={coach.id}>
+                                <div className="card text-white bg-black rounded-lg overflow-hidden shadow-lg" key={coach.id}>
                                     <img
                                         src={coach.foto_coach || "https://i.pinimg.com/550x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg"}
                                         className="w-full h-48 object-cover"
@@ -193,6 +191,13 @@ const CoachesList = () => {
                     )}
                 </div>
             </div>
+            {/* Agregando estilos CSS directamente en el componente */}
+            <style jsx>{`
+                .card {
+                    background-color: black !important;
+                    color: white !important;
+                }
+            `}</style>
         </div>
     );
 };

@@ -1,14 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
 import { Context } from "../store/appContext"; 
 
 const UserProfile = () => {
     const { userId } = useParams();
+    const navigate = useNavigate(); // Initialize useNavigate
     const { store, actions } = useContext(Context);
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState({});
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -27,7 +26,6 @@ const UserProfile = () => {
 
                 const data = await response.json();
                 setUserData(data);
-                setFormData(data);
             } catch (error) {
                 console.error("Error al obtener el perfil del usuario:", error);
             } finally {
@@ -38,123 +36,63 @@ const UserProfile = () => {
         fetchUserProfile();
     }, [userId]);
 
-    const handleEdit = () => {
-        console.log("Entrando al modo de edición");
-        setIsEditing(true);
-    };
-
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const handleSaveChanges = async () => {
-        console.log("Saliendo del modo de edición y guardando datos");
-        try {
-            const response = await fetch(`${process.env.BACKEND_URL}/api/smoker/${userId}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
-                },
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
-            }
-
-            const updatedUser = await response.json();
-            setUserData(updatedUser);
-            setIsEditing(false);
-        } catch (error) {
-            console.error("Error al actualizar el perfil del usuario:", error);
-        }
-    };
-
     if (loading) {
-        return <p className="text-center text-light">Cargando perfil del usuario...</p>;
+        return <p className="text-center text-gray-500">Cargando perfil del usuario...</p>;
     }
 
     if (!userData) {
-        return <p className="text-center text-light">No se pudo cargar el perfil del usuario.</p>;
+        return <p className="text-center text-gray-500">No se pudo cargar el perfil del usuario.</p>;
     }
 
     return (
-        <div className="user-dashboard-container">
-            <div className="user-main-layout">
-                <div className="user-main-content">
-                    <h2 className="text-center mb-4">Perfil de Usuario</h2>
-                    <div className="user-profile-content">
-                        {userData.foto_usuario ? (
-                            <img src={userData.foto_usuario} alt="Foto de usuario" className="profile-image" />
-                        ) : (
-                            <p>No se ha subido una foto de perfil.</p>
-                        )}
-                        <form>
-                            <div>
-                                <label>Nombre:</label>
-                                {isEditing ? (
-                                    <input type="text" name="nombre_usuario" value={formData.nombre_usuario || ''} onChange={handleChange} />
-                                ) : (
-                                    <p>{userData.nombre_usuario}</p>
-                                )}
-                            </div>
-                            <div>
-                                <label>Email:</label>
-                                {isEditing ? (
-                                    <input type="email" name="email_usuario" value={formData.email_usuario || ''} onChange={handleChange} />
-                                ) : (
-                                    <p>{userData.email_usuario}</p>
-                                )}
-                            </div>
-                            <div>
-                                <label>Género:</label>
-                                {isEditing ? (
-                                    <input type="text" name="genero_usuario" value={formData.genero_usuario || ''} onChange={handleChange} />
-                                ) : (
-                                    <p>{userData.genero_usuario}</p>
-                                )}
-                            </div>
-                            <div>
-                                <label>Fecha de Nacimiento:</label>
-                                {isEditing ? (
-                                    <input type="date" name="nacimiento_usuario" value={formData.nacimiento_usuario || ''} onChange={handleChange} />
-                                ) : (
-                                    <p>{userData.nacimiento_usuario}</p>
-                                )}
-                            </div>
-                            <div>
-                                <label>Tiempo Fumando:</label>
-                                {isEditing ? (
-                                    <input type="text" name="tiempo_fumando" value={formData.tiempo_fumando || ''} onChange={handleChange} />
-                                ) : (
-                                    <p>{userData.tiempo_fumando}</p>
-                                )}
-                            </div>
-                            <div>
-                                <label>Número de Cigarrillos:</label>
-                                {isEditing ? (
-                                    <input type="number" name="numero_cigarrillos" value={formData.numero_cigarrillos || ''} onChange={handleChange} />
-                                ) : (
-                                    <p>{userData.numero_cigarrillos}</p>
-                                )}
-                            </div>
-                            <div>
-                                <label>Periodicidad de Consumo:</label>
-                                {isEditing ? (
-                                    <input type="text" name="periodicidad_consumo" value={formData.periodicidad_consumo || ''} onChange={handleChange} />
-                                ) : (
-                                    <p>{userData.periodicidad_consumo}</p>
-                                )}
-                            </div>
-                            {isEditing ? (
-                                <button type="button" onClick={handleSaveChanges}>Guardar Cambios</button> // Botón para guardar cambios
-                            ) : (
-                                <button type="button" onClick={handleEdit}>Editar</button> // Botón para entrar en modo de edición
-                            )}
-                        </form>
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-100 to-blue-300 p-6">
+            <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-lg border border-gray-200">
+                <h2 className="text-center text-3xl font-bold mb-6 text-gray-700">Perfil de Usuario</h2>
+                <div className="flex flex-col items-center mb-8">
+                    {userData.foto_usuario ? (
+                        <img src={userData.foto_usuario} alt="Foto de usuario" className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-lg mb-4" />
+                    ) : (
+                        <div className="w-32 h-32 rounded-full border-4 border-gray-300 flex items-center justify-center mb-4 shadow-lg">
+                            <span className="text-gray-400 text-xl">Sin foto</span>
+                        </div>
+                    )}
+                </div>
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-gray-600 font-semibold">Nombre:</label>
+                        <p className="text-gray-800 text-lg">{userData.nombre_usuario}</p>
+                    </div>
+                    <div>
+                        <label className="block text-gray-600 font-semibold">Email:</label>
+                        <p className="text-gray-800 text-lg">{userData.email_usuario}</p>
+                    </div>
+                    <div>
+                        <label className="block text-gray-600 font-semibold">Género:</label>
+                        <p className="text-gray-800 text-lg">{userData.genero_usuario}</p>
+                    </div>
+                    <div>
+                        <label className="block text-gray-600 font-semibold">Fecha de Nacimiento:</label>
+                        <p className="text-gray-800 text-lg">{userData.nacimiento_usuario}</p>
+                    </div>
+                    <div>
+                        <label className="block text-gray-600 font-semibold">Tiempo Fumando:</label>
+                        <p className="text-gray-800 text-lg">{userData.tiempo_fumando}</p>
+                    </div>
+                    <div>
+                        <label className="block text-gray-600 font-semibold">Número de Cigarrillos:</label>
+                        <p className="text-gray-800 text-lg">{userData.numero_cigarrillos}</p>
+                    </div>
+                    <div>
+                        <label className="block text-gray-600 font-semibold">Periodicidad de Consumo:</label>
+                        <p className="text-gray-800 text-lg">{userData.periodicidad_consumo}</p>
                     </div>
                 </div>
+                <button 
+                    onClick={() => navigate(-1)} // Navigate back
+                    className="mt-8 w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-500 transition duration-300 transform hover:scale-105 shadow-lg"
+                >
+                    Volver Atrás
+                </button>
             </div>
         </div>
     );

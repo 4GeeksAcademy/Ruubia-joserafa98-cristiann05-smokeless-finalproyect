@@ -28,7 +28,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             userInfo: null,
             coachInfo: null,
             solicitudes: [],
-            consejo: []
+            consejo: [],
         },
         actions: {
 
@@ -732,12 +732,24 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            generarConsejo: async (userId) => {
+            generarConsejo: async () => {
                 try {
+                    // Obtener el ID del usuario desde localStorage
+                    const userId = localStorage.getItem('userId'); // Cambiar para obtener el ID del localStorage
+                    console.log("ID almacenado en localStorage:", userId); // Verifica que se almacene correctamente
+                    
+                    // Obtener los datos del usuario desde el store
+                    const { loggedInUser } = getStore();
+                    
+                    // Verifica que los datos del usuario estén completos
+                    if (!loggedInUser.tiempo_fumando || !loggedInUser.numero_cigarrillos || !loggedInUser.periodicidad_consumo) {
+                        console.error("Los datos del usuario son incompletos.");
+                        alert("Por favor, completa tu información antes de solicitar un consejo."); // Mensaje amigable
+                        return; // Sale de la función si los datos no son válidos
+                    }
+            
                     const apiKey = process.env.REACT_APP_OPENAI_API_KEY; // Accede a la clave de API
-            
-                    // Verifica si la clave API es correcta
-            
+                    
                     const response = await fetch('https://api.openai.com/v1/chat/completions', {
                         method: 'POST',
                         headers: {
@@ -749,20 +761,20 @@ const getState = ({ getStore, getActions, setStore }) => {
                             messages: [
                                 {
                                     role: 'user',
-                                    content: `Soy un fumador que ha estado fumando durante ${userId.tiempo_fumando} años. Fumo ${userId.numero_cigarrillos} cigarrillos al día y consumo de forma ${userId.periodicidad_consumo}. ¿Puedes darme un consejo sobre cómo dejar de fumar?`
+                                    content: `Soy un fumador que ha estado fumando durante ${loggedInUser.tiempo_fumando} años. Fumo ${loggedInUser.numero_cigarrillos} cigarrillos al día y consumo de forma ${loggedInUser.periodicidad_consumo}. ¿Puedes darme un consejo sobre cómo dejar de fumar?`
                                 }
                             ]
                         }),
                     });
-        
+            
                     if (!response.ok) {
                         const errorDetails = await response.text(); // Captura el texto de error
                         throw new Error(`HTTP error! status: ${response.status}, details: ${errorDetails}`);
                     }
-        
+            
                     const data = await response.json();
                     console.log("Consejo recibido de la API:", data);
-            
+                    
                     // Actualiza el consejo en el store
                     setStore({
                         ...getStore(),
@@ -775,7 +787,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 } catch (error) {
                     console.error("Error fetching consejo:", error.message);
                 }
-            }
+            }            
                  
         },
     };
