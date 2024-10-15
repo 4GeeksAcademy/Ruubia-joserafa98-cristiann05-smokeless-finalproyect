@@ -143,6 +143,7 @@ const LoginCoach = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
+                                minLength={8}
                                 style={{ height: '60px', fontSize: '1.25rem' }}
                             />
                         </div>

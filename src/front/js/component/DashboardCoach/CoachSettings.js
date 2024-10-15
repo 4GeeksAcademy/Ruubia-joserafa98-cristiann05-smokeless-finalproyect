@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useCallback } from "react";
-import { useParams } from "react-router-dom"; 
+import { useParams, useNavigate } from "react-router-dom"; 
 import { Context } from "../../store/appContext";
 import Sidebar from "./SiderbarCoach"; 
 import Header from "./HeaderCoach"; 
@@ -14,7 +14,7 @@ const CoachSettings = () => {
     const [error, setError] = useState(null);
     const [isDarkMode, setIsDarkMode] = useState(true);
     const [active, setActive] = useState("home");
-    // Estados para la dirección
+    const navigate = useNavigate();
     const [address, setAddress] = useState('');
     const [lat, setLat] = useState(null);
     const [lon, setLon] = useState(null);

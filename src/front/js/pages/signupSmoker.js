@@ -23,7 +23,10 @@ const SignupSmoker = () => {
             setError("Las contraseñas no coinciden. Por favor, inténtalo de nuevo.");
             return;
         }
-
+        if (password.length < 8) {
+            setError("La contraseña debe tener al menos 8 caracteres.");
+            return;
+        }
         // Crear el objeto de datos del fumador
         const smokerData = { email_usuario: email, password_email: password };
         console.log("Datos del fumador que se envían:", smokerData); // Muestra los datos del fumador que se envían
@@ -101,6 +104,7 @@ const SignupSmoker = () => {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
+                                    minLength={8}
                                     style={{ height: '60px', fontSize: '1.25rem' }}
                                 />
                             </div>
@@ -116,6 +120,7 @@ const SignupSmoker = () => {
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     required
+                                    minLength={8}
                                     style={{ height: '60px', fontSize: '1.25rem' }}
                                 />
                             </div>

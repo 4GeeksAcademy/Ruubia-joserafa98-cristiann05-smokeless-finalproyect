@@ -22,7 +22,10 @@ const SignupCoach = () => {
             setError("Las contraseñas no coinciden. Por favor, inténtalo de nuevo.");
             return;
         }
-
+        if (password.length < 8) {
+            setError("La contraseña debe tener al menos 8 caracteres.");
+            return;
+        }
         // Crear el objeto de datos del coach
         const coachData = { email_coach: email, password_coach: password };
         console.log("Datos del coach que se envían:", coachData); // Muestra los datos del coach que se envían
@@ -98,6 +101,7 @@ const SignupCoach = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            minLength={8}
                             style={{ height: '60px', fontSize: '1.25rem' }}
                         />
                     </div>
@@ -113,6 +117,7 @@ const SignupCoach = () => {
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required
+                            minLength={8}
                             style={{ height: '60px', fontSize: '1.25rem' }}
                         />
                     </div>
