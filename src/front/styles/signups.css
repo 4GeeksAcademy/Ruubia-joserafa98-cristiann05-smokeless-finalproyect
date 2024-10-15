@@ -5,7 +5,10 @@
     position: relative;
     margin-bottom: 1rem; /* Margen inferior ajustado */
   }
-  
+  img {
+    max-width: 90%;
+    height: auto;
+  }
   /* Estilos del input */
   .input {
     width: 100%;

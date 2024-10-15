@@ -25,7 +25,7 @@ const SolicitudesSmoker = () => {
         };
 
         fetchSolicitudes();
-    }, [store.loggedInUser, actions]);
+    }, []);
 
     // Filtrar solicitudes en función del usuario logueado (smoker)
     const solicitudesEnEspera = store.solicitudes.filter(solicitud =>

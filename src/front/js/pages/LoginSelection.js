@@ -27,9 +27,9 @@ const LoginSelection = () => {
             </div>
 
             {/* Ajustes en el título y subtítulo */}
-            <div className="mt-16 text-center px-5">
-              <h1 className="ls-tight fw-bolder display-5 text-white mb-4">
-                INICIA SESIÓN Y CONTINÚA TU CAMINO
+            <div className="mt-1 text-center px-5">
+              <h1 className="ls-tight fw-bolder display-5 text-white mb-2">
+                ¡INICIA SESIÓN!
               </h1>
               <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.5rem', marginBottom: '2rem' }}>
                 ¿Eres Coach, o eres Fumador?
