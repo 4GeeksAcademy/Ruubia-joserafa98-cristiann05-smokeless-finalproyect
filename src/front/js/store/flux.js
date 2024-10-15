@@ -123,7 +123,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                                 nombre: data.nombre_usuario || '', // Asegúrate de que el servidor envíe este dato
                                 genero: data.genero_usuario || '',
                                 cumpleaños: data.nacimiento_usuario || '',
-                                foto_usuario: data.foto_usuario || '',
+                                public_id: data.public_id || '',
                             },
                             isAuthenticated: true,
                         });

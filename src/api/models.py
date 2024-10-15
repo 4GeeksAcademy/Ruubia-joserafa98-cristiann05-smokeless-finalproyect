@@ -14,7 +14,6 @@ class Coach(db.Model):
     latitud = db.Column(db.Float, nullable=True)  # Cambiado a opcional
     longitud = db.Column(db.Float, nullable=True)  # Cambiado a opcional
     descripcion_coach = db.Column(db.Text, nullable=True)  # Cambiado a opcional
-    foto_coach = db.Column(db.String(200), nullable=True)  # Cambiado a opcional
     public_id = db.Column(db.String(200), nullable=True)  # Cambiado a opcional
     precio_servicio = db.Column(db.Float, nullable=True)  # Cambiado a opcional
 
@@ -32,7 +31,6 @@ class Coach(db.Model):
         "latitud": self.latitud,
         "longitud": self.longitud,
         "descripcion_coach": self.descripcion_coach,
-        "foto_coach": self.foto_coach,
         "public_id": self.public_id,
         "precio_servicio": self.precio_servicio,
     }
@@ -48,7 +46,6 @@ class SmokerUser(db.Model):
     nacimiento_usuario = db.Column(db.Date, nullable=True)  # Opcional
     tiempo_fumando = db.Column(db.String(10), nullable=True)  # Opcional
     forma_consumo = db.Column(db.Integer, db.ForeignKey('tipos_consumo.id'), nullable=True)  # ID del tipo de consumo
-    foto_usuario = db.Column(db.String(255), nullable=True)  # Opcional
     numero_cigarrillos = db.Column(db.Integer, nullable=True)  # Cantidad de cigarrillos
     periodicidad_consumo = db.Column(db.String(20), nullable=True)  # Diaria, semanal, mensual o anual
     public_id = db.Column(db.String(200), nullable=True)  # Opcional
@@ -65,7 +62,6 @@ class SmokerUser(db.Model):
             "nacimiento_usuario": self.nacimiento_usuario.isoformat() if self.nacimiento_usuario else None,
             "tiempo_fumando": self.tiempo_fumando,
             "forma_consumo": self.forma_consumo,  # ID del tipo de consumo
-            "foto_usuario": self.foto_usuario,
             "numero_cigarrillos": self.numero_cigarrillos,
             "periodicidad_consumo": self.periodicidad_consumo,
             "public_id": self.public_id
