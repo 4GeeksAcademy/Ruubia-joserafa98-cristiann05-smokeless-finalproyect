@@ -18,12 +18,6 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
-            <Link to="/" className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200">
-              <BarChart2 className="w-5 h-5" />
-              <span className="text-sm font-medium">Dashboard</span>
-            </Link>
-          </li>
-          <li>
             <Link to="/signup-smoker" className="flex items-center space-x-2 bg-white hover:bg-gray-200 text-black font-semibold py-2 px-4 rounded-full transition-colors duration-200 text-sm">
               <UserPlus className="w-4 h-4" />
               <span>Get Started</span>

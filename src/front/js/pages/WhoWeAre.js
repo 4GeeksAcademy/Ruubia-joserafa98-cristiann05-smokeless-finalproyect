@@ -25,20 +25,7 @@ export const WhoAreWe = () => {
                                  Sin importar tu nivel de consumo, estamos aquí para guiarte en cada paso del camino hacia una vida sin cigarrillos.
                             </p>
                         </div>
-                        <div className="col-lg-6 col-md-12 align-self-end">
-                            <div className="hstack gap-3 justify-content-lg-end mt-4">
-                                <Link to="/signup-smoker">
-                                    <button className={`register-button btn btn-light`}>
-                                        REGISTRARSE COMO FUMADOR
-                                    </button>
-                                </Link>
-                                <Link to="/signup-coach">
-                                    <button className={`register-button btn btn-dark`}>
-                                        REGISTRARSE COMO COACH
-                                    </button>
-                                </Link>
-                            </div>
-                        </div>
+                        <br></br>
                     </div>
                     <div className="mt-5 text-center">
                         <Atropos className="my-atropos" activeOffset={40} shadowScale={1.05}>
