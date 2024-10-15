@@ -23,18 +23,22 @@ const AdviceSmoker = () => {
         console.log("ID del usuario:", userId); // Verifica el ID del usuario
 
         // Verificar si los datos del usuario están completos antes de llamar a generarConsejo
-        const userInfoComplete = store.userInfo?.tiempo_fumando &&
-            store.userInfo?.numero_cigarrillos &&
-            store.userInfo?.periodicidad_consumo;
+        // const userInfoComplete = (store.userInfo?.tiempo_fumando) && 
+        //     (store.userInfo?.numero_cigarrillos) &&
+        //     (store.userInfo?.periodicidad_consumo);
+        //     console.log (userInfoComplete)
 
-        if (!userInfoComplete) {
-            console.error("Los datos del usuario son incompletos:", store.userInfo);
-            alert("Por favor, completa tu información antes de solicitar un consejo.");
-            return; // No hacer nada si los datos no son válidos
-        }
+        // if (!userInfoComplete) {
+        //     console.error("Los datos del usuario son incompletos:", store.userInfo);
+        //     alert("Por favor, completa tu información antes de solicitar un consejo.");
+        //     return; // No hacer nada si los datos no son válidos
+        // }
 
         actions.generarConsejo(userId); // Llama a la acción para obtener el consejo
     };
+    useEffect (() =>{
+        console.log (store.userInfo)
+    }, [store.userInfo])
 
     // Verificar si los datos del usuario están completos y mostrar un mensaje si no lo están
     useEffect(() => {
