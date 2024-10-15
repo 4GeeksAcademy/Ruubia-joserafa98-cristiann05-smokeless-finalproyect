@@ -31,6 +31,7 @@ import UserSettings from "./component/DasboardSmoker/UserSettings";
 import ListaClientesAprobados from "./pages/ApprovedClientsList";
 import CoachSettings from "./component/DashboardCoach/CoachSettings";
 import CoachProfileFromUser from "./pages/CoachProfilefromUser";
+import { WhoAreWe} from "./pages/WhoWeAre";
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
@@ -74,6 +75,7 @@ const Layout = () => {
                         <Route element={<UserSettings />} path="/Dashboard-Smoker/configuracion/:userId" />
                         <Route element={<CoachSettings />} path="/Dashboard-coach/configuracion/:coachId" />
                         <Route element={<ListaClientesAprobados />} path="/Dashboard-coach/clientes" />
+                        <Route element={<WhoAreWe />} path="/about-us" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                 </ScrollToTop>

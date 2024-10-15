@@ -4,6 +4,7 @@ import { Context } from "../store/appContext";
 import '../../styles/signups.css'; // Asegúrate de tener un CSS correspondiente
 import logo from '../../img/logos/logoblanco.png';
 import logoOscuro from '../../img/logos/logonegro.png';
+import { Link } from "react-router-dom";
 
 const SignupCoach = () => {
     const { actions } = useContext(Context);
@@ -47,7 +48,9 @@ const SignupCoach = () => {
             <div className="p-12 py-xl-10 px-xl-20">
                 {/* Aquí puedes colocar tu logo */}
                 <div className="d-block">
-                    <img src={logo} alt="Logo" className="logo" />
+                    <Link to="/">
+                        <img src={logo} alt="Logo" className="logo" />
+                    </Link>
                 </div>
 
                 {/* Ajustes en el título y subtítulo */}

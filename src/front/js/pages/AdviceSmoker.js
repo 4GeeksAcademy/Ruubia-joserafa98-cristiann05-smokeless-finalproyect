@@ -54,7 +54,7 @@ const AdviceSmoker = () => {
         }
     }, [store.userInfo]);
 
-    return (
+    return ( 
         <div className="flex min-h-screen bg-gray-900 text-white">
             <Sidebar active="Consejos" isDarkMode={true} handleNavigation={(item) => navigate(item.path)} /> {/* Sidebar con navegación */}
             <div className="md:ml-64 flex-1">
