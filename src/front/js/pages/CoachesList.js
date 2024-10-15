@@ -90,7 +90,7 @@ const CoachesList = () => {
     };
 
     const handleViewProfile = (coachId) => {
-        navigate(`/coach-details/${coachId}`);
+        navigate(`/Dashboard-Smoker/coach-profile/${coachId}`);
     };
 
     const filteredCoaches = store.coaches
@@ -124,82 +124,114 @@ const CoachesList = () => {
 
     return (
         <div className={`flex min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
-            <Sidebar active="Lista de Coaches" isDarkMode={isDarkMode} handleNavigation={(item) => navigate(item.path)} /> {/* Sidebar con navegación */}
-
-            <div className="md:ml-64 flex-1">
-                <Header onLogout={() => actions.logoutsmoker()} isDarkMode={isDarkMode} toggleTheme={toggleTheme} /> {/* Header */}
-
-                <div className="user-main-content p-6"> {/* Contenido principal */}
-                    {alertMessage && (
-                        <div className={`alert ${alertMessage.includes("éxitosamente") ? "alert-success" : "alert-danger"}`} role="alert">
-                            {alertMessage}
-                        </div>
-                    )}
-                    <h1 className="text-center text-3xl font-bold mb-4">Coaches Disponibles</h1>
-
-                    {/* Input para filtrar por ciudad */}
-                    <div className="flex justify-center mb-4">
-                        <input
-                            type="text"
-                            id="searchCity"
-                            className="form-control w-1/2 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-300"
-                            placeholder="Buscar por Ciudad"
-                            value={searchCity}
-                            onChange={(e) => setSearchCity(e.target.value)} // Actualiza el estado con la ciudad ingresada
-                        />
-                    </div>
-
-                    {isLoading ? (
-                        <p className="text-center text-light">Cargando datos...</p>
-                    ) : currentCoaches.length > 0 ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {currentCoaches.map((coach) => (
-                                <div className="card text-white bg-black rounded-lg overflow-hidden shadow-lg" key={coach.id}>
-                                    <img
-                                        src={coach.foto_coach || "https://i.pinimg.com/550x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg"}
-                                        className="w-full h-48 object-cover"
-                                        alt={coach.nombre_coach || "Imagen no disponible"}
-                                    />
-                                    <div className="p-4">
-                                        <h5 className="text-xl font-semibold">{coach.nombre_coach}</h5>
-                                        <p className="mt-2">
-                                            <strong>Género:</strong> {coach.genero_coach}
-                                        </p>
-                                        <p className="mt-1">
-                                            <strong>Dirección:</strong> {coach.direccion}
-                                        </p>
-                                        <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded mt-4 hover:bg-blue-700 transition duration-200" onClick={() => handleAddCoach(coach.id)}>
-                                            Agregar Coach
-                                        </button>
-                                        <button className="bg-green-600 text-white font-semibold py-2 px-4 rounded mt-2 hover:bg-green-700 transition duration-200" onClick={() => handleViewProfile(coach.id)}>
-                                            Ver Perfil
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <p className="text-center text-light">No hay coaches disponibles en esta ciudad.</p>
-                    )}
-
-                    {currentCoaches.length > displayCount && (
-                        <div className="text-center mt-4">
-                            <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-700 transition duration-200" onClick={loadMore}>
-                                Ver Más
-                            </button>
-                        </div>
-                    )}
+          <Sidebar active="Lista de Coaches" isDarkMode={isDarkMode} handleNavigation={(item) => navigate(item.path)} /> {/* Sidebar con navegación */}
+      
+          <div className="md:ml-64 flex-1">
+            <Header onLogout={() => actions.logoutsmoker()} isDarkMode={isDarkMode} toggleTheme={toggleTheme} /> {/* Header */}
+      
+            <div className="user-main-content p-6"> {/* Contenido principal */}
+              {alertMessage && (
+                <div className={`alert ${alertMessage.includes("éxitosamente") ? "alert-success" : "alert-danger"}`} role="alert">
+                  {alertMessage}
                 </div>
+              )}
+              <h1 className="text-center text-3xl font-bold mb-4">Coaches Disponibles</h1>
+      
+              {/* Input para filtrar por ciudad */}
+              <div className="flex justify-center mb-4">
+                <input
+                  type="text"
+                  id="searchCity"
+                  className="form-control w-1/2 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-300"
+                  placeholder="Buscar por Ciudad"
+                  value={searchCity}
+                  onChange={(e) => setSearchCity(e.target.value)} // Actualiza el estado con la ciudad ingresada
+                />
+              </div>
+      
+              {isLoading ? (
+                <p className="text-center text-light">Cargando datos...</p>
+              ) : currentCoaches.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {currentCoaches.map((coach) => (
+                    <div
+                      className="coach-card relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105 bg-gray-800 text-white rounded-lg shadow-md"
+                      key={coach.id}
+                    >
+                      {/* Imagen con overlay en hover */}
+                      <div className="relative h-48">
+                        <img
+                          src={coach.foto_coach || "https://i.pinimg.com/550x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg"}
+                          className="w-full h-full object-cover"
+                          alt={`${coach.nombre_coach}'s profile picture`}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70 hover:opacity-80 transition duration-300"></div>
+                        <div className="absolute bottom-2 left-2 text-white">
+                          <h3 className="text-lg font-semibold">{coach.nombre_coach || "Nombre no disponible"}</h3>
+                        </div>
+                      </div>
+      
+                      {/* Información del coach */}
+                      <div className="p-4">
+                        <div className="flex items-center text-gray-400 mb-2">
+                          <i className="bi bi-person-fill mr-2"></i>
+                          <span>{coach.genero_coach || "Género no disponible"}</span>
+                        </div>
+                        <div className="flex items-center text-gray-400">
+                          <i className="bi bi-geo-alt-fill mr-2"></i>
+                          <span>{coach.direccion || "Dirección no disponible"}</span>
+                        </div>
+                      </div>
+      
+                      {/* Botones */}
+                      <div className="p-4 pt-2 flex justify-between">
+                        <button className="btn btn-outline-light w-1/2 mr-2" onClick={() => handleAddCoach(coach.id)}>
+                          <i className="bi bi-plus mr-2"></i> Add Coach
+                        </button>
+                        <button className="btn btn-light w-1/2" onClick={() => handleViewProfile(coach.id)}>
+                          <i className="bi bi-eye mr-2"></i> View Profile
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center text-light">No hay coaches disponibles en esta ciudad.</p>
+              )}
+      
+              {currentCoaches.length > displayCount && (
+                <div className="text-center mt-4">
+                  <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-700 transition duration-200" onClick={loadMore}>
+                    Ver Más
+                  </button>
+                </div>
+              )}
             </div>
-            {/* Agregando estilos CSS directamente en el componente */}
-            <style jsx>{`
-                .card {
-                    background-color: black !important;
-                    color: white !important;
-                }
-            `}</style>
+          </div>
+      
+          {/* Estilos CSS */}
+          <style jsx>{`
+            .coach-card {
+              border-radius: 0.5rem;
+              overflow: hidden;
+              background-color: #1f2937; /* Color de fondo oscuro */
+              transition: transform 0.3s, box-shadow 0.3s;
+            }
+            .coach-card:hover {
+              transform: scale(1.05);
+              box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.3); /* Sombra más oscura */
+            }
+            .coach-card img {
+              transition: opacity 0.3s;
+               object-fit: cover; /* Mantiene la imagen bien ajustada al contenedor */
+              object-position: center;
+            }
+            .coach-card:hover img {
+              opacity: 0.85;
+            }
+          `}</style>
         </div>
-    );
-};
+      );      
+    }            
 
 export default CoachesList;
