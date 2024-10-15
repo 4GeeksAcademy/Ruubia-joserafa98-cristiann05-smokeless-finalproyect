@@ -738,10 +738,12 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.log("ID almacenado en localStorage:", userId);
             
                     // Obtener los datos del usuario desde el store
-                    const { userInfo } = getStore(); // Cambia a userInfo en lugar de loggedInUser
-            
+                    // const { userInfo } = getStore(); // Cambia a userInfo en lugar de loggedInUser
+                    
+                    const store = getStore ()
+                    console.log(store.userInfo);
                     // Verifica que los datos del usuario estén completos
-                    if (!userInfo) {
+                    if (!store.userInfo) {
                         console.error("userInfo es null o undefined. Asegúrate de haber obtenido los datos del usuario.");
                         alert("No se pudo encontrar información del usuario. Por favor, intenta de nuevo.");
                         return; // Sale de la función si no hay información del usuario

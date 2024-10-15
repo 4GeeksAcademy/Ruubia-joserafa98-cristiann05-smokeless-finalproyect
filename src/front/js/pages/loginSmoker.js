@@ -137,18 +137,10 @@ const LoginSmoker = () => {
                         <h1 className="ls-tight fw-bolder display-6 text-white mb-2"> {/* display-3 para hacerlo más grande */}
                         ¡INICIA SESIÓN!
                         </h1>
-                        <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.5rem', marginBottom: '2rem' }}> {/* Aumenta el tamaño del subtítulo */}
+                        <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.2rem', marginBottom: '2rem' }}> {/* Aumenta el tamaño del subtítulo */}
                          ¡Tu nueva vida te espera 🚭!
                         </p>
                     </div>
-                </div>
-
-                <div className="mt-auto ps-16 ps-xl-20">
-                    <img 
-                        src="https://images.pexels.com/photos/3767418/pexels-photo-3767418.jpeg?auto=compress&cs=tinysrgb&w=600" 
-                        className="img-fluid rounded-top-start-4 custom-img" 
-                        alt="Side Image" 
-                    />
                 </div>
             </div>
 
