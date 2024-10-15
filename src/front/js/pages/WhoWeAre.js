@@ -5,6 +5,8 @@ import 'atropos/css'; // Importa los estilos de Atropos
 import foto from '../../img/logos/imagenesweb/prueba.png';
 import Navbar from "../component/navbar";
 import '../../styles/homePage.css';
+import Cristian from "../../img/logos/imagenesweb/Cristian.jpg"
+import Jose from "../../img/logos/imagenesweb/Jose.jpeg"
 
 export const WhoAreWe = () => {
 
@@ -45,74 +47,15 @@ export const WhoAreWe = () => {
                     </div>
                 </div>
             </div>
-            {/* Nuevo segmento "How it works" */}
-            <div className="mt-2 py-20 pt-lg-32 bg-dark rounded-bottom-4 overflow-hidden position-relative z-1">
-                <div className="container mw-screen-xl">
-                    <div className="row">
-                        <div className="col-lg-6 col-md-10">
-                            <h5 className="h5 mb-3 text-uppercase text-light">TODO DEPENDE DE TI...</h5>
-                            <h1 className="display-4 font-display text-white fw-bolder lh-tight mb-4" style={{ fontSize: '5rem' }}>¡Comienza tu camino hoy!</h1>
-                            <p className="text-lg text-light text-opacity-75">
-                                Dejar de fumar es un viaje transformador que no solo mejora tu salud, sino que también revitaliza tu vida. Imagina disfrutar de una vida llena de energía, libre de humos y con la claridad mental que mereces. En Smokeless, te acompañamos en este camino hacia el bienestar, brindándote el apoyo y las herramientas necesarias para alcanzar tus metas y disfrutar de un futuro más saludable y pleno.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="row g-6 g-lg-20" style={{ marginTop: '-170px', marginBottom: '20px' }}>
-                        <div className="col-md-4">
-                            <div className="card shadow-none border-0">
-                                <div className="card-body p-7">
-                                    <div className="mt-4 mb-7 mx-3">
-                        
-                                        
-                                    </div>
-                                    <div className="pt-2 pb-3">
-                                        <h5 className="h3 font-display fw-bold text-dark mb-3">Toma la decisión 🚭</h5>
-                                        <p className="text-dark">El primer paso hacia una vida sin humo comienza con una decisión valiente: ¡dejar de fumar! Reconocer la necesidad de un cambio es fundamental para transformar tu vida. Al registrarte en nuestra plataforma, no solo te comprometes contigo mismo, sino que también te abres a un mundo de posibilidades.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="card shadow-none border-0">
-                                <div className="card-body p-7">
-                                    <div className="mt-4 mb-7 mx-3">
-                                    
-                                    </div>
-                                    <div className="pt-2 pb-3">
-                                        <h5 className="h3 font-display fw-bold text-dark  mb-3">Conecta con los mejores profesionales 🤝</h5>
-                                        <p className="text-dark">Te ofrecemos la oportunidad de conectar con coaches especializados que comprenden tus desafíos y están dedicados a guiarte en tu camino para liberarte del tabaco. Estos profesionales cuentan con una variedad de técnicas adaptadas a tus necesidades, asegurando un apoyo personalizado y efectivo.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="card shadow-none border-0">
-                                <div className="card-body p-7">
-                                    <div className="mt-4 mb-7 mx-3">
-                                        
-                                    
-                                    </div>
-                                    <div className="pt-2 pb-3">
-                                        <h5 className="h3 font-display  text-dark fw-bold mb-3">Disfruta de una Vida Sin Humos 💪</h5>
-                                        <p className="text-dark">Únete a nuestra comunidad y comienza a disfrutar de beneficios inmediatos! Desde más energía hasta una mejor calidad de vida, cada día sin fumar es un paso hacia un futuro más brillante. ¡Regístrate y empieza tu transformación hoy!</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div className="py-20 pt-lg-32 pb-lg-20">
                 <div className="container mw-screen-xl">
                     <div className="row justify-content-center mb-10 mb-lg-24">
                         <div className="col-md-6 text-center">
-                            <h2 className="display-1 font-display text-primary fw-bold">23k+</h2>
+                            <h2 className="display-1 font-display text-primary fw-bold">Los FullStackers...</h2>
                             <h1 className="font-display lh-tight text-dark fw-bolder display-5 mb-3">
-                                Coaches y fumadores <span className="text-primary">ya confían en Smokeless...</span>
+                                ¡Un grupo de jovenes que llevan su talento al siguiente nivel! <span className="text-primary">Este es nuestro equipo:</span>
                             </h1>
-                            <p className="lead mb-5">Únete a una comunidad de expertos dispuestos a ayudar a los demás...</p>
                         </div>
                     </div>
 
@@ -120,45 +63,30 @@ export const WhoAreWe = () => {
                         <div className="row justify-content-between align-items-center">
                             {/* Columna izquierda: Título, Subtítulo y Lista */}
                             <div className="col-lg-5 mb-7 mb-lg-0">
-                                <h5 className="h5 mb-3 text-uppercase fw-bolder text-primary">SI ERES UN COACH...</h5>
-                                <h1 className="ls-tight font-display text-dark fw-bolder mb-3">¡CONECTA Y TRANSFORMA!</h1>
-                                <p className="lead mb-5">Convierte tu pasión por ayudar a otros en una carrera exitosa.  sus vidas. ¡Inscríbete hoy y empieza a transformar vidas, incluyendo la tuya!</p>
+                                <h5 className="h5 mb-3 text-uppercase fw-bolder text-primary">Cristian Ayala Sánchez</h5>
+                                <h1 className="ls-tight font-display text-dark fw-bolder mb-3">Full Stack Developer</h1>
+                                <p className="lead mb-5">Soy Cristian Ayala Sánchez, un Full Stack Developer apasionado por la tecnología y la creación de soluciones web. Me encanta enfrentar desafíos y aprender constantemente nuevas habilidades en el desarrollo de software. Siempre busco formas de mejorar mis conocimientos y de aplicar lo que aprendo en proyectos significativos.
 
-                                <ul className="list-unstyled mt-6 mb-2">
-                                    <li className="py-2 list-item mb-3">
-                                        <div className="d-flex align-items-center">
-                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
-                                            </div>
-                                            <div>
-                                                <p className="fw-semibold">Conecta con Fumadores en Tu Área: Expande tu red y ayuda a quienes más lo necesitan.</p>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li className="py-2 list-item mb-3">
-                                        <div className="d-flex align-items-center">
-                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
-                                            </div>
-                                            <div>
-                                                <p className="fw-semibold">Herramientas Avanzadas para el Éxito: Aprovecha recursos innovadores para guiar a tus clientes en su camino hacia una vida sin humo.</p>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li className="py-2 list-item mb-3">
-                                        <div className="d-flex align-items-center">
-                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
-                                            </div>
-                                            <div>
-                                                <p className="fw-semibold">Chatea y Ofrece Soporte Personalizado: Brinda consejos y motivación a través de chats directos, adaptando tu enfoque a cada fumador.</p>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
+                                En mi tiempo libre, disfruto explorar nuevas tendencias en tecnología y colaborar con otros desarrolladores. Mi objetivo es seguir creciendo en mi carrera y contribuir a proyectos que impacten positivamente en la sociedad.</p>
+
+                                <div className="social-buttons d-flex mt-4">
+                                        <a href="https://github.com/cristiann05" target="_blank" rel="noopener noreferrer" className="btn btn-outline-dark btn-lg mx-2">
+                                            <i className="fa-brands fa-github fa-2x"></i>
+                                        </a>
+
+                                        
+                                        <a href="https://www.linkedin.com/in/cristian05/" target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-lg mx-2">
+                                            <i className="fa-brands fa-linkedin fa-2x"></i>
+                                        </a>
+
+                                       
+                                        <a href="https://www.instagram.com/cristian_as05" target="_blank" rel="noopener noreferrer" className="btn btn-outline-danger btn-lg mx-2">
+                                            <i className="fa-brands fa-instagram fa-2x"></i>
+                                        </a>
+                                    </div>
                             </div>
                             <div className="col-lg-6">
-                                <img src="https://media.istockphoto.com/id/1728008421/es/foto/profesor-mentor-estudiante-universitario.jpg?s=1024x1024&w=is&k=20&c=HcpELb7Ql-NTrM2oDfy5I-5xITivpldfqWoB06kxgfU=" className="img-fluid rounded highlight-image" alt="Imagen de prueba" />
+                                <img src={Cristian} className="img-fluid rounded highlight-image" alt="Cristian Ayala Sánchez" />
                             </div>
                         </div>
                     </div>
@@ -171,53 +99,59 @@ export const WhoAreWe = () => {
                         <div className="section-step-lg">
                             <div className="row justify-content-between align-items-center">
                                 <div className="col-lg-6">
-                                    <img src="https://media.istockphoto.com/id/1783743772/es/foto/oradora-femenina-dando-una-presentaci%C3%B3n-durante-un-seminario-de-negocios-en-el-centro-de.jpg?s=1024x1024&w=is&k=20&c=BCXkREMj6sFVgEeEKF7lff-ikLE_drUxvRb6dggRuME=" className="img-fluid rounded highlight-image" alt="Imagen de prueba" />
+                                    <img src={Jose} className="img-fluid rounded highlight-image" alt="Imagen de prueba" />
                                 </div>
 
                                 <div className="col-lg-5 mb-7 mb-lg-0">
-                                    <h5 className="h5 mb-3 text-uppercase fw-bolder text-primary">Impulsa el cambio hacia un futuro sin humo...</h5>
-                                    <h1 className="ls-tight font-display text-dark fw-bolder mb-3">AYUDA A LAS PERSONAS A ALCANZAR SUS METAS Y DEJAR DE FUMAR DE MANERA EFECTIVA.</h1>
-                                    <p className="lead">Conviértete en el coach que tus clientes necesitan: </p>
+                                    <h5 className="h5 mb-3 text-uppercase fw-bolder text-primary">José Hernández</h5>
+                                    <h1 className="ls-tight font-display text-dark fw-bolder mb-3">Full Stack Developer </h1>
+                                    <p className="lead">Soy José Hernández, periodista y marketer egresado de la Universidad Arturo Michelena, con una pasión por el aprendizaje continuo y una sólida trayectoria en el desarrollo web. Actualmente Full Stack Developer, especializado en la creación de soluciones tecnológicas con un enfoque integral, combinando habilidades en front-end y back-end. Busco seguir perfeccionándome en el área de Inteligencia Artificial para aplicar sus innovaciones en el mundo digital. </p>
+                                    <div className="social-buttons d-flex mt-4">
+                                        <a href="https://github.com/Joserafa98" target="_blank" rel="noopener noreferrer" className="btn btn-outline-dark btn-lg mx-2">
+                                            <i className="fa-brands fa-github fa-2x"></i>
+                                        </a>
 
-                                    <ul className="list-unstyled mt-6 mb-5">
-                                        <li className="py-2 list-item mb-3">
-                                            <div className="d-flex align-items-center">
-                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
-                                                </div>
-                                                <div>
-                                                    <p className="fw-semibold">Crea un entorno positivo donde los fumadores puedan compartir sus experiencias.</p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li className="py-2 list-item mb-3">
-                                            <div className="d-flex align-items-center">
-                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
-                                                </div>
-                                                <div>
-                                                    <p className="fw-semibold"> Mantén el compromiso con tus clientes a través de sesiones de seguimiento.</p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li className="py-2 list-item mb-3">
-                                            <div className="d-flex align-items-center">
-                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
-                                                </div>
-                                                <div>
-                                                    <p className="fw-semibold">Utiliza Nuestras herramientas interactivas.</p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
+                                        {/* Botón de LinkedIn */}
+                                        <a href="https://www.linkedin.com/in/jose-hernandez-67605813b/" target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-lg mx-2">
+                                            <i className="fa-brands fa-linkedin fa-2x"></i>
+                                        </a>
 
+                                        {/* Botón de Instagram */}
+                                        <a href="https://www.instagram.com/joserafa98" target="_blank" rel="noopener noreferrer" className="btn btn-outline-danger btn-lg mx-2">
+                                            <i className="fa-brands fa-instagram fa-2x"></i>
+                                        </a>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div className="py-20 pt-lg-32 pb-lg-20">
+                <div className="container mw-screen-xl">
+                    <div className="row justify-content-center mb-10 mb-lg-24">
+                    <div className="section-step-lg">
+                        <div className="row justify-content-between align-items-center">
+                            {/* Columna izquierda: Título, Subtítulo y Lista */}
+                            <div className="col-lg-5 mb-7 mb-lg-0">
+                                <h5 className="h5 mb-3 text-uppercase fw-bolder text-primary">Beatriz Carmona</h5>
+                                <h1 className="ls-tight font-display text-dark fw-bolder mb-3">Full Stack Developer</h1>
+                                <p className="lead mb-5">Soy Cristian Ayala Sánchez, un Full Stack Developer apasionado por la tecnología y la creación de soluciones web. Me encanta enfrentar desafíos y aprender constantemente nuevas habilidades en el desarrollo de software. Siempre busco formas de mejorar mis conocimientos y de aplicar lo que aprendo en proyectos significativos.
+
+                                En mi tiempo libre, disfruto explorar nuevas tendencias en tecnología y colaborar con otros desarrolladores. Mi objetivo es seguir creciendo en mi carrera y contribuir a proyectos que impacten positivamente en la sociedad.</p>
+
+                               
+                            </div>
+                            <div className="col-lg-6">
+                                <img src={Cristian} className="img-fluid rounded highlight-image" alt="Cristian Ayala Sánchez" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
             <div className="py-20 py-lg-20">
                 <div className="container mw-screen-xl">
                     <div className="py-32 gradient-bottom-right start-gray middle-black end-gray rounded-5 px-lg-16 text-center text-md-start">

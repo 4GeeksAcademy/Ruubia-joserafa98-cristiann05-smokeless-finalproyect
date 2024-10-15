@@ -158,7 +158,7 @@ export const Home = () => {
                                 </ul>
                             </div>
                             <div className="col-lg-6">
-                                <img src="https://media.istockphoto.com/id/1728008421/es/foto/profesor-mentor-estudiante-universitario.jpg?s=1024x1024&w=is&k=20&c=HcpELb7Ql-NTrM2oDfy5I-5xITivpldfqWoB06kxgfU=" className="img-fluid rounded highlight-image" alt="Imagen de prueba" />
+                                <img src="https://images.pexels.com/photos/3958379/pexels-photo-3958379.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" className="img-fluid rounded highlight-image" alt="Imagen de prueba" />
                             </div>
                         </div>
                     </div>
@@ -171,7 +171,7 @@ export const Home = () => {
                         <div className="section-step-lg">
                             <div className="row justify-content-between align-items-center">
                                 <div className="col-lg-6">
-                                    <img src="https://media.istockphoto.com/id/1783743772/es/foto/oradora-femenina-dando-una-presentaci%C3%B3n-durante-un-seminario-de-negocios-en-el-centro-de.jpg?s=1024x1024&w=is&k=20&c=BCXkREMj6sFVgEeEKF7lff-ikLE_drUxvRb6dggRuME=" className="img-fluid rounded highlight-image" alt="Imagen de prueba" />
+                                    <img src="https://images.pexels.com/photos/2977567/pexels-photo-2977567.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" className="img-fluid rounded highlight-image" />
                                 </div>
 
                                 <div className="col-lg-5 mb-7 mb-lg-0">
@@ -256,9 +256,10 @@ export const Home = () => {
                         <div className="col-auto">
                             <ul className="nav mx-n4">
                                 <li className="nav-item">
-                                    <Link to="/" className="nav-link text-lg text-muted text-primary-hover">
-                                        <i className="fa-brands fa-github fa-2x"></i>
-                                    </Link>
+                                <a href="https://github.com/4GeeksAcademy/Ruubia-joserafa98-cristiann05-smokeless-finalproyect" className="nav-link text-lg text-muted text-primary-hover" target="_blank" rel="noopener noreferrer">
+                                    <i className="fa-brands fa-github fa-2x"></i>
+                                </a>
+
                                 </li>
                                 <li className="nav-item">
                                     <Link to="/" className="nav-link text-lg text-muted text-primary-hover">
