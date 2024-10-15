@@ -133,12 +133,12 @@ const LoginSmoker = () => {
                     </div>
 
                     {/* Ajustes en el título y subtítulo */}
-                    <div className="mt-16 text-center px-5"> {/* Añadí text-center y padding lateral */}
-                        <h1 className="ls-tight fw-bolder display-5 text-white mb-4"> {/* display-3 para hacerlo más grande */}
-                            ¡TU CAMINO HACIA UNA VIDA SIN TABACO!
+                    <div className="mt-1 text-center px-5"> {/* Añadí text-center y padding lateral */}
+                        <h1 className="ls-tight fw-bolder display-6 text-white mb-2"> {/* display-3 para hacerlo más grande */}
+                        ¡INICIA SESIÓN!
                         </h1>
                         <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.5rem', marginBottom: '2rem' }}> {/* Aumenta el tamaño del subtítulo */}
-                        Inicia sesión para acceder a tus herramientas, consejos personalizados y el apoyo que necesitas para dejar de fumar. ¡Tu nueva vida te espera!
+                         ¡Tu nueva vida te espera 🚭!
                         </p>
                     </div>
                 </div>
@@ -156,7 +156,7 @@ const LoginSmoker = () => {
                 <div className="w-md-50 mx-auto px-10 px-md-0 py-10">
                     <div className="mb-10">
                         <a className="d-inline-block d-lg-none mb-10" href="/pages/dashboard.html">
-                            <img src={logoOscuro} alt="Logo Oscuro" className="logo" />
+                            <img src={logoOscuro} alt="Logo Oscuro" className="logo w-25" />
                         </a>
                         <h1 className="ls-tight fw-bolder h1">Log in here</h1> 
                     </div>
@@ -189,6 +189,7 @@ const LoginSmoker = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
+                                minLength={8}
                                 style={{ height: '60px', fontSize: '1.25rem' }}
                             />
                         </div>

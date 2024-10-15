@@ -88,12 +88,12 @@ const CreateConsumProfile = () => {
                             </div>
     
                             {/* Ajustes en el título y subtítulo */}
-                            <div className="mt-8 text-center px-5">
+                            <div className="mt-1 text-center px-5">
                                 <h1 className="ls-tight fw-bolder display-6 text-white mb-3">
                                 ¡CUÉNTANOS TUS HÁBITOS DE CONSUMO!
                                 </h1>
                                 <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.2rem', marginBottom: '2rem' }}>
-                                Queremos entender mejor tu relación con el tabaco. Comparte con nosotros cuánto y con qué frecuencia fumas, para ofrecerte el apoyo más adecuado en tu camino hacia una vida más saludable.
+                                Queremos entender mejor tu relación con el tabaco. Comparte con nosotros cuánto y con qué frecuencia fumas.
                                 </p>
                             </div>
                         </div>

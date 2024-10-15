@@ -91,31 +91,26 @@ const LoginCoach = () => {
                         <img src={logo} alt="Logo" className="logo" />
                     </div>
 
+
                     {/* Ajustes en el título y subtítulo */}
-                    <div className="mt-16 text-center px-5"> {/* Añadí text-center y padding lateral */}
-                        <h1 className="ls-tight fw-bolder display-4 text-white mb-4"> {/* display-3 para hacerlo más grande */}
-                            ¡INICIA SESIÓN Y CONTINÚA TRANSFORMANDO VIDAS!
+                    <div className="mt-1 text-center px-5"> {/* Añadí text-center y padding lateral */}
+                        <h1 className="ls-tight fw-bolder display-6 text-white mb-2"> {/* display-3 para hacerlo más grande */}
+                            ¡INICIA SESIÓN!
                         </h1>
-                        <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.5rem', marginBottom: '2rem' }}> {/* Aumenta el tamaño del subtítulo */}
-                        Accede a tu panel de control, donde podrás conectar con smokers, ofrecer tu apoyo y aprovechar todas las herramientas que tenemos para ayudarte a guiar a tus clientes hacia una vida sin tabaco.
+                        <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.5rem', marginBottom: '2rem' }}>
+                            Como Coach
                         </p>
                     </div>
                 </div>
 
-                <div className="mt-auto ps-16 ps-xl-20">
-                    <img 
-                        src="https://images.pexels.com/photos/2977567/pexels-photo-2977567.jpeg?auto=compress&cs=tinysrgb&w=600" 
-                        className="img-fluid rounded-top-start-4 custom-img" 
-                        alt="Side Image" 
-                    />
-                </div>
+               
             </div>
 
             <div className="col-12 col-md-12 col-lg-7 offset-lg-5 min-vh-100 overflow-y-auto d-flex flex-column justify-content-center position-relative bg-body rounded-top-start-lg-4 rounded shadow-soft-5">
                 <div className="w-md-50 mx-auto px-10 px-md-0 py-10">
                     <div className="mb-10">
                         <a className="d-inline-block d-lg-none mb-10" href="/pages/dashboard.html">
-                            <img src={logoOscuro} alt="Logo Oscuro" className="logo" />
+                            <img src={logoOscuro} alt="Logo Oscuro" className="logo w-25" />
                         </a>
                         <h1 className="ls-tight fw-bolder h1">Log in here</h1> 
                     </div>
@@ -148,6 +143,7 @@ const LoginCoach = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
+                                minLength={8}
                                 style={{ height: '60px', fontSize: '1.25rem' }}
                             />
                         </div>

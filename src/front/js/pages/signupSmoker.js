@@ -23,7 +23,10 @@ const SignupSmoker = () => {
             setError("Las contraseñas no coinciden. Por favor, inténtalo de nuevo.");
             return;
         }
-
+        if (password.length < 8) {
+            setError("La contraseña debe tener al menos 8 caracteres.");
+            return;
+        }
         // Crear el objeto de datos del fumador
         const smokerData = { email_usuario: email, password_email: password };
         console.log("Datos del fumador que se envían:", smokerData); // Muestra los datos del fumador que se envían
@@ -50,22 +53,15 @@ const SignupSmoker = () => {
                         </div>
 
                         {/* Ajustes en el título y subtítulo */}
-                        <div className="mt-16 text-center px-5"> {/* Añadí text-center y padding lateral */}
-                            <h1 className="ls-tight fw-bolder display-4 text-white mb-3"> {/* display-3 para hacerlo más grande */}
+                        <div className="mt-1 text-center px-5"> {/* Añadí text-center y padding lateral */}
+                            <h1 className="ls-tight fw-bolder display-6 text-white mb-3"> {/* display-3 para hacerlo más grande */}
                                 ¡EMPIEZA UNA NUEVA VIDA HOY!
                             </h1>
-                            <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.5rem', marginBottom: '2rem' }}> {/* Aumenta el tamaño del subtítulo */}
-                                Toma el control de tu salud y da el primer paso hacia una vida sin tabaco. Con el apoyo de expertos, herramientas personalizadas y un seguimiento constante, tu objetivo está al alcance. Regístrate hoy y comienza tu camino hacia un futuro más saludable.
+                            <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.2rem', marginBottom: '2rem' }}> {/* Aumenta el tamaño del subtítulo */}
+                                Toma el control de tu salud y da el primer paso hacia una vida sin tabaco. 
                             </p>
+                            
                         </div>
-                    </div>
-
-                    <div className="mt-auto ps-16 ps-xl-20">
-                        <img 
-                            src="https://images.pexels.com/photos/1325619/pexels-photo-1325619.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
-                            className="img-fluid rounded-top-start-4 custom-img" 
-                            alt="Side Image" 
-                        />
                     </div>
 
                 </div>
@@ -74,7 +70,7 @@ const SignupSmoker = () => {
                     <div className="w-md-50 mx-auto px-10 px-md-0 py-10">
                         <div className="mb-10">
                             <a className="d-inline-block d-lg-none mb-10" href="/pages/dashboard.html">
-                                <img src={logoOscuro} alt="Logo Oscuro" className="logo" />
+                                <img src={logoOscuro} alt="Logo Oscuro" className="logo w-25" />
                             </a>
                             <h1 className="ls-tight fw-bolder h1">Sign up here</h1> 
                         </div>
@@ -108,6 +104,7 @@ const SignupSmoker = () => {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
+                                    minLength={8}
                                     style={{ height: '60px', fontSize: '1.25rem' }}
                                 />
                             </div>
@@ -123,6 +120,7 @@ const SignupSmoker = () => {
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     required
+                                    minLength={8}
                                     style={{ height: '60px', fontSize: '1.25rem' }}
                                 />
                             </div>

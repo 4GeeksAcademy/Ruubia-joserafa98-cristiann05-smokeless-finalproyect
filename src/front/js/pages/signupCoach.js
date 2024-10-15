@@ -22,7 +22,10 @@ const SignupCoach = () => {
             setError("Las contraseñas no coinciden. Por favor, inténtalo de nuevo.");
             return;
         }
-
+        if (password.length < 8) {
+            setError("La contraseña debe tener al menos 8 caracteres.");
+            return;
+        }
         // Crear el objeto de datos del coach
         const coachData = { email_coach: email, password_coach: password };
         console.log("Datos del coach que se envían:", coachData); // Muestra los datos del coach que se envían
@@ -48,22 +51,14 @@ const SignupCoach = () => {
                 </div>
 
                 {/* Ajustes en el título y subtítulo */}
-                <div className="mt-16 text-center px-5"> {/* Añadí text-center y padding lateral */}
-                    <h1 className="ls-tight fw-bolder display-5 text-white mb-4"> {/* display-3 para hacerlo más grande */}
-                     TRANSFORMA VIDAS... ¡COMIENZA HOY!
+                <div className="mt-1 text-center px-5"> {/* Añadí text-center y padding lateral */}
+                    <h1 className="ls-tight fw-bolder display-6 text-white mb-1"> {/* display-3 para hacerlo más grande */}
+                        ¡COMIENZA HOY!
                     </h1>
-                    <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.5rem', marginBottom: '2rem' }}> {/* Aumenta el tamaño del subtítulo */}
-                    Únete a nuestra comunidad de coaches dedicados a ayudar a fumadores a alcanzar sus metas. Con herramientas personalizadas y un enfoque en resultados, cada paso que guíes será un avance hacia una vida sin tabaco. ¡Empieza ahora y sé el cambio que tus clientes necesitan!
+                    <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.2rem', marginBottom: '2rem' }}> {/* Aumenta el tamaño del subtítulo */}
+                    Únete a nuestra comunidad de coaches dedicados a ayudar a fumadores a alcanzar sus metas.
                     </p>
                 </div>
-            </div>
-
-            <div className="mt-auto ps-16 ps-xl-20">
-                <img 
-                    src="https://images.pexels.com/photos/7176325/pexels-photo-7176325.jpeg?auto=compress&cs=tinysrgb&w=600" 
-                    className="img-fluid rounded-top-start-4 custom-img" 
-                    alt="Side Image" 
-                />
             </div>
 
         </div>
@@ -72,7 +67,7 @@ const SignupCoach = () => {
             <div className="w-md-50 mx-auto px-10 px-md-0 py-10">
                 <div className="mb-10">
                     <a className="d-inline-block d-lg-none mb-10" href="/pages/dashboard.html">
-                        <img src={logoOscuro} alt="Logo Oscuro" className="logo" />
+                        <img src={logoOscuro} alt="Logo Oscuro" className="logo w-25" />
                     </a>
                     <h1 className="ls-tight fw-bolder h1">Sign up here</h1> 
                 </div>
@@ -106,6 +101,7 @@ const SignupCoach = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            minLength={8}
                             style={{ height: '60px', fontSize: '1.25rem' }}
                         />
                     </div>
@@ -121,6 +117,7 @@ const SignupCoach = () => {
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required
+                            minLength={8}
                             style={{ height: '60px', fontSize: '1.25rem' }}
                         />
                     </div>

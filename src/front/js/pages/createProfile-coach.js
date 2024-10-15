@@ -29,6 +29,17 @@ const CreateProfileCoach = () => {
         setfoto_coach(e.target.files[0]); 
     };
 
+    const isAdult = (birthday) => {
+        const today = new Date();
+        const birthDate = new Date(birthday);
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const monthDifference = today.getMonth() - birthDate.getMonth();
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+            return age - 1;
+        }
+        return age;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
@@ -47,6 +58,12 @@ const CreateProfileCoach = () => {
 
         if (!cumpleaños) {
             setError("La fecha de cumpleaños es requerida.");
+            return;
+        }
+
+        // Verificar si el coach es mayor de edad
+        if (isAdult(cumpleaños) < 18) {
+            setError("Debes ser mayor de 18 años para registrarte.");
             return;
         }
 
@@ -92,10 +109,10 @@ const CreateProfileCoach = () => {
     
                         <div className="mt-16 text-center px-5">
                             <h1 className="ls-tight fw-bolder display-4 text-white mb-3">
-                                ¡Cuentanos más de ti!
+                                ¡Cuéntanos más de ti!
                             </h1>
                             <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.5rem', marginBottom: '2rem' }}>
-                                Ayudanos a conocerte mejor. Estos detalles básicos harán que tu experiencia sea única y personalizada en cada paso del camino.
+                                Ayúdanos a conocerte mejor. Estos detalles básicos harán que tu experiencia sea única y personalizada en cada paso del camino.
                             </p>
                         </div>
                     </div>
@@ -184,5 +201,6 @@ const CreateProfileCoach = () => {
             </div>
         </>
     );
-}    
+};
+
 export default CreateProfileCoach;

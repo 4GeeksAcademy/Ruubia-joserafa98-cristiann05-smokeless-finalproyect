@@ -31,6 +31,20 @@ const CreateProfileUser = () => {
         setfoto_usuario(e.target.files[0]); // Guardar la imagen seleccionada
     };
 
+    // Función para verificar si el usuario es mayor de edad
+    const isAdult = (birthdate) => {
+        const today = new Date();
+        const birthDate = new Date(birthdate);
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const monthDifference = today.getMonth() - birthDate.getMonth();
+        
+        // Si el cumpleaños no ha ocurrido este año aún, restamos un año
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+            return age >= 18; // El usuario debe ser mayor de 18
+        }
+        return age >= 18;
+    };
+
     // Manejar el envío del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -39,6 +53,12 @@ const CreateProfileUser = () => {
         // Validación de que el usuario esté logueado
         if (!store.loggedInUser) {
             setError("No hay usuario logueado. Por favor, inicia sesión.");
+            return;
+        }
+
+        // Validar que el usuario sea mayor de edad
+        if (!isAdult(cumpleaños)) {
+            setError("Debes ser mayor de 18 años para registrarte.");
             return;
         }
 
@@ -82,116 +102,106 @@ const CreateProfileUser = () => {
     }
 
     return (
-            <>
-                <div className="row g-0 justify-content-center gradient-bottom-right start-purple middle-indigo end-pink">
-                    <div className="col-md-6 col-lg-5 col-xl-5 position-fixed start-0 top-0 vh-100 overflow-y-hidden d-none d-lg-flex flex-lg-column">
-                        <div className="p-12 py-xl-10 px-xl-20">
-                            {/* Aquí puedes colocar tu logo */}
-                            <div className="d-block">
-                                <img src={logo} alt="Logo" className="logo" />
-                            </div>
-        
-                            {/* Ajustes en el título y subtítulo */}
-                            <div className="mt-16 text-center px-5">
-                                <h1 className="ls-tight fw-bolder display-4 text-white mb-3">
-                                    ¡Cuentanos más de ti!
-                                </h1>
-                                <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.5rem', marginBottom: '2rem' }}>
-                                Ayudanos a conocerte mejor. Estos detalles básicos harán que tu experiencia sea única y personalizada en cada paso del camino.
-                                </p>
-                            </div>
+        <>
+            <div className="row g-0 justify-content-center gradient-bottom-right start-purple middle-indigo end-pink">
+                <div className="col-md-6 col-lg-5 col-xl-5 position-fixed start-0 top-0 vh-100 overflow-y-hidden d-none d-lg-flex flex-lg-column">
+                    <div className="p-12 py-xl-10 px-xl-20">
+                        <div className="d-block">
+                            <img src={logo} alt="Logo" className="logo" />
                         </div>
         
-                    
-                    </div>
-        
-                    <div className="col-12 col-md-12 col-lg-7 offset-lg-5 min-vh-100 overflow-y-auto d-flex flex-column justify-content-center position-relative bg-body rounded-top-start-lg-4 rounded shadow-soft-5">
-                        <div className="w-md-50 mx-auto px-10 px-md-0 py-10">
-                            <div className="mb-10">
-                                <a className="d-inline-block d-lg-none mb-10" href="/pages/dashboard.html">
-                                    <img src={logoOscuro} alt="Logo Oscuro" className="logo" />
-                                </a>
-                                <h1 className="ls-tight fw-bolder h1">Actualizar Perfil</h1> 
-                            </div>
-        
-                            {error && <div className="alert alert-danger">{error}</div>}
-                            
-                            {/* Formulario para actualizar el perfil */}
-                            <form className="form" onSubmit={handleSubmit} style={{ fontSize: '1.25rem' }}> 
-                                
-                                {/* Input de Nombre de Usuario */}
-                                <div className="group mb-4">
-                                    <i className="fa-regular fa-user icon"></i>
-                                    <input
-                                        type="text"
-                                        name="nombre_usuario"
-                                        id="nombre_usuario"
-                                        className="input"
-                                        value={nombre_usuario}
-                                        onChange={(e) => setnombre_usuario(e.target.value)}
-                                        placeholder="Nombre de Usuario"
-                                        required
-                                        style={{ height: '60px', fontSize: '1.25rem' }}
-                                    />
-                                </div>
-        
-                                {/* Selección de Género */}
-                                <div className="group mb-4">
-                                    <i className="fa-solid fa-venus-mars icon"></i>
-                                    <select
-                                        name="genero"
-                                        id="genero"
-                                        className="input"
-                                        value={genero}
-                                        onChange={(e) => setGenero(e.target.value)}
-                                        required
-                                        style={{ height: '60px', fontSize: '1.25rem' }}
-                                    >
-                                        <option value="" disabled>Seleccionar Género</option>
-                                        <option value="masculino">Masculino</option>
-                                        <option value="femenino">Femenino</option>
-                                    </select>
-                                </div>
-        
-                                {/* Input de Fecha de Nacimiento */}
-                                <div className="group mb-4">
-                                    <i className="fa-regular fa-calendar icon"></i>
-                                    <input
-                                        type="date"
-                                        name="cumpleaños"
-                                        id="cumpleaños"
-                                        className="input"
-                                        value={cumpleaños}
-                                        onChange={(e) => setCumpleaños(e.target.value)}
-                                        required
-                                        style={{ height: '60px', fontSize: '1.25rem' }}
-                                    />
-                                </div>
-        
-                                {/* Input para Subir Foto */}
-                                <div className="group mb-4">
-                                    <i className="fa-solid fa-camera icon"></i>
-                                    <input
-                                        type="file"
-                                        name="foto"
-                                        id="foto"
-                                        className="input"
-                                        onChange={handleImageUpload}
-                                        style={{ height: '60px', fontSize: '1.25rem' }}
-                                    />
-                                </div>
-        
-                                {/* Botón de enviar */}
-                                <button className="btn btn-dark w-100" type="submit" style={{ fontSize: '1.25rem', padding: '15px' }}>
-                                    Actualizar Perfil
-                                </button>
-                            </form>
+                        <div className="mt-1 text-center px-5">
+                            <h1 className="ls-tight fw-bolder display-6 text-white mb-3">
+                                ¡Cuéntanos más de ti!
+                            </h1>
+                            <p className="text-white text-opacity-75 pe-xl-24" style={{ fontSize: '1.2rem', marginBottom: '2rem' }}>
+                                Ayúdanos a conocerte mejor. 
+                            </p>
                         </div>
                     </div>
-        
                 </div>
-            </>
-        );
-    }        
+        
+                <div className="col-12 col-md-12 col-lg-7 offset-lg-5 min-vh-100 overflow-y-auto d-flex flex-column justify-content-center position-relative bg-body rounded-top-start-lg-4 rounded shadow-soft-5">
+                    <div className="w-md-50 mx-auto px-10 px-md-0 py-10">
+                        <div className="mb-10">
+                            <a className="d-inline-block d-lg-none mb-10" href="/pages/dashboard.html">
+                                <img src={logoOscuro} alt="Logo Oscuro" className="logo" />
+                            </a>
+                            <h1 className="ls-tight fw-bolder h1">Actualizar Perfil</h1> 
+                        </div>
+        
+                        {error && <div className="alert alert-danger">{error}</div>}
+                        
+                        <form className="form" onSubmit={handleSubmit} style={{ fontSize: '1.25rem' }}> 
+                            <div className="group mb-4">
+                                <i className="fa-regular fa-user icon"></i>
+                                <input
+                                    type="text"
+                                    name="nombre_usuario"
+                                    id="nombre_usuario"
+                                    className="input"
+                                    value={nombre_usuario}
+                                    onChange={(e) => setnombre_usuario(e.target.value)}
+                                    placeholder="Nombre de Usuario"
+                                    required
+                                    style={{ height: '60px', fontSize: '1.25rem' }}
+                                />
+                            </div>
+        
+                            <div className="group mb-4">
+                                <i className="fa-solid fa-venus-mars icon"></i>
+                                <select
+                                    name="genero"
+                                    id="genero"
+                                    className="input"
+                                    value={genero}
+                                    onChange={(e) => setGenero(e.target.value)}
+                                    required
+                                    style={{ height: '60px', fontSize: '1.25rem' }}
+                                >
+                                    <option value="" disabled>Seleccionar Género</option>
+                                    <option value="masculino">Masculino</option>
+                                    <option value="femenino">Femenino</option>
+                                </select>
+                            </div>
+        
+                            <div className="group mb-4">
+                                <i className="fa-regular fa-calendar icon"></i>
+                                <input
+                                    type="date"
+                                    name="cumpleaños"
+                                    id="cumpleaños"
+                                    className="input"
+                                    value={cumpleaños}
+                                    onChange={(e) => setCumpleaños(e.target.value)}
+                                    required
+                                    style={{ height: '60px', fontSize: '1.25rem' }}
+                                />
+                            </div>
+        
+                            <div className="group mb-4">
+                                <i className="fa-solid fa-camera icon"></i>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    className="input"
+                                />
+                            </div>
+        
+                            <button
+                                type="submit"
+                                className="btn btn-primary d-inline-flex align-items-center w-100 mt-2"
+                                style={{ height: '60px', fontSize: '1.25rem' }}
+                            >
+                                Actualizar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+};
 
 export default CreateProfileUser;

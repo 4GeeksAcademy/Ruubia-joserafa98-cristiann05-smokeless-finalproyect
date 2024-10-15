@@ -15,11 +15,12 @@ export const Home = () => {
                 <div className="container">
                     <div className="row align-items-center g-10">
                         <div className="col-lg-8 col-md-12 mt-5">
+                            <br></br>
                             <h1 className="ls-tight fw-bolder display-4 text-white mb-4 mt-4 text-wrap" style={{ marginTop: '10px',fontSize: '6rem' }}> {/* Ajusta el tamaño aquí */}
                                 Deja de fumar para siempre...
                             </h1>
                             <p className="w-xl-75 lead text-white text-wrap">
-                                Nuestros coaches especializados utilizan técnicas personalizadas y herramientas probadas para ayudarte a dejar de fumar de forma efectiva y definitiva. Sin importar tu nivel de consumo, estamos aquí para guiarte en cada paso del camino hacia una vida sin cigarrillos.
+                                 Sin importar tu nivel de consumo, estamos aquí para guiarte en cada paso del camino hacia una vida sin cigarrillos.
                             </p>
                         </div>
                         <div className="col-lg-6 col-md-12 align-self-end">
@@ -30,13 +31,8 @@ export const Home = () => {
                                     </button>
                                 </Link>
                                 <Link to="/signup-coach">
-                                    <button className={`register-button btn btn-light`}>
+                                    <button className={`register-button btn btn-dark`}>
                                         REGISTRARSE COMO COACH
-                                    </button>
-                                </Link>
-                                <Link to="/login-selection">
-                                    <button className="btn btn-outline-light">
-                                        YA TENGO UNA CUENTA
                                     </button>
                                 </Link>
                             </div>
@@ -71,7 +67,7 @@ export const Home = () => {
                                         
                                     </div>
                                     <div className="pt-2 pb-3">
-                                        <h5 className="h3 font-display fw-bold text-dark mb-3">Toma la decisión.</h5>
+                                        <h5 className="h3 font-display fw-bold text-dark mb-3">Toma la decisión 🚭</h5>
                                         <p className="text-dark">El primer paso hacia una vida sin humo comienza con una decisión valiente: ¡dejar de fumar! Reconocer la necesidad de un cambio es fundamental para transformar tu vida. Al registrarte en nuestra plataforma, no solo te comprometes contigo mismo, sino que también te abres a un mundo de posibilidades.</p>
                                     </div>
                                 </div>
@@ -84,7 +80,7 @@ export const Home = () => {
                                     
                                     </div>
                                     <div className="pt-2 pb-3">
-                                        <h5 className="h3 font-display fw-bold text-dark  mb-3">Conecta con los mejores profesionales</h5>
+                                        <h5 className="h3 font-display fw-bold text-dark  mb-3">Conecta con los mejores profesionales 🤝</h5>
                                         <p className="text-dark">Te ofrecemos la oportunidad de conectar con coaches especializados que comprenden tus desafíos y están dedicados a guiarte en tu camino para liberarte del tabaco. Estos profesionales cuentan con una variedad de técnicas adaptadas a tus necesidades, asegurando un apoyo personalizado y efectivo.</p>
                                     </div>
                                 </div>
@@ -98,7 +94,7 @@ export const Home = () => {
                                     
                                     </div>
                                     <div className="pt-2 pb-3">
-                                        <h5 className="h3 font-display  text-dark fw-bold mb-3">Disfruta de una Vida Sin Humos</h5>
+                                        <h5 className="h3 font-display  text-dark fw-bold mb-3">Disfruta de una Vida Sin Humos 💪</h5>
                                         <p className="text-dark">Únete a nuestra comunidad y comienza a disfrutar de beneficios inmediatos! Desde más energía hasta una mejor calidad de vida, cada día sin fumar es un paso hacia un futuro más brillante. ¡Regístrate y empieza tu transformación hoy!</p>
                                     </div>
                                 </div>
@@ -126,7 +122,7 @@ export const Home = () => {
                             <div className="col-lg-5 mb-7 mb-lg-0">
                                 <h5 className="h5 mb-3 text-uppercase fw-bolder text-primary">SI ERES UN COACH...</h5>
                                 <h1 className="ls-tight font-display text-dark fw-bolder mb-3">¡CONECTA Y TRANSFORMA!</h1>
-                                <p className="lead mb-5">Convierte tu pasión por ayudar a otros en una carrera exitosa. Únete a nuestra plataforma y aprovecha la oportunidad de conectar con fumadores que buscan cambiar sus vidas. Desarrolla tus habilidades como coach mientras haces una diferencia real en la vida de quienes te rodean. ¡Inscríbete hoy y empieza a transformar vidas, incluyendo la tuya!</p>
+                                <p className="lead mb-5">Convierte tu pasión por ayudar a otros en una carrera exitosa.  sus vidas. ¡Inscríbete hoy y empieza a transformar vidas, incluyendo la tuya!</p>
 
                                 <ul className="list-unstyled mt-6 mb-2">
                                     <li className="py-2 list-item mb-3">
@@ -181,7 +177,7 @@ export const Home = () => {
                                 <div className="col-lg-5 mb-7 mb-lg-0">
                                     <h5 className="h5 mb-3 text-uppercase fw-bolder text-primary">Impulsa el cambio hacia un futuro sin humo...</h5>
                                     <h1 className="ls-tight font-display text-dark fw-bolder mb-3">AYUDA A LAS PERSONAS A ALCANZAR SUS METAS Y DEJAR DE FUMAR DE MANERA EFECTIVA.</h1>
-                                    <p className="lead">Conviértete en el coach que tus clientes necesitan </p>
+                                    <p className="lead">Conviértete en el coach que tus clientes necesitan: </p>
 
                                     <ul className="list-unstyled mt-6 mb-5">
                                         <li className="py-2 list-item mb-3">
@@ -230,7 +226,7 @@ export const Home = () => {
                                 <h1 className="ls-tight fw-bolder display-4 mb-5 text-white">¿Estás listo para comenzar?</h1>
                                 <p className="lead text-white opacity-8 mb-10">¡Da el primer paso hacia tu futuro libre de humo y descubre un mundo de oportunidades! Regístrate ahora y comienza tu transformación.</p>
                                 <div className="mx-n2">
-                                    <button className="btn btn-primary" onClick={() => window.location.href = '/signup-smoker'}>
+                                    <button className="btn btn-light" onClick={() => window.location.href = '/signup-smoker'}>
                                         Comienza tu travesía hoy
                                     </button>
                                 </div>
@@ -287,7 +283,7 @@ export const Home = () => {
                     <div className="row justify-content-center">
                         <div className="col-auto">
                             <p className="text-sm text-muted text-center">
-                                © Copyright 2023 FullStackers - Joserafa98, cristiann05 & Ruubia.
+                                © Copyright 2024 FullStackers - Joserafa98, cristiann05 & Ruubia.
                             </p>
                         </div>
                     </div>
