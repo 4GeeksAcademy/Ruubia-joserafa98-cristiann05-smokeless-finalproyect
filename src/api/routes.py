@@ -400,9 +400,17 @@ def add_solicitud():
         return jsonify({"error": "Datos incompletos"}), 400
 
     try:
+        # Verificar si ya existe una solicitud para el mismo usuario y coach
+        solicitud_existente = Solicitud.query.filter_by(id_usuario=data['id_usuario'], id_coach=data['id_coach']).first()
+
+        if solicitud_existente:
+            return jsonify({"error": "Ya has hecho una solicitud a este coach."}), 400
+
+        # Procesar las fechas
         nueva_fecha_solicitud = datetime.strptime(data['fecha_solicitud'], "%d/%m/%Y").date()
         nueva_fecha_respuesta = datetime.strptime(data['fecha_respuesta'], "%d/%m/%Y").date() if data.get('fecha_respuesta') else None
         
+        # Crear nueva solicitud si no existe
         new_solicitud = Solicitud(
             id_usuario=data['id_usuario'],
             id_coach=data['id_coach'],
@@ -419,6 +427,7 @@ def add_solicitud():
 
     except ValueError:
         return jsonify({"error": "Formato de fecha inválido"}), 400
+
 
 # Actualizar una solicitud específica
 @api.route('/solicitudes/<int:id>', methods=['PUT'])
