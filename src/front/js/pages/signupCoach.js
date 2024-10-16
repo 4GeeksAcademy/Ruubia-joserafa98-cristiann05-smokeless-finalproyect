@@ -72,7 +72,9 @@ const SignupCoach = () => {
                     <a className="d-inline-block d-lg-none mb-10" href="/pages/dashboard.html">
                         <img src={logoOscuro} alt="Logo Oscuro" className="logo w-25" />
                     </a>
-                    <h1 className="ls-tight fw-bolder h1">Sign up here</h1> 
+                    <h1 className="ls-tight fw-bolder h1">Sign up here</h1>
+                    <p>Already have an account? <a href="/login-coach" className="text-primary">Log in here</a>.</p>
+ 
                 </div>
 
 

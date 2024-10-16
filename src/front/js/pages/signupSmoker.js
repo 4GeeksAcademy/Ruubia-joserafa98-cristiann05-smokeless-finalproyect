@@ -76,6 +76,8 @@ const SignupSmoker = () => {
                                 <img src={logoOscuro} alt="Logo Oscuro" className="logo w-25" />
                             </a>
                             <h1 className="ls-tight fw-bolder h1">Sign up here</h1> 
+                            <p>Already have an account? <a href="/login-smoker" className="text-primary">Log in here</a>.</p>
+
                         </div>
 
         

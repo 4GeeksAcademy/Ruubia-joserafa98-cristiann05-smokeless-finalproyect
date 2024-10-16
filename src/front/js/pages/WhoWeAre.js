@@ -20,10 +20,10 @@ export const WhoAreWe = () => {
                         <div className="col-lg-8 col-md-12 mt-5">
                             <br></br>
                             <h1 className="ls-tight fw-bolder display-4 text-white mb-4 mt-4 text-wrap" style={{ marginTop: '10px',fontSize: '6rem' }}> {/* Ajusta el tamaño aquí */}
-                                Conoce al equipo detrás de Smokeless
+                                Conoce al equipo detrás de Smokeless...
                             </h1>
                             <p className="w-xl-75 lead text-white text-wrap mb-5">
-                                 Sin importar tu nivel de consumo, estamos aquí para guiarte en cada paso del camino hacia una vida sin cigarrillos.
+                            Desarrolladores apasionados creando soluciones innovadoras para ayudarte a dejar de fumar.
                             </p>
                         </div>
 
@@ -128,7 +128,7 @@ export const WhoAreWe = () => {
                                         </a>
 
                                         {/* Botón de LinkedIn */}
-                                        <a href="www.linkedin.com/in/beatrizcarmonajurado" target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-lg mx-2">
+                                        <a href="https://www.linkedin.com/in/beatrizcarmonajurado" target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-lg mx-2">
                                             <i className="fa-brands fa-linkedin fa-2x"></i>
                                         </a>
 
