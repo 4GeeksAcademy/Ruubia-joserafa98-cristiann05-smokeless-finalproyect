@@ -10,7 +10,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 nombre: '',
                 genero: '',
                 cumpleaños: '',
-                foto_usuario: ''
+                public_id: ''
             },
             loggedInCoach: {
                 id: null,
@@ -123,7 +123,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                                 nombre: data.nombre_usuario || '', // Asegúrate de que el servidor envíe este dato
                                 genero: data.genero_usuario || '',
                                 cumpleaños: data.nacimiento_usuario || '',
-                                foto_usuario: data.foto_usuario || '',
+                                public_id: data.public_id || '',
                             },
                             isAuthenticated: true,
                         });
@@ -199,7 +199,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             numerocigarro_usuario: data.numerocigarro_usuario,
                             periodicidad: data.periodicidad,
                             tipo_consumo: data.tipo_consumo,
-                            foto_usuario: data.foto_usuario,
+                            public_id: data.public_id,
                         });
 
                         return true;
@@ -551,7 +551,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         ...prevStore,
                         loggedInUser: {
                             ...prevStore.loggedInUser,
-                            foto_usuario: data.secure_url,
+                            public_id: data.secure_url,
                         }
                     }));
 

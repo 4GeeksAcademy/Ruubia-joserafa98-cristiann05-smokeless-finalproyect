@@ -1,56 +1,75 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useStore } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
-import "../../styles/CreateProfileUser.css"; // Importar el CSS específico
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css"; // Asegúrate de que este CSS esté importado
 import logo from '../../img/logos/logoblanco.png';
 import logoOscuro from '../../img/logos/logonegro.png';
 
 const CreateProfileUser = () => {
-    const { store, actions } = useStore(); // Acceso al store y acciones
+    const { store, actions } = useStore();
     const [nombre_usuario, setnombre_usuario] = useState("");
     const [genero, setGenero] = useState("masculino");
-    const [cumpleaños, setCumpleaños] = useState("");
-    const [foto_usuario, setfoto_usuario] = useState(null); // Estado para la imagen
-    const [error, setError] = useState(""); // Manejo de errores
-    const navigate = useNavigate(); // Hook de navegación
+    const [cumpleaños, setCumpleaños] = useState(null);
+    const [urlImagen, setUrlImagen] = useState("");
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
+    const fileInputRef = useRef(null);
 
-    // Efecto para cargar los datos del usuario logueado
     useEffect(() => {
         if (store.loggedInUser) {
-            setnombre_usuario(store.loggedInUser.nombre_usuario || ""); // Cargar nombre
-            setGenero(store.loggedInUser.genero_usuario || "masculino"); // Cargar género
+            setnombre_usuario(store.loggedInUser.nombre_usuario || "");
+            setGenero(store.loggedInUser.genero_usuario || "masculino");
             if (store.loggedInUser.nacimiento_usuario && typeof store.loggedInUser.nacimiento_usuario === 'string') {
-                setCumpleaños(store.loggedInUser.nacimiento_usuario.split("T")[0]); // Cargar cumpleaños
+                setCumpleaños(new Date(store.loggedInUser.nacimiento_usuario));
             }
-            setfoto_usuario(store.loggedInUser.foto_usuario || null); // Cargar la imagen si existe
+            setUrlImagen(store.loggedInUser.public_id || "");
         }
-    }, [store.loggedInUser]); // Efecto depende de los cambios en loggedInUser
+    }, [store.loggedInUser]);
 
-    // Manejar la selección de la imagen
-    const handleImageUpload = (e) => {
-        setfoto_usuario(e.target.files[0]); // Guardar la imagen seleccionada
+    const changeUploadImage = async (e) => {
+        const file = e.target.files[0];
+        const data = new FormData();
+        data.append("file", file);
+        data.append("upload_preset", "Presents_react");
+        data.append("cloud_name", "dhieuyort");
+    
+        try {
+            const response = await fetch("https://api.cloudinary.com/v1_1/dhieuyort/image/upload", {
+                method: "POST",
+                body: data
+            });
+    
+            const result = await response.json();
+            console.log(result);
+    
+            if (response.ok) {
+                setUrlImagen(result.secure_url);
+                localStorage.setItem("profileImageUrl", result.secure_url); // Guardar en localStorage
+            } else {
+                setError("Error al subir la imagen. Inténtalo de nuevo.");
+            }
+        } catch (error) {
+            console.error("Error al subir la imagen:", error);
+            setError("Error al subir la imagen. Inténtalo nuevamente.");
+        }
+    };
+    
+
+    const handleDeleteImage = () => {
+        setUrlImagen("");
+        fileInputRef.current.value = "";
     };
 
-    // Función para verificar si el usuario es mayor de edad
     const isAdult = (birthdate) => {
         const today = new Date();
-        const birthDate = new Date(birthdate);
-        const age = today.getFullYear() - birthDate.getFullYear();
-        const monthDifference = today.getMonth() - birthDate.getMonth();
-        
-        // Si el cumpleaños no ha ocurrido este año aún, restamos un año
-        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-            return age >= 18; // El usuario debe ser mayor de 18
-        }
-        return age >= 18;
+        return birthdate <= today.setFullYear(today.getFullYear() - 18); // Verificar si el usuario es mayor de 18
     };
 
-    // Manejar el envío del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(""); // Limpiar errores previos
+        setError("");
 
-        // Validación de que el usuario esté logueado
         if (!store.loggedInUser) {
             setError("No hay usuario logueado. Por favor, inicia sesión.");
             return;
@@ -62,41 +81,24 @@ const CreateProfileUser = () => {
             return;
         }
 
-        // Subir la imagen a Cloudinary si se seleccionó una
-        let imageUrl = store.loggedInUser.foto_usuario; // Si ya tiene una imagen, se conserva
-        if (foto_usuario) {
-            const uploadResult = await actions.uploadSmokerImage(foto_usuario); // Subir imagen
-            console.log(uploadResult); // Imprime el resultado de Cloudinary para verificar los campos
-
-            if (uploadResult && uploadResult.secure_url) {
-                imageUrl = uploadResult.secure_url; // Usar la URL de la imagen subida
-            } else {
-                setError("Error al subir la imagen. Inténtalo de nuevo.");
-                return;
-            }
-        }
-
-        // Datos a enviar al actualizar perfil
         const updatedData = {
-            nombre_usuario: nombre_usuario,
+            nombre_usuario,
             genero_usuario: genero,
-            nacimiento_usuario: cumpleaños,
-            foto_usuario: imageUrl, // Guardar la URL de la imagen en la base de datos
+            nacimiento_usuario: cumpleaños.toISOString().split("T")[0],
+            public_id: urlImagen,
         };
 
         console.log("Datos enviados en el perfil:", updatedData);
 
-        // Llamada a la acción para actualizar el perfil
         const success = await actions.updateProfile(store.loggedInUser.id, updatedData);
         if (success) {
             alert("Perfil actualizado con éxito");
-            navigate('/question-config-smoker'); // Navegar a la siguiente pantalla
+            navigate('/question-config-smoker');
         } else {
             alert("Error al actualizar el perfil");
         }
     };
 
-    // Si no hay usuario logueado, muestra un mensaje
     if (!store.loggedInUser) {
         return <div>No hay usuario logueado. Por favor, inicia sesión.</div>;
     }
@@ -164,37 +166,55 @@ const CreateProfileUser = () => {
                                     <option value="femenino">Femenino</option>
                                 </select>
                             </div>
-        
-                            <div className="group mb-4">
+
+                            <div className="group mb-4 position-relative">
                                 <i className="fa-regular fa-calendar icon"></i>
-                                <input
-                                    type="date"
-                                    name="cumpleaños"
-                                    id="cumpleaños"
+                                <DatePicker
+                                    selected={cumpleaños}
+                                    onChange={(date) => setCumpleaños(date)}
+                                    dateFormat="yyyy-MM-dd"
                                     className="input"
-                                    value={cumpleaños}
-                                    onChange={(e) => setCumpleaños(e.target.value)}
                                     required
+                                    placeholderText="Fecha de Cumpleaños"
+                                    maxDate={new Date()}
+                                    showYearDropdown
+                                    yearDropdownItemNumber={100}
+                                    scrollableYearDropdown
+                                    style={{ height: '60px', fontSize: '1.25rem', paddingLeft: '40px' }} // Añadir padding para el ícono
+                                />
+                            </div>
+
+                            <div className="group mb-4">
+                                <i className="fa-solid fa-image icon"></i>
+                                <input
+                                    id="file-upload"
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={changeUploadImage}
+                                    required
+                                    className="input"
                                     style={{ height: '60px', fontSize: '1.25rem' }}
                                 />
                             </div>
-        
-                            <div className="group mb-4">
-                                <i className="fa-solid fa-camera icon"></i>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleImageUpload}
-                                    className="input"
-                                />
-                            </div>
-        
-                            <button
-                                type="submit"
-                                className="btn btn-primary d-inline-flex align-items-center w-100 mt-2"
-                                style={{ height: '60px', fontSize: '1.25rem' }}
-                            >
-                                Actualizar
+
+                            {urlImagen && (
+                                <div className="mb-4 text-center">
+                                    <img src={urlImagen} alt="Imagen subida" width="200" className="img-preview" />
+                                    <button 
+                                        type="button" 
+                                        onClick={handleDeleteImage} 
+                                        className="btn btn-light mt-2"
+                                        style={{ border: 'none', background: 'transparent' }}
+                                    >
+                                        <i className="fa-solid fa-trash" style={{ color: 'red' }}></i>
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Botón para guardar cambios con los estilos especificados */}
+                            <button className="btn btn-dark w-100" type="submit" style={{ marginTop: '10px', fontSize: '1.25rem', padding: '15px' }}>
+                                Guardar Cambios
                             </button>
                         </form>
                     </div>

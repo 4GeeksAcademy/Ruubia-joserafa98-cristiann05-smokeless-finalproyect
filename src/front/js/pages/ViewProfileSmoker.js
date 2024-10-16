@@ -46,9 +46,11 @@ const UserProfile = () => {
     if (!userData) {
         return <p className="text-center text-gray-500">No se pudo cargar el perfil del usuario.</p>;
     }
-const toggleTheme = () => {
+
+    const toggleTheme = () => {
         setIsDarkMode(!isDarkMode); // Alterna entre modo oscuro y claro
     };
+
     return (
         <div className={`flex min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
             <Sidebar active="Lista de Coaches" isDarkMode={isDarkMode} handleNavigation={(item) => navigate(item.path)} /> {/* Sidebar con navegación */}
@@ -59,8 +61,9 @@ const toggleTheme = () => {
                     <div className="bg-gray-800 shadow-lg rounded-xl p-8 w-full max-w-lg border border-gray-700"> {/* Fondo de tarjeta más oscuro */}
                         <h2 className="text-center text-3xl font-bold mb-6 text-gray-300">Perfil de Usuario</h2> {/* Texto claro */}
                         <div className="flex flex-col items-center mb-8">
-                            {userData.foto_usuario ? (
-                                <img src={userData.foto_usuario} alt="Foto de usuario" className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-lg mb-4" />
+                            {userData.public_id ? (
+                                // Usar la URL completa de la imagen almacenada en userData.foto_usuario
+                                <img src={userData.public_id} alt="Foto de usuario" className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-lg mb-4" />
                             ) : (
                                 <div className="w-32 h-32 rounded-full border-4 border-gray-500 flex items-center justify-center mb-4 shadow-lg"> {/* Bordes más oscuros */}
                                     <span className="text-gray-400 text-xl">Sin foto</span> {/* Texto claro */}
@@ -108,7 +111,6 @@ const toggleTheme = () => {
             </div>
         </div>  
     );
-    
 };
 
 export default UserProfile;
