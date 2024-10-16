@@ -7,6 +7,7 @@ import Navbar from "../component/navbar";
 import '../../styles/homePage.css';
 import Cristian from "../../img/logos/imagenesweb/Cristian.jpg"
 import Jose from "../../img/logos/imagenesweb/Jose.jpeg"
+import Beatriz from "../../img/logos/imagenesweb/Beatriz.jpg"
 
 export const WhoAreWe = () => {
 
@@ -21,16 +22,11 @@ export const WhoAreWe = () => {
                             <h1 className="ls-tight fw-bolder display-4 text-white mb-4 mt-4 text-wrap" style={{ marginTop: '10px',fontSize: '6rem' }}> {/* Ajusta el tamaño aquí */}
                                 Conoce al equipo detrás de Smokeless
                             </h1>
-                            <p className="w-xl-75 lead text-white text-wrap">
+                            <p className="w-xl-75 lead text-white text-wrap mb-5">
                                  Sin importar tu nivel de consumo, estamos aquí para guiarte en cada paso del camino hacia una vida sin cigarrillos.
                             </p>
                         </div>
-                        <br></br>
-                    </div>
-                    <div className="mt-5 text-center">
-                        <Atropos className="my-atropos" activeOffset={40} shadowScale={1.05}>
-                            <img className="atropos-image" src={foto} data-atropos-offset="0" alt="3D Effect" />
-                        </Atropos>
+
                     </div>
                 </div>
             </div>
@@ -122,16 +118,29 @@ export const WhoAreWe = () => {
                         <div className="row justify-content-between align-items-center">
                             {/* Columna izquierda: Título, Subtítulo y Lista */}
                             <div className="col-lg-5 mb-7 mb-lg-0">
-                                <h5 className="h5 mb-3 text-uppercase fw-bolder text-primary">Beatriz Carmona</h5>
+                                <h5 className="h5 mb-3 text-uppercase fw-bolder text-primary">Beatriz Carmona Jurado</h5>
                                 <h1 className="ls-tight font-display text-dark fw-bolder mb-3">Full Stack Developer</h1>
-                                <p className="lead mb-5">Soy Cristian Ayala Sánchez, un Full Stack Developer apasionado por la tecnología y la creación de soluciones web. Me encanta enfrentar desafíos y aprender constantemente nuevas habilidades en el desarrollo de software. Siempre busco formas de mejorar mis conocimientos y de aplicar lo que aprendo en proyectos significativos.
+                                <p className="lead mb-5">Soy Beatriz Carmona, una entusiasta de la tecnología y el desarrollo de software. Actualmente trabajo como Técnico de Operaciones en un Centro de Datos (DCO L4) en AWS, Dublín. Me encanta aprender y enfrentar nuevos desafíos cada día, lo que me ha llevado a inscribirme en un Bootcamp de Full Stack Software Developer en 4Geeks Academy.
+                                Mis principales fortalezas son el trabajo en equipo, la resolución de problemas y mi capacidad autodidacta. Busco seguir creciendo como desarrolladora y contribuir a proyectos con impacto positivo.</p>
+                                <div className="social-buttons d-flex mt-4">
+                                        <a href="https://github.com/Ruubia" target="_blank" rel="noopener noreferrer" className="btn btn-outline-dark btn-lg mx-2">
+                                            <i className="fa-brands fa-github fa-2x"></i>
+                                        </a>
 
-                                En mi tiempo libre, disfruto explorar nuevas tendencias en tecnología y colaborar con otros desarrolladores. Mi objetivo es seguir creciendo en mi carrera y contribuir a proyectos que impacten positivamente en la sociedad.</p>
+                                        {/* Botón de LinkedIn */}
+                                        <a href="www.linkedin.com/in/beatrizcarmonajurado" target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-lg mx-2">
+                                            <i className="fa-brands fa-linkedin fa-2x"></i>
+                                        </a>
 
+                                        {/* Botón de Instagram */}
+                                        <a href="https://www.instagram.com/ruubi_a/" target="_blank" rel="noopener noreferrer" className="btn btn-outline-danger btn-lg mx-2">
+                                            <i className="fa-brands fa-instagram fa-2x"></i>
+                                        </a>
+                                    </div>
                                
                             </div>
                             <div className="col-lg-6">
-                                <img src={Cristian} className="img-fluid rounded highlight-image" alt="Cristian Ayala Sánchez" />
+                                <img src={Beatriz} className="img-fluid rounded highlight-image" alt="Cristian Ayala Sánchez" />
                             </div>
                         </div>
                     </div>
