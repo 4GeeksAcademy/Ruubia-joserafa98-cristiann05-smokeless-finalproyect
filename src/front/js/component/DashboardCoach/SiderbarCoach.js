@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, Users, FileQuestion, MessageSquare, Lightbulb, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, FileQuestion, MessageSquare, Menu, X } from 'lucide-react';
 import logoblanco from '../../../img/logos/logoblanco.png';
 import logonegro from '../../../img/logos/logonegro.png';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +9,6 @@ const navItems = [
   { name: 'Lista de Clientes', icon: Users, path: '/Dashboard-Coach/clientes' },
   { name: 'Solicitudes', icon: FileQuestion, path: '/Dashboard-Coach/solicitudes' },
   { name: 'Mensajes', icon: MessageSquare, path: '/Dashboard-Coach/mensajes' },
-  { name: 'Consejos', icon: Lightbulb, path: '/Dashboard-Coach/consejos' },
 ];
 
 export default function Sidebar({ active, isDarkMode, handleNavigation }) {
