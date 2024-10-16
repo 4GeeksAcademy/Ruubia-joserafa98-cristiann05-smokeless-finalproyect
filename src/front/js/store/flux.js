@@ -661,11 +661,22 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(newSolicitud),
                     });
-                    // Resto del código...
+            
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        alert(errorData.error); // Mostrar mensaje de error si la solicitud ya existe
+                        return;
+                    }
+            
+                    const data = await response.json();
+                    console.log("Solicitud creada:", data);
+                    // Puedes manejar el estado de éxito aquí, si es necesario.
+                    
                 } catch (error) {
-                    console.error("Error adding solicitud:", error);
+                    console.error("Error al agregar solicitud:", error);
                 }
             },
+            
 
 
             // Actualizar una solicitud específica
