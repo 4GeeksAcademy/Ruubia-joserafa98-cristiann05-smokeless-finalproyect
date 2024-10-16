@@ -143,17 +143,23 @@ def create_profile(user_id):
     if not user:
         return jsonify({"msg": "Usuario no encontrado"}), 404
 
+    # Obtener datos del JSON
     nombre = request.json.get('nombre_usuario', None)
     genero = request.json.get('genero_usuario', None)
     cumpleaños = request.json.get('nacimiento_usuario', None)
+    public_id = request.json.get('public_id', None)  # Añadir esta línea
 
+    # Actualizar los campos del usuario si están presentes
     if nombre:
         user.nombre_usuario = nombre
     if genero:
         user.genero_usuario = genero
     if cumpleaños:
         user.nacimiento_usuario = datetime.strptime(cumpleaños, '%Y-%m-%d').date()
+    if public_id:  # Actualiza public_id si está presente
+        user.public_id = public_id  # Asegúrate de que el modelo tenga este campo definido
 
+    # Guardar cambios en la base de datos
     db.session.commit()
 
     return jsonify({"msg": "Perfil actualizado exitosamente", "user": user.serialize()}), 200
@@ -197,13 +203,16 @@ def create_profile_coach(coach_id):
     # Agrega log aquí para verificar los datos recibidos
     print("Datos recibidos:", request.json)  # Muestra los datos que se están recibiendo
 
-    nombre = request.json.get('nombre_coach')
-    genero = request.json.get('genero_coach')
-    cumpleaños = request.json.get('nacimiento_coach')
-    direccion = request.json.get('direccion')  # Nueva entrada para dirección
-    latitud = request.json.get('latitud')  # Nueva entrada para latitud
-    longitud = request.json.get('longitud')  # Nueva entrada para longitud
+    # Obtener datos del JSON
+    nombre = request.json.get('nombre_coach', None)
+    genero = request.json.get('genero_coach', None)
+    cumpleaños = request.json.get('nacimiento_coach', None)
+    direccion = request.json.get('direccion', None)  # Nueva entrada para dirección
+    latitud = request.json.get('latitud', None)  # Nueva entrada para latitud
+    longitud = request.json.get('longitud', None)  # Nueva entrada para longitud
+    public_id = request.json.get('public_id', None)  # Añadir esta línea para obtener el public_id
 
+    # Actualizar los campos del coach si están presentes
     if nombre:
         coach.nombre_coach = nombre
     if genero:
@@ -228,13 +237,15 @@ def create_profile_coach(coach_id):
             coach.longitud = float(longitud)
         except ValueError:
             return jsonify({"msg": "Longitud inválida. Debe ser un número válido."}), 400
+    
+    # Actualiza el public_id si está presente en la solicitud
+    if public_id:
+        coach.public_id = public_id  # El public_id se actualiza si está presente
 
     # Guarda los cambios en la base de datos
     db.session.commit()
 
     return jsonify({"msg": "Perfil del coach actualizado exitosamente", "coach": coach.serialize()}), 200
-
-
 
 # Obtener todos los coaches (GET)
 @api.route('/coaches', methods=['GET'])
@@ -345,72 +356,6 @@ def get_consuming(tiposconsumo_id):
         return jsonify({"error": "Tipo de consumo no encontrado"}), 404
     return jsonify(tiposconsumo.serialize()), 200
 
-# Obtener las ubicaciones de todos los coaches (GET)
-@api.route('/coaches/locations', methods=['GET'])
-def get_coaches_locations():
-    coaches = Coach.query.all()
-    coaches_data = [
-        {
-            "id": coach.id,
-            "nombre": coach.nombre_coach,
-            "latitud": coach.latitud,
-            "longitud": coach.longitud,
-            "direccion": coach.direccion
-        }
-        for coach in coaches if coach.latitud and coach.longitud
-    ]
-    return jsonify(coaches_data), 200
-
-# Agregar o actualizar la ubicación de un coach (POST)
-@api.route('/coaches/locations', methods=['POST'])
-def add_or_update_coach_location():
-    data = request.json
-    coach_id = data.get('coach_id')
-    latitud = data.get('latitud')
-    longitud = data.get('longitud')
-    direccion = data.get('direccion')
-
-    coach = Coach.query.get(coach_id)
-    if not coach:
-        return jsonify({"msg": "Coach no encontrado"}), 404
-
-    # Actualiza los campos del coach
-    coach.latitud = latitud
-    coach.longitud = longitud
-    coach.direccion = direccion
-
-    db.session.commit()
-    return jsonify({"msg": "Ubicación del coach actualizada", "coach_id": coach.id}), 201
-
-# Actualizar la ubicación de un coach (PUT)
-@api.route('/coaches/locations/<int:coach_id>', methods=['PUT'])
-def update_coach_location(coach_id):
-    coach = Coach.query.get(coach_id)
-    if not coach:
-        return jsonify({"msg": "Coach no encontrado"}), 404
-
-    data = request.json
-    coach.latitud = data.get('latitud', coach.latitud)
-    coach.longitud = data.get('longitud', coach.longitud)
-    coach.direccion = data.get('direccion', coach.direccion)
-
-    db.session.commit()
-    return jsonify({"msg": "Ubicación del coach actualizada", "coach_id": coach.id}), 200
-
-# Eliminar la ubicación de un coach (DELETE)
-@api.route('/coaches/locations/<int:coach_id>', methods=['DELETE'])
-def delete_coach_location(coach_id):
-    coach = Coach.query.get(coach_id)
-    if not coach:
-        return jsonify({"msg": "Coach no encontrado"}), 404
-
-    coach.latitud = None
-    coach.longitud = None
-    coach.direccion = None
-    db.session.commit()
-
-    return jsonify({"msg": "Ubicación del coach eliminada", "coach_id": coach.id}), 204
-
 # Inicializa la aplicación Flask
 def create_app():
     app = Flask(__name__)
@@ -456,9 +401,17 @@ def add_solicitud():
         return jsonify({"error": "Datos incompletos"}), 400
 
     try:
+        # Verificar si ya existe una solicitud para el mismo usuario y coach
+        solicitud_existente = Solicitud.query.filter_by(id_usuario=data['id_usuario'], id_coach=data['id_coach']).first()
+
+        if solicitud_existente:
+            return jsonify({"error": "Ya has hecho una solicitud a este coach."}), 400
+
+        # Procesar las fechas
         nueva_fecha_solicitud = datetime.strptime(data['fecha_solicitud'], "%d/%m/%Y").date()
         nueva_fecha_respuesta = datetime.strptime(data['fecha_respuesta'], "%d/%m/%Y").date() if data.get('fecha_respuesta') else None
         
+        # Crear nueva solicitud si no existe
         new_solicitud = Solicitud(
             id_usuario=data['id_usuario'],
             id_coach=data['id_coach'],
@@ -475,6 +428,7 @@ def add_solicitud():
 
     except ValueError:
         return jsonify({"error": "Formato de fecha inválido"}), 400
+
 
 # Actualizar una solicitud específica
 @api.route('/solicitudes/<int:id>', methods=['PUT'])
@@ -510,8 +464,6 @@ def delete_solicitud(id):
     db.session.delete(solicitud)
     db.session.commit()
     return jsonify({"message": "Solicitud eliminada exitosamente"}), 200
-
-
 
 # Ruta protegida con JWT
 @api.route('/protected', methods=['GET'])

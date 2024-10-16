@@ -25,6 +25,8 @@ export const WhoAreWe = () => {
                             <p className="w-xl-75 lead text-white text-wrap mb-5">
                             Desarrolladores apasionados creando soluciones innovadoras para ayudarte a dejar de fumar.
                             </p>
+                            <br />
+                            <br />
                         </div>
 
                     </div>

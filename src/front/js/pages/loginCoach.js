@@ -59,6 +59,7 @@ const LoginCoach = () => {
                         coachInfo.genero_coach &&
                         coachInfo.direccion &&
                         coachInfo.latitud &&
+                        coachInfo.public_id &&
                         coachInfo.longitud;
 
                     if (hasRequiredInfo) {

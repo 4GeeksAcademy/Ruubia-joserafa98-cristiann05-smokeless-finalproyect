@@ -10,7 +10,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 nombre: '',
                 genero: '',
                 cumpleaños: '',
-                foto_usuario: ''
+                public_id: ''
             },
             loggedInCoach: {
                 id: null,
@@ -201,7 +201,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             numerocigarro_usuario: data.numerocigarro_usuario,
                             periodicidad: data.periodicidad,
                             tipo_consumo: data.tipo_consumo,
-                            foto_usuario: data.foto_usuario,
+                            public_id: data.public_id,
                         });
 
                         return true;
@@ -553,7 +553,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         ...prevStore,
                         loggedInUser: {
                             ...prevStore.loggedInUser,
-                            foto_usuario: data.secure_url,
+                            public_id: data.secure_url,
                         }
                     }));
 
@@ -663,11 +663,22 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(newSolicitud),
                     });
-                    // Resto del código...
+            
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        alert(errorData.error); // Mostrar mensaje de error si la solicitud ya existe
+                        return;
+                    }
+            
+                    const data = await response.json();
+                    console.log("Solicitud creada:", data);
+                    // Puedes manejar el estado de éxito aquí, si es necesario.
+                    
                 } catch (error) {
-                    console.error("Error adding solicitud:", error);
+                    console.error("Error al agregar solicitud:", error);
                 }
             },
+            
 
 
             // Actualizar una solicitud específica

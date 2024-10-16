@@ -1,47 +1,75 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Atropos from 'atropos/react'; // Importa Atropos
-import 'atropos/css'; // Importa los estilos de Atropos
-import foto from '../../img/logos/imagenesweb/prueba.png';
+import foto from '../../img/logos/imagenesweb/nuevafoto.jpg';
 import Navbar from "../component/navbar";
 import '../../styles/homePage.css';
+import { Cigarette, ThumbsUp, TrendingUp } from "lucide-react"
 
 export const Home = () => {
-
     return (
         <>
             <div className={`pt-5 pb-4 pt-lg-56 pb-lg-0 mt-n40 position-relative gradient-bottom-right start-indigo middle-purple end-yellow`}>
                 <Navbar />
                 <div className="container">
                     <div className="row align-items-center g-10">
-                        <div className="col-lg-8 col-md-12 mt-5">
+                        <div className="col-lg-7 col-md-12 mt-5">
                             <br></br>
-                            <h1 className="ls-tight fw-bolder display-4 text-white mb-4 mt-4 text-wrap" style={{ marginTop: '10px',fontSize: '6rem' }}> {/* Ajusta el tamaño aquí */}
+                            <h1 className="animate-title ls-tight fw-bolder display-4 text-white mb-4 mt-4 text-wrap" style={{ marginTop: '10px', fontSize: '6rem' }}>
                                 Deja de fumar para siempre...
                             </h1>
                             <p className="w-xl-75 lead text-white text-wrap">
-                                 Sin importar tu nivel de consumo, estamos aquí para guiarte en cada paso del camino hacia una vida sin cigarrillos.
+                                Sin importar tu nivel de consumo, estamos aquí para guiarte en cada paso del camino hacia una vida sin cigarrillos.
                             </p>
-                        </div>
-                        <div className="col-lg-6 col-md-12 align-self-end">
-                            <div className="hstack gap-3 justify-content-lg-end mt-4">
+                            <div className="hstack gap-3 mt-4">
                                 <Link to="/signup-smoker">
-                                    <button className={`register-button btn btn-light`}>
-                                        REGISTRARSE COMO FUMADOR
+                                    <button className={`register-button-1 btn`}>
+                                        <span className="transition"></span>
+                                        <span className="gradient"></span>
+                                        <span className="label">REGISTRARSE COMO FUMADOR</span>
                                     </button>
                                 </Link>
                                 <Link to="/signup-coach">
-                                    <button className={`register-button btn btn-dark`}>
-                                        REGISTRARSE COMO COACH
+                                    <button className={`register-button-2 btn btn-dark`}>
+                                        <span className="transition"></span>
+                                        <span className="gradient"></span>
+                                        <span className="label">REGISTRARSE COMO COACH</span>
                                     </button>
                                 </Link>
                             </div>
                         </div>
+                        <div className="col-lg-5 col-md-12 mt-5">
+                            <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl m-4 transition-all duration-300 ease-in-out hover:shadow-xl" style={{marginLeft: '50px'}}>
+                                <div className="md:flex">
+                                    <div className="md:shrink-0 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-4">
+                                        <Cigarette className="h-20 w-20 text-white" strokeWidth={1.5} />
+                                    </div>
+                                    <div className="p-4">
+                                        <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Salud y Bienestar</div>
+                                        <h2 className="block mt-1 text-2xl leading-tight font-bold text-black">Deja de Fumar Hoy</h2>
+                                        <p className="mt-2 text-gray-500">Empieza tu viaje hacia una vida más saludable y libre de humo. ¡Tú puedes lograrlo! 💪</p>
+                                        <div className="mt-4 flex justify-between items-center">
+                                            <div className="flex items-center text-green-500">
+                                                <ThumbsUp className="h-5 w-5 mr-1" />
+                                                <span className="text-sm font-medium">98% de éxito</span>
+                                            </div>
+                                            <div className="flex items-center text-blue-500">
+                                                <TrendingUp className="h-5 w-5 mr-1" />
+                                                <span className="text-sm font-medium">Mejora tu salud</span>
+                                            </div>
+                                        </div>
+                                        <Link to="/signup-smoker">
+                                        <button className="mt-6 w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50">
+                                            Comienza Ahora 🚀
+                                        </button>
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div className="mt-5 text-center">
-                        <Atropos className="my-atropos" activeOffset={40} shadowScale={1.05}>
-                            <img className="atropos-image" src={foto} data-atropos-offset="0" alt="3D Effect" />
-                        </Atropos>
+
+                    <div className="mt-5 text-center imagendashboard-container">
+                        <img className="imagendashboard" src={foto} alt="Dashboard" />
                     </div>
                 </div>
             </div>
@@ -63,8 +91,8 @@ export const Home = () => {
                             <div className="card shadow-none border-0">
                                 <div className="card-body p-7">
                                     <div className="mt-4 mb-7 mx-3">
-                        
-                                        
+
+
                                     </div>
                                     <div className="pt-2 pb-3">
                                         <h5 className="h3 font-display fw-bold text-dark mb-3">Toma la decisión 🚭</h5>
@@ -77,7 +105,7 @@ export const Home = () => {
                             <div className="card shadow-none border-0">
                                 <div className="card-body p-7">
                                     <div className="mt-4 mb-7 mx-3">
-                                    
+
                                     </div>
                                     <div className="pt-2 pb-3">
                                         <h5 className="h3 font-display fw-bold text-dark  mb-3">Conecta con los mejores profesionales 🤝</h5>
@@ -90,8 +118,8 @@ export const Home = () => {
                             <div className="card shadow-none border-0">
                                 <div className="card-body p-7">
                                     <div className="mt-4 mb-7 mx-3">
-                                        
-                                    
+
+
                                     </div>
                                     <div className="pt-2 pb-3">
                                         <h5 className="h3 font-display  text-dark fw-bold mb-3">Disfruta de una Vida Sin Humos 💪</h5>
@@ -256,9 +284,9 @@ export const Home = () => {
                         <div className="col-auto">
                             <ul className="nav mx-n4">
                                 <li className="nav-item">
-                                <a href="https://github.com/4GeeksAcademy/Ruubia-joserafa98-cristiann05-smokeless-finalproyect" className="nav-link text-lg text-muted text-primary-hover" target="_blank" rel="noopener noreferrer">
-                                    <i className="fa-brands fa-github fa-2x"></i>
-                                </a>
+                                    <a href="https://github.com/4GeeksAcademy/Ruubia-joserafa98-cristiann05-smokeless-finalproyect" className="nav-link text-lg text-muted text-primary-hover" target="_blank" rel="noopener noreferrer">
+                                        <i className="fa-brands fa-github fa-2x"></i>
+                                    </a>
 
                                 </li>
                                 <li className="nav-item">

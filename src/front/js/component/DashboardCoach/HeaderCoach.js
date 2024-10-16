@@ -1,18 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Sun, Moon, User, Settings, LogOut, ChevronDown } from 'lucide-react';
-import { useStore } from '../../store/appContext';
-import { useNavigate } from 'react-router-dom';
+import { useStore } from '../../store/appContext'; 
+import { useNavigate } from 'react-router-dom'; 
 
 export default function Header({ active, isDarkMode, toggleTheme }) {
   const { store, actions } = useStore();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [userProfileImage, setUserProfileImage] = useState(""); // Estado para almacenar la imagen del perfil
+  const [loading, setLoading] = useState(true); // Estado para mostrar el indicador de carga
   const profileRef = useRef(null);
   const navigate = useNavigate();
 
+  // Función para alternar el menú de perfil
   const toggleProfile = () => {
     setIsProfileOpen(!isProfileOpen);
   };
 
+  // Cerrar el menú si se hace clic fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -21,37 +25,74 @@ export default function Header({ active, isDarkMode, toggleTheme }) {
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
-  // Verificar la autenticación al montar el componente
+  // Obtener el perfil del coach y manejar errores
   useEffect(() => {
-    const token = localStorage.getItem('jwtTokenCoach');
-    // Solo redirige si no hay token
-    if (!token && !store.isAuthenticated) {
-      navigate("/");
-    }
-  }, [navigate, store.isAuthenticated]); // Dependencias actualizadas
+    const fetchCoachProfile = async () => {
+      const coachId = localStorage.getItem('coachId'); // Obtenemos el ID del coach
+      if (coachId) {
+        const apiUrl = `${process.env.BACKEND_URL}/api/coaches/${coachId}`; // URL del API del coach
+        try {
+          const response = await fetch(apiUrl, {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem("jwtTokenCoach")}` // Token de autenticación
+            }
+          });
 
+          if (!response.ok) {
+            throw new Error(`Error en la respuesta del servidor: ${response.status}`);
+          }
+
+          const coachData = await response.json(); // Obtenemos los datos del coach
+          if (coachData && coachData.public_id) {
+            // Verificamos si public_id contiene una URL válida
+            const imageUrl = coachData.public_id.startsWith("https://") 
+                ? coachData.public_id // Usa directamente la URL completa
+                : `https://res.cloudinary.com/dhieuyort/image/upload/${coachData.public_id}.jpg`; // Alternativa si solo se proporciona el public_id
+        
+            console.log('Image URL:', imageUrl); 
+            setUserProfileImage(imageUrl); // Establecemos la imagen del perfil
+          } else {
+            console.error("No public_id found in coach data.");
+            navigate('/question-profile-coach'); // Redirige si no se encuentra public_id
+          }
+
+          setLoading(false);
+        } catch (error) {
+          console.error("Error al obtener los datos del perfil del coach:", error);
+          setLoading(false);
+        }
+      } else {
+        console.warn("No se encontró coachId en localStorage");
+        setLoading(false);
+      }
+    };
+
+    fetchCoachProfile(); // Llama a la función para obtener el perfil del coach
+  }, [navigate]);
+
+  // Función para manejar el cierre de sesión
   const handleLogout = () => {
-    actions.logoutCoach();
-    navigate("/");
+    actions.logoutCoach(); // Llama a la acción de cierre de sesión
+    navigate('/'); // Redirige al inicio
   };
 
+  // Manejar las opciones de menú de perfil
   const handleProfileOptionClick = (option) => {
     setIsProfileOpen(false);
     const coachId = localStorage.getItem('coachId');
     switch (option) {
       case 'profile':
-        if (coachId) {
-          navigate(`/Dashboard-Coach/coach-profile/${coachId}`); 
-        }
+        if (coachId) navigate(`/Dashboard-Coach/coach-profile/${coachId}`); 
         break;
       case 'settings':
-        navigate(`/Dashboard-coach/configuracion/${coachId}`);
+        navigate(`/Dashboard-Coach/configuracion/${coachId}`);
         break;
       case 'logout':
         handleLogout();
@@ -61,6 +102,7 @@ export default function Header({ active, isDarkMode, toggleTheme }) {
     }
   };
 
+  // Renderizado del componente
   return (
     <header className={`p-4 ${isDarkMode ? 'bg-gray-900' : 'bg-white'} shadow-md sticky top-0 z-20`}>
       <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -73,11 +115,12 @@ export default function Header({ active, isDarkMode, toggleTheme }) {
             {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
           <div className="relative" ref={profileRef}>
-            <button
-              onClick={toggleProfile}
-              className="flex items-center space-x-2 focus:outline-none"
-            >
-              <img src="https://api.dicebear.com/6.x/micah/svg?seed=Coach" alt="Perfil" className="h-8 w-8 rounded-full" />
+            <button onClick={toggleProfile} className="flex items-center space-x-2 focus:outline-none">
+              {loading ? (
+                <div className="h-8 w-8 rounded-full bg-gray-300 animate-pulse" /> // Indicador de carga
+              ) : (
+                <img src={userProfileImage} alt="Perfil" className="h-8 w-8 rounded-full" /> // Imagen de perfil
+              )}
               <ChevronDown className="h-4 w-4" />
             </button>
             {isProfileOpen && (

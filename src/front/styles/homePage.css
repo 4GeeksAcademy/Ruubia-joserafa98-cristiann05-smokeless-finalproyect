@@ -1,5 +1,3 @@
-/* homePage.css */
-
 /* Estilo global */
 body {
     margin: 0;
@@ -11,7 +9,6 @@ body {
     background: linear-gradient(to right, #4A90E2, #9013FE); /* Ajusta el gradiente según sea necesario */
     padding: 60px 15px; /* Espaciado en el contenedor principal */
 }
-
 
 /* Ajustes para el texto en pantallas grandes */
 @media (min-width: 1200px) {
@@ -27,10 +24,72 @@ body {
 }
 
 /* Estilo para botones */
-.register-button {
+.register-button-1,
+.register-button-2 {
+    position: relative; /* Para posicionar los elementos pseudo */
     padding: 10px 20px; /* Añadir algo de padding para un mejor aspecto */
     font-size: 1.1rem; 
-    border-radius: 50px;
+    border-radius: 50px; /* Bordes redondeados */
+    font-weight: 500; /* Peso de fuente */
+    border: none; /* Sin borde */
+    overflow: hidden; /* Ocultar desbordamiento */
+    transition: color 0.3s ease, transform 0.3s ease; /* Transiciones para el color del texto y el tamaño */
+    margin-bottom: 40px;
+}
+
+/* Efecto de hover para el botón de Fumador */
+.register-button-1 {
+    background-color: #1f2937; /* Color de fondo por defecto */
+    color: white; /* Color del texto */
+}
+
+.register-button-1:hover {
+    background-color: #1f2937; /* Cambia el fondo a un gris más claro al hacer hover */
+    color: white; /* Mantiene el texto blanco */
+    transform: translateY(-3px); /* Eleva ligeramente el botón */
+}
+
+/* Efecto de hover para el botón de Coach */
+.register-button-2 {
+    background-color: #f7f7f7; /* Color de fondo por defecto */
+    color: black; /* Color del texto */
+}
+
+.register-button-2:hover {
+    background-color: #f7f7f7; /* Cambia el fondo a blanco con opacidad */
+    color: #1f2937; /* Cambia el color del texto a gris oscuro */
+    transform: translateY(-3px); /* Eleva ligeramente el botón */
+}
+
+/* Estilo para los spans dentro de los botones */
+.register-button-1 .transition,
+.register-button-1 .gradient,
+.register-button-2 .transition,
+.register-button-2 .gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50px; /* Bordes redondeados */
+    transition: transform 0.5s ease; /* Transición suave para los efectos */
+}
+
+/* Efecto hover para el botón de Fumador */
+.register-button-1:hover .transition {
+    transform: scale(1.15); /* Aumenta ligeramente el tamaño del elemento */
+}
+
+/* Efecto hover para el botón de Coach */
+.register-button-2:hover .transition {
+    transform: scale(1.15); /* Aumenta ligeramente el tamaño del elemento */
+}
+
+/* Estilo para los textos de los botones */
+.register-button-1 .label,
+.register-button-2 .label {
+    position: relative; /* Para que el texto se mantenga en su lugar */
+    z-index: 1; /* Para que el texto esté por encima de otros elementos */
 }
 
 /* Efecto de imagen en Atropos */
@@ -52,6 +111,7 @@ body {
 .align-self-end {
     align-self: flex-end; /* Para alinear correctamente el contenido en la parte inferior */
 }
+
 .card {
     background-color: white !important; /* O el color que prefieras */
     transition: box-shadow 0.3s ease; /* Suaviza la transición */
@@ -72,3 +132,48 @@ body {
 .nav-item {
     align-items: center; /* Centra verticalmente los elementos dentro del item */
 }
+
+/* Definición de la animación */
+@keyframes slideInAndColor {
+    0% {
+        transform: translateY(50px); /* Comienza desplazado hacia abajo */
+        opacity: 0; /* Invisible al inicio */
+        color: #ffcc00; /* Color inicial (amarillo) */
+    }
+    100% {
+        transform: translateY(0); /* Llega a su posición final y se queda ahí */
+        opacity: 1; /* Totalmente visible */
+        color: #ffffff; /* Color final (blanco) */
+    }
+}
+
+/* Aplicar la animación al título */
+.animate-title {
+    animation: slideInAndColor 1.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; 
+    margin-right: 50px; /* Eliminar el margen derecho o ajustar */
+    margin-top: 200px;
+    
+}
+
+
+/* Contenedor de la imagen */
+.imagendashboard-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5rem; /* Espaciado superior general */
+    margin-top: 7rem; /* Aumentar este valor para bajar solo la imagen */
+}
+
+/* Estilo de la imagen */
+/* Estilo para la imagen */
+.imagendashboard {
+    max-width: 100%; /* Asegura que la imagen no exceda el ancho del contenedor */
+    height: auto; /* Mantiene la proporción de la imagen */
+    border: 2px solid rgba(0, 0, 0, 0.1); /* Borde sutil alrededor de la imagen */
+    border-radius: 10px; /* Bordes redondeados para suavizar el aspecto */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil para destacar */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Efecto suave al interactuar */
+    margin-top: 20px; /* Añadir margen superior para bajar solo la imagen */
+}
+
