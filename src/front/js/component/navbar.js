@@ -12,15 +12,9 @@ export default function Navbar() {
         </Link>
         <ul className="flex items-center space-x-8">
           <li>
-            <Link to="/" className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200">
+            <Link to="/about-us" className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200">
               <Home className="w-5 h-5" />
-              <span className="text-sm font-medium">Product</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/" className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200">
-              <BarChart2 className="w-5 h-5" />
-              <span className="text-sm font-medium">Dashboard</span>
+              <span className="text-sm font-medium">About Us</span>
             </Link>
           </li>
           <li>

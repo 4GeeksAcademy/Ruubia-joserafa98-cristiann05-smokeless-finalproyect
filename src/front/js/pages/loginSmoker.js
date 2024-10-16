@@ -3,6 +3,7 @@ import { useStore } from '../store/appContext';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../img/logos/logoblanco.png';
 import logoOscuro from '../../img/logos/logonegro.png';
+import { Link } from "react-router-dom";
 
 // Componente que maneja el login
 const LoginSmoker = () => {
@@ -129,7 +130,9 @@ const LoginSmoker = () => {
                 <div className="p-12 py-xl-10 px-xl-20">
                     {/* Aquí puedes colocar tu logo */}
                     <div className="d-block">
-                        <img src={logo} alt="Logo" className="logo" />
+                        <Link to="/">
+                            <img src={logo} alt="Logo" className="logo" />
+                        </Link>
                     </div>
 
                     {/* Ajustes en el título y subtítulo */}

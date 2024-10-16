@@ -142,7 +142,7 @@ const ChatSmoker = () => {
                                         <li
                                             key={coach.id}
                                             onClick={() => setSelectedCoachId(coach.id)}
-                                            className={`p-3 rounded cursor-pointer ${coach.id === selectedCoachId ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+                                            className={`p-3 rounded cursor-pointer ${coach.id === selectedCoachId ? 'bg-light text-dark' : 'bg-gray-200 hover:bg-gray-300'}`}
                                         >
                                             {coach.nombre_coach}
                                         </li>
@@ -155,7 +155,7 @@ const ChatSmoker = () => {
 
                         <div className="w-3/4">
                             {selectedCoachId ? (
-                                <div className="bg-white shadow-md rounded-lg">
+                                <div className="bg-gray-900 shadow-md rounded-lg">
                                     <div className="border-b p-4">
                                         <h4 className="font-semibold">Chat con {approvedCoaches.find(coach => coach.id === selectedCoachId)?.nombre_coach}</h4>
                                     </div>
@@ -164,7 +164,7 @@ const ChatSmoker = () => {
                                             mensajes.map((mensaje) => (
                                                 <div
                                                     key={mensaje.id}
-                                                    className={`my-2 p-2 rounded ${mensaje.id_usuario === store.loggedInUser.id ? 'bg-blue-600 text-white self-end' : 'bg-gray-200 text-gray-900 self-start'}`}
+                                                    className={`my-2 p-2 rounded ${mensaje.id_usuario === store.loggedInUser.id ? 'bg-light text-dark self-end' : 'bg-gray-200 text-gray-900 self-start'}`}
                                                 >
                                                     {mensaje.contenido}
                                                 </div>
@@ -183,7 +183,7 @@ const ChatSmoker = () => {
                                                 required
                                                 className="flex-grow p-2 border rounded mr-2"
                                             />
-                                            <button type="submit" className="bg-blue-600 text-white p-2 rounded">Enviar</button>
+                                            <button type="submit" className="bg-light text-dark p-2 rounded">Enviar</button>
                                         </form>
                                     </div>
                                 </div>

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"; // Importar useNavigate para red
 import { Context } from "../store/appContext"; // Importar el contexto
 import logo from '../../img/logos/logoblanco.png';
 import logoOscuro from '../../img/logos/logonegro.png';
+import { Link } from "react-router-dom";
 
 const LoginCoach = () => {
     const { actions } = useContext(Context); // Obtener las acciones del contexto
@@ -88,7 +89,9 @@ const LoginCoach = () => {
                 <div className="p-12 py-xl-10 px-xl-20">
                     {/* Aquí puedes colocar tu logo */}
                     <div className="d-block">
-                        <img src={logo} alt="Logo" className="logo" />
+                        <Link to="/">
+                            <img src={logo} alt="Logo" className="logo" />
+                        </Link>
                     </div>
 
 
