@@ -3,8 +3,7 @@ from api.models import db, SmokerUser, Coach, TiposConsumo, Mensajes, Solicitud
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from datetime import datetime 
-from cloudinary_config import cloudinary
-from upload_image import upload_image_to_coach, upload_image_to_smoker
+
 
 
 
@@ -79,7 +78,7 @@ def signup():
         periodicidad_consumo=None,
         tiempo_fumando=None,
         forma_consumo=None,
-        foto_usuario=None
+        public_id=None
     )
 
     db.session.add(new_user)
@@ -133,8 +132,7 @@ def get_smoker_profile(user_id):
         "tiempo_fumando": smoker.tiempo_fumando,
         "numero_cigarrillos": smoker.numero_cigarrillos,
         "periodicidad_consumo": smoker.periodicidad_consumo,
-        "foto_usuario": smoker.foto_usuario,  # Aquí se devuelve la URL de la foto
-        "public_id": smoker.public_id
+        "public_id": smoker.public_id  # Aquí se devuelve la URL de la foto
     })
 
 # Actualización de perfil de usuario
@@ -144,17 +142,23 @@ def create_profile(user_id):
     if not user:
         return jsonify({"msg": "Usuario no encontrado"}), 404
 
+    # Obtener datos del JSON
     nombre = request.json.get('nombre_usuario', None)
     genero = request.json.get('genero_usuario', None)
     cumpleaños = request.json.get('nacimiento_usuario', None)
+    public_id = request.json.get('public_id', None)  # Añadir esta línea
 
+    # Actualizar los campos del usuario si están presentes
     if nombre:
         user.nombre_usuario = nombre
     if genero:
         user.genero_usuario = genero
     if cumpleaños:
         user.nacimiento_usuario = datetime.strptime(cumpleaños, '%Y-%m-%d').date()
+    if public_id:  # Actualiza public_id si está presente
+        user.public_id = public_id  # Asegúrate de que el modelo tenga este campo definido
 
+    # Guardar cambios en la base de datos
     db.session.commit()
 
     return jsonify({"msg": "Perfil actualizado exitosamente", "user": user.serialize()}), 200
@@ -301,7 +305,7 @@ def signup_coach():
         latitud=None,
         longitud=None,
         descripcion_coach=None,
-        foto_coach=None,
+        public_id=None,
         precio_servicio=None
     )
 
@@ -345,271 +349,6 @@ def get_consuming(tiposconsumo_id):
     if tiposconsumo is None:
         return jsonify({"error": "Tipo de consumo no encontrado"}), 404
     return jsonify(tiposconsumo.serialize()), 200
-
-# Endpoint para subir imágenes
-@api.route('/coaches/upload_image/<int:coach_id>', methods=['POST'])
-def upload_image(coach_id):
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-
-    file = request.files['file']
-
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-
-    try:
-        # Sube la imagen a Cloudinary
-        response = cloudinary.uploader.upload(file)
-        image_url = response['secure_url']
-
-        # Guarda la URL en la base de datos
-        coach = Coach.query.get(coach_id)
-        if coach:
-            coach.foto_coach = image_url
-            db.session.commit()
-
-        return jsonify({'message': 'Image uploaded successfully', 'url': image_url}), 200
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-# Endpoint para obtener la imagen de un coach
-@api.route('/coaches/image/<int:coach_id>', methods=['GET'])
-def get_image(coach_id):
-    coach = Coach.query.get(coach_id)
-    if coach and coach.foto_coach:
-        return jsonify({'image_url': coach.foto_coach}), 200
-    else:
-        return jsonify({'error': 'Image not found'}), 404
-
-# Endpoint para actualizar la imagen de un coach
-@api.route('/coaches/update_image/<int:coach_id>', methods=['PUT'])
-def update_image(coach_id):
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-
-    try:
-        coach = Coach.query.get(coach_id)
-        if not coach:
-            return jsonify({'error': 'Coach not found'}), 404
-
-        response = cloudinary.uploader.upload(file)
-        image_url = response['secure_url']
-        new_public_id = response['public_id']
-
-        if coach.public_id:
-            cloudinary.uploader.destroy(coach.public_id)
-
-        coach.foto_coach = image_url
-        coach.public_id = new_public_id
-        db.session.commit()
-
-        return jsonify({'message': 'Image updated successfully', 'url': image_url}), 200
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-# Endpoint para eliminar la imagen de un coach
-@api.route('/coaches/delete_image/<int:coach_id>', methods=['DELETE'])
-def delete_image(coach_id):
-    try:
-        coach = Coach.query.get(coach_id)
-        if coach:
-            if coach.public_id:
-                cloudinary.uploader.destroy(coach.public_id)
-
-            coach.foto_coach = None
-            coach.public_id = None
-            db.session.commit()
-
-            return jsonify({'message': 'Image deleted successfully'}), 200
-        else:
-            return jsonify({'error': 'Coach not found'}), 404
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-# Endpoint para subir imágenes de un smoker
-@api.route('/smoker/upload_image/<int:user_id>', methods=['POST'])
-def upload_smoker_image(user_id):
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-
-    file = request.files['file']
-
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-
-    try:
-        # Sube la imagen a Cloudinary
-        response = cloudinary.uploader.upload(file)
-        image_url = response['secure_url']
-        public_id = response['public_id']  # Obtén el public_id
-
-        # Actualiza el campo foto_usuario y public_id en la base de datos
-        smoker = SmokerUser.query.get(user_id)
-        if smoker:
-            smoker.foto_usuario = image_url
-            smoker.public_id = public_id  # Actualiza el public_id
-            db.session.commit()
-            return jsonify({'message': 'Image uploaded successfully', 'url': image_url}), 200
-        else:
-            return jsonify({'error': 'Smoker not found'}), 404
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-# Endpoint para obtener la imagen de un smoker
-@api.route('/smoker/image/<int:user_id>', methods=['GET'])
-def get_smoker_image(user_id):
-    smoker = SmokerUser.query.get(user_id)
-    if smoker and smoker.foto_usuario:
-        return jsonify({'image_url': smoker.foto_usuario}), 200
-    else:
-        return jsonify({'error': 'Image not found'}), 404
-
-# Endpoint para actualizar la imagen de un smoker
-@api.route('/smoker/update_image/<int:user_id>', methods=['PUT'])
-def update_smoker_image(user_id):
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-
-    file = request.files['file']
-
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-
-    try:
-        # Busca el smoker en la base de datos
-        smoker = SmokerUser.query.get(user_id)
-        if not smoker:
-            return jsonify({'error': 'Smoker not found'}), 404
-
-        # Sube la nueva imagen a Cloudinary
-        response = cloudinary.uploader.upload(file)
-        image_url = response['secure_url']
-        new_public_id = response['public_id']
-
-        # Si hay una imagen anterior, se puede eliminar
-        if smoker.public_id:
-            # Elimina la imagen anterior de Cloudinary
-            cloudinary.uploader.destroy(smoker.public_id)
-
-        # Actualiza la URL y el public_id en la base de datos
-        smoker.foto_usuario = image_url
-        smoker.public_id = new_public_id  # Actualiza el public_id
-        db.session.commit()
-
-        return jsonify({'message': 'Image updated successfully', 'url': image_url}), 200
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-# Endpoint para eliminar la imagen de un smoker
-@api.route('/smoker/delete_image/<int:user_id>', methods=['DELETE'])
-def delete_smoker_image(user_id):
-    try:
-        smoker = SmokerUser.query.get(user_id)
-        if smoker:
-            if smoker.public_id:
-                # Elimina la imagen de Cloudinary
-                cloudinary.uploader.destroy(smoker.public_id)
-
-            smoker.foto_usuario = None  # Borra la URL de la imagen
-            smoker.public_id = None  # Borra el public_id
-            db.session.commit()
-
-            return jsonify({'message': 'Image deleted successfully'}), 200
-        else:
-            return jsonify({'error': 'Smoker not found'}), 404
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-    
-@api.route('/users/upload_image/<int:user_id>', methods=['POST'])
-def upload_user_image(user_id):
-    request_data = request.get_json()  # Obtén los datos de la solicitud
-    image_url = request_data.get('imageUrl')  # Obtén la URL de la imagen
-
-    try:
-        # Actualiza la imagen en la base de datos
-        UserModel.update_one({'_id': user_id}, {'$set': {'foto_usuario': image_url}})
-        return jsonify({'message': 'Perfil actualizado con éxito.'}), 200
-    except Exception as error:
-        print("Error al actualizar el perfil:", error)
-        return jsonify({'message': 'Error al actualizar el perfil.'}), 500
-
-
-# Obtener las ubicaciones de todos los coaches (GET)
-@api.route('/coaches/locations', methods=['GET'])
-def get_coaches_locations():
-    coaches = Coach.query.all()
-    coaches_data = [
-        {
-            "id": coach.id,
-            "nombre": coach.nombre_coach,
-            "latitud": coach.latitud,
-            "longitud": coach.longitud,
-            "direccion": coach.direccion
-        }
-        for coach in coaches if coach.latitud and coach.longitud
-    ]
-    return jsonify(coaches_data), 200
-
-# Agregar o actualizar la ubicación de un coach (POST)
-@api.route('/coaches/locations', methods=['POST'])
-def add_or_update_coach_location():
-    data = request.json
-    coach_id = data.get('coach_id')
-    latitud = data.get('latitud')
-    longitud = data.get('longitud')
-    direccion = data.get('direccion')
-
-    coach = Coach.query.get(coach_id)
-    if not coach:
-        return jsonify({"msg": "Coach no encontrado"}), 404
-
-    # Actualiza los campos del coach
-    coach.latitud = latitud
-    coach.longitud = longitud
-    coach.direccion = direccion
-
-    db.session.commit()
-    return jsonify({"msg": "Ubicación del coach actualizada", "coach_id": coach.id}), 201
-
-# Actualizar la ubicación de un coach (PUT)
-@api.route('/coaches/locations/<int:coach_id>', methods=['PUT'])
-def update_coach_location(coach_id):
-    coach = Coach.query.get(coach_id)
-    if not coach:
-        return jsonify({"msg": "Coach no encontrado"}), 404
-
-    data = request.json
-    coach.latitud = data.get('latitud', coach.latitud)
-    coach.longitud = data.get('longitud', coach.longitud)
-    coach.direccion = data.get('direccion', coach.direccion)
-
-    db.session.commit()
-    return jsonify({"msg": "Ubicación del coach actualizada", "coach_id": coach.id}), 200
-
-# Eliminar la ubicación de un coach (DELETE)
-@api.route('/coaches/locations/<int:coach_id>', methods=['DELETE'])
-def delete_coach_location(coach_id):
-    coach = Coach.query.get(coach_id)
-    if not coach:
-        return jsonify({"msg": "Coach no encontrado"}), 404
-
-    coach.latitud = None
-    coach.longitud = None
-    coach.direccion = None
-    db.session.commit()
-
-    return jsonify({"msg": "Ubicación del coach eliminada", "coach_id": coach.id}), 204
 
 # Inicializa la aplicación Flask
 def create_app():
@@ -710,47 +449,6 @@ def delete_solicitud(id):
     db.session.delete(solicitud)
     db.session.commit()
     return jsonify({"message": "Solicitud eliminada exitosamente"}), 200
-
-@api.route('/upload-coach-image', methods=['POST'])
-def upload_coach_image_v1():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-
-    file = request.files['file']  # Suponiendo que la imagen viene en un formulario
-
-    try:
-        # Guardar la imagen localmente antes de subir a Cloudinary
-        file_path = f"ruta/a/donde/guardar/{file.filename}"
-        file.save(file_path)
-
-        image_url = upload_image_to_coach(file_path)  # Usar la función
-        if image_url:
-            return jsonify({"url": image_url}), 200
-        return jsonify({"error": "Error al subir la imagen"}), 500
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-# Endpoint para subir la imagen de un smoker
-@api.route('/upload-smoker-image', methods=['POST'])
-def upload_smoker_image_v1():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-
-    file = request.files['file']  # Suponiendo que la imagen viene en un formulario
-
-    try:
-        # Guardar la imagen localmente antes de subir a Cloudinary
-        file_path = f"ruta/a/donde/guardar/{file.filename}"
-        file.save(file_path)
-
-        image_url = upload_image_to_smoker(file_path)  # Usar la función
-        if image_url:
-            return jsonify({"url": image_url}), 200
-        return jsonify({"error": "Error al subir la imagen"}), 500
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 # Ruta protegida con JWT
 @api.route('/protected', methods=['GET'])
