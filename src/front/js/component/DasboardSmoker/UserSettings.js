@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { Context } from "../../store/appContext";
 import Sidebar from "./Sidebar";  
 import Header from "./Header";
+import DatePicker from "react-datepicker"; // Importar el DatePicker
+import "react-datepicker/dist/react-datepicker.css"; // Importar estilos para el DatePicker
 
 const UserSettings = () => {
     const { userId } = useParams();
@@ -14,6 +16,8 @@ const UserSettings = () => {
     const [formData, setFormData] = useState({});
     const [activeTab, setActiveTab] = useState('profile');
     const [isDarkMode, setIsDarkMode] = useState(true);
+    const [cumpleaños, setCumpleaños] = useState(null); // State for birthdate
+    const [error, setError] = useState(""); // State for error messages
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -32,7 +36,9 @@ const UserSettings = () => {
 
                 const data = await response.json();
                 setUserData(data);
-                setFormData(data); // Initialize formData with fetched user data
+                setFormData(data);
+                // Set the birthday from userData
+                setCumpleaños(new Date(data.nacimiento_usuario)); 
             } catch (error) {
                 console.error("Error al obtener el perfil del usuario:", error);
             } finally {
@@ -49,8 +55,20 @@ const UserSettings = () => {
     };
 
     const handleSaveChanges = async () => {
+        // Check if the user is at least 18 years old
+        const isAdult = (birthdate) => {
+            const today = new Date();
+            return birthdate <= today.setFullYear(today.getFullYear() - 18);
+        };
+
+        if (!isAdult(cumpleaños)) {
+            setError("Debes ser mayor de 18 años para actualizar los datos.");
+            return;
+        }
+
         try {
             const { email_usuario, ...dataToUpdate } = formData; // Exclude email from the data to update
+            dataToUpdate.nacimiento_usuario = cumpleaños; // Update birthdate in dataToUpdate
             const response = await fetch(`${process.env.BACKEND_URL}/api/smoker/${userId}`, {
                 method: "PUT",
                 headers: {
@@ -69,6 +87,7 @@ const UserSettings = () => {
             setFormData(updatedUser); // Update formData with the new changes
             setIsEditingProfile(false); // Close editing mode
             setIsEditingConsumption(false); // Close editing mode
+            setError(""); // Clear error message
         } catch (error) {
             console.error("Error al actualizar el perfil del usuario:", error);
         }
@@ -78,6 +97,7 @@ const UserSettings = () => {
         setActiveTab(tab);
         setIsEditingProfile(false);
         setIsEditingConsumption(false);
+        setError(""); // Clear error when switching tabs
     };
 
     if (loading) {
@@ -87,9 +107,11 @@ const UserSettings = () => {
     if (!userData) {
         return <p className="text-center text-gray-400">No se pudo cargar el perfil del usuario.</p>;
     }
+
     const toggleTheme = () => {
         setIsDarkMode(!isDarkMode); // Alterna entre modo oscuro y claro
     };
+
     return (
         <div className={`flex min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
             <Sidebar active="Lista de Coaches" isDarkMode={isDarkMode} handleNavigation={(item) => navigate(item.path)} /> 
@@ -129,8 +151,8 @@ const UserSettings = () => {
                             {activeTab === "profile" && (
                                 <div className="p-6">
                                     <div className="flex justify-center mb-4">
-                                        {userData.foto_usuario ? (
-                                            <img src={userData.foto_usuario} alt="Foto de usuario" className="w-28 h-28 rounded-full border-2 border-blue-500" />
+                                        {userData.public_id ? (
+                                            <img src={userData.public_id} alt="Foto de usuario" className="w-28 h-28 rounded-full border-2 border-blue-500" />
                                         ) : (
                                             <div className="w-28 h-28 rounded-full border-2 border-gray-300 flex items-center justify-center">
                                                 <span className="text-gray-400">Sin foto</span>
@@ -171,6 +193,7 @@ const UserSettings = () => {
                                                     <option value="" disabled>Selecciona un género</option>
                                                     <option value="Masculino">Masculino</option>
                                                     <option value="Femenino">Femenino</option>
+                                                    <option value="Otro">Otro</option>
                                                 </select>
                                             ) : (
                                                 <p>{userData.genero_usuario}</p>
@@ -178,17 +201,23 @@ const UserSettings = () => {
                                         </div>
     
                                         <div className="mb-4">
-                                            <label className="block">Fecha de Nacimiento:</label>
+                                            <label className="block">Fecha de Cumpleaños:</label>
                                             {isEditingProfile ? (
-                                                <input
-                                                    type="date"
-                                                    name="nacimiento_usuario"
-                                                    value={formData.nacimiento_usuario || ''}
-                                                    onChange={handleChange}
+                                                <DatePicker
+                                                    selected={cumpleaños}
+                                                    onChange={(date) => setCumpleaños(date)}
+                                                    dateFormat="yyyy-MM-dd"
                                                     className={`${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-50'} mt-1 block w-full p-2 border rounded border-gray-300 focus:outline-none focus:ring focus:ring-blue-200`}
+                                                    required
+                                                    placeholderText="Fecha de Cumpleaños"
+                                                    maxDate={new Date()}
+                                                    showYearDropdown
+                                                    yearDropdownItemNumber={100}
+                                                    scrollableYearDropdown
+                                                    style={{ height: '60px', fontSize: '1.25rem', paddingLeft: '40px' }} // Añadir padding para el ícono
                                                 />
                                             ) : (
-                                                <p>{userData.nacimiento_usuario}</p>
+                                                <p>{new Date(userData.nacimiento_usuario).toLocaleDateString()}</p>
                                             )}
                                         </div>
     
@@ -210,9 +239,10 @@ const UserSettings = () => {
                                             </button>
                                         )}
                                     </form>
+                                    {error && <p className="text-red-500 mt-4">{error}</p>} {/* Mostrar error si existe */}
                                 </div>
                             )}
-    
+
                             {/* Contenido de la pestaña de configuración de consumo */}
                             {activeTab === "consumption" && (
                                 <div className="p-6">
@@ -279,8 +309,8 @@ const UserSettings = () => {
                     </div>
                 </div>
             </div>
-            </div>
-        );
-    }
+        </div>
+    );
+};
 
 export default UserSettings;
