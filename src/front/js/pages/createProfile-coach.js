@@ -1,7 +1,9 @@
-import React, { useEffect, useState, useContext } from "react"; 
+import React, { useEffect, useState, useContext, useRef } from "react"; 
 import { useNavigate } from "react-router-dom"; 
 import { Context } from "../store/appContext"; 
 import "../../styles/CreateProfileCoach.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css"; // Asegúrate de que este CSS esté importado
 import logo from '../../img/logos/logoblanco.png';
 import logoOscuro from '../../img/logos/logonegro.png';
 
@@ -10,9 +12,10 @@ const CreateProfileCoach = () => {
     const [nombre_coach, setnombre_coach] = useState("");
     const [genero, setGenero] = useState("masculino");
     const [cumpleaños, setCumpleaños] = useState("");
-    const [foto_coach, setfoto_coach] = useState(null); 
+    const [urlImagen, setUrlImagen] = useState("");  // Para guardar la URL de la imagen subida
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const fileInputRef = useRef(null);  // Para el input de archivo
 
     useEffect(() => {
         if (store.loggedInCoach) {
@@ -21,70 +24,83 @@ const CreateProfileCoach = () => {
             if (store.loggedInCoach.nacimiento_coach && typeof store.loggedInCoach.nacimiento_coach === 'string') {
                 setCumpleaños(store.loggedInCoach.nacimiento_coach.split("T")[0]);
             }
-            setfoto_coach(store.loggedInCoach.foto_coach || null); 
+            setUrlImagen(store.loggedInCoach.public_id || "");  // Asignar el public_id si existe
         }
     }, [store.loggedInCoach]);
 
-    const handleImageUpload = (e) => {
-        setfoto_coach(e.target.files[0]); 
+    
+    // Función para subir la imagen a Cloudinary
+    const changeUploadImage = async (e) => {
+        const file = e.target.files[0];
+        const data = new FormData();
+        data.append("file", file);
+        data.append("upload_preset", "Presents_react");
+        data.append("cloud_name", "dhieuyort");
+
+        try {
+            const response = await fetch("https://api.cloudinary.com/v1_1/dhieuyort/image/upload", {
+                method: "POST",
+                body: data
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                setUrlImagen(result.secure_url);
+                localStorage.setItem("profileImageUrlCoach", result.secure_url); // Guardar en localStorage con el nuevo nombre
+            } else {
+                setError("Error al subir la imagen. Inténtalo de nuevo.");
+            }
+        } catch (error) {
+            console.error("Error al subir la imagen:", error);
+            setError("Error al subir la imagen. Inténtalo nuevamente.");
+        }
     };
 
-    const isAdult = (birthday) => {
+    const handleDeleteImage = () => {
+        setUrlImagen("");
+        fileInputRef.current.value = "";
+    };
+
+    const isAdult = (birthdate) => {
         const today = new Date();
-        const birthDate = new Date(birthday);
-        const age = today.getFullYear() - birthDate.getFullYear();
-        const monthDifference = today.getMonth() - birthDate.getMonth();
-        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-            return age - 1;
-        }
-        return age;
+        return birthdate <= today.setFullYear(today.getFullYear() - 18); // Verificar si el usuario es mayor de 18
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
-
+    
         if (!store.loggedInCoach) {
             setError("No hay coach logueado. Por favor, inicia sesión.");
             return;
         }
-
+    
         const coachId = store.loggedInCoach.id;
-
+    
         if (!coachId) {
             setError("ID de coach no válido.");
             return;
         }
-
-        if (!cumpleaños) {
-            setError("La fecha de cumpleaños es requerida.");
-            return;
-        }
-
-        // Verificar si el coach es mayor de edad
-        if (isAdult(cumpleaños) < 18) {
+    
+        // Validar que el usuario sea mayor de edad
+        if (!isAdult(cumpleaños)) {
             setError("Debes ser mayor de 18 años para registrarte.");
             return;
         }
-
-        let imageUrl = store.loggedInCoach.foto_coach; 
-        if (foto_coach) {
-            const uploadResult = await actions.uploadCoachImage(foto_coach);
-            if (uploadResult && uploadResult.secure_url) {
-                imageUrl = uploadResult.secure_url; 
-            } else {
-                setError("Error al subir la imagen. Inténtalo de nuevo.");
-                return;
-            }
-        }
-
+    
+        // Formatear la fecha antes de enviarla
+        const formattedDate = cumpleaños instanceof Date ? 
+            cumpleaños.toISOString().split('T')[0] : // formato YYYY-MM-DD
+            cumpleaños;
+    
+        // Enviar los datos actualizados
         const updatedData = {
             nombre_coach: nombre_coach,
             genero_coach: genero,
-            nacimiento_coach: cumpleaños,
-            foto_coach: imageUrl, 
+            nacimiento_coach: formattedDate, // Usar la fecha formateada aquí
+            public_id: urlImagen,
         };
-
+    
         const success = await actions.updateProfileCoach(coachId, updatedData);
         if (success) {
             alert("Perfil actualizado con éxito");
@@ -93,6 +109,7 @@ const CreateProfileCoach = () => {
             alert("Error al actualizar el perfil");
         }
     };
+    
 
     if (!store.loggedInCoach) {
         return <div>No hay coach logueado. Por favor, inicia sesión.</div>;
@@ -165,17 +182,20 @@ const CreateProfileCoach = () => {
                             </div>
     
                             {/* Fecha de nacimiento */}
-                            <div className="group mb-4">
+                            <div className="group mb-4 position-relative">
                                 <i className="fa-regular fa-calendar icon"></i>
-                                <input
-                                    type="date"
-                                    name="cumpleaños"
-                                    id="cumpleaños"
+                                <DatePicker
+                                    selected={cumpleaños}
+                                    onChange={(date) => setCumpleaños(date)}
+                                    dateFormat="yyyy-MM-dd"
                                     className="input"
-                                    value={cumpleaños}
-                                    onChange={(e) => setCumpleaños(e.target.value)}
                                     required
-                                    style={{ height: '60px', fontSize: '1.25rem' }}
+                                    placeholderText="Fecha de Cumpleaños"
+                                    maxDate={new Date()}
+                                    showYearDropdown
+                                    yearDropdownItemNumber={100}
+                                    scrollableYearDropdown
+                                    style={{ height: '60px', fontSize: '1.25rem', paddingLeft: '40px' }} // Añadir padding para el ícono
                                 />
                             </div>
     
@@ -183,18 +203,30 @@ const CreateProfileCoach = () => {
                             <div className="group mb-4">
                                 <i className="fa-solid fa-camera icon"></i>
                                 <input
+                                    id="file-upload"
+                                    ref={fileInputRef}
                                     type="file"
-                                    name="foto"
-                                    id="foto"
+                                    accept="image/*"
+                                    onChange={changeUploadImage}
                                     className="input"
-                                    onChange={handleImageUpload}
                                     style={{ height: '60px', fontSize: '1.25rem' }}
                                 />
                             </div>
+
+                            {/* Mostrar la imagen subida */}
+                            {urlImagen && (
+                                <div className="mb-4 text-center">
+                                    <img src={urlImagen} alt="Imagen subida" width="200px" className="img-thumbnail" />
+                                    <button type="button" className="btn btn-danger mt-2" onClick={handleDeleteImage}>Eliminar Imagen</button>
+                                </div>
+                            )}
     
-                            <button className="btn btn-dark w-100" type="submit" style={{ fontSize: '1.25rem', padding: '15px' }}>
-                                Actualizar Perfil
-                            </button>
+                            {/* Botón de guardar */}
+                            <div className="text-center">
+                                <button type="submit" className="btn btn-primary w-100" style={{ height: '60px', fontSize: '1.25rem' }}>
+                                    Guardar
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>

@@ -134,19 +134,6 @@ export default function MainDashboard({
           }
           isDarkMode={isDarkMode}
         />
-        <StatCard
-          title="Último logro"
-          value="1 Mes Sin Fumar"
-          icon={Award}
-          color="yellow"
-          subtitle="¡Felicidades! Has alcanzado un hito importante."
-          footer={
-            <button className="mt-4 w-full py-2 px-4 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors duration-200">
-              Ver todos los logros
-            </button>
-          }
-          isDarkMode={isDarkMode}
-        />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <MotivationalWidget />

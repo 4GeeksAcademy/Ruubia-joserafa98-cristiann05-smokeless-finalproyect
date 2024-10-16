@@ -202,13 +202,16 @@ def create_profile_coach(coach_id):
     # Agrega log aquí para verificar los datos recibidos
     print("Datos recibidos:", request.json)  # Muestra los datos que se están recibiendo
 
-    nombre = request.json.get('nombre_coach')
-    genero = request.json.get('genero_coach')
-    cumpleaños = request.json.get('nacimiento_coach')
-    direccion = request.json.get('direccion')  # Nueva entrada para dirección
-    latitud = request.json.get('latitud')  # Nueva entrada para latitud
-    longitud = request.json.get('longitud')  # Nueva entrada para longitud
+    # Obtener datos del JSON
+    nombre = request.json.get('nombre_coach', None)
+    genero = request.json.get('genero_coach', None)
+    cumpleaños = request.json.get('nacimiento_coach', None)
+    direccion = request.json.get('direccion', None)  # Nueva entrada para dirección
+    latitud = request.json.get('latitud', None)  # Nueva entrada para latitud
+    longitud = request.json.get('longitud', None)  # Nueva entrada para longitud
+    public_id = request.json.get('public_id', None)  # Añadir esta línea para obtener el public_id
 
+    # Actualizar los campos del coach si están presentes
     if nombre:
         coach.nombre_coach = nombre
     if genero:
@@ -233,13 +236,15 @@ def create_profile_coach(coach_id):
             coach.longitud = float(longitud)
         except ValueError:
             return jsonify({"msg": "Longitud inválida. Debe ser un número válido."}), 400
+    
+    # Actualiza el public_id si está presente en la solicitud
+    if public_id:
+        coach.public_id = public_id  # El public_id se actualiza si está presente
 
     # Guarda los cambios en la base de datos
     db.session.commit()
 
     return jsonify({"msg": "Perfil del coach actualizado exitosamente", "coach": coach.serialize()}), 200
-
-
 
 # Obtener todos los coaches (GET)
 @api.route('/coaches', methods=['GET'])
