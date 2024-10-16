@@ -159,7 +159,7 @@ export const Home = () => {
                                                 <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
                                             </div>
                                             <div>
-                                                <p className="fw-semibold">Conecta con Fumadores en Tu Área: Expande tu red y ayuda a quienes más lo necesitan.</p>
+                                                <p className="fw-semibold">Conecta con Fumadores en Tu Área.</p>
                                             </div>
                                         </div>
                                     </li>
@@ -169,7 +169,7 @@ export const Home = () => {
                                                 <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
                                             </div>
                                             <div>
-                                                <p className="fw-semibold">Herramientas Avanzadas para el Éxito: Aprovecha recursos innovadores para guiar a tus clientes en su camino hacia una vida sin humo.</p>
+                                                <p className="fw-semibold">Aprovecha recursos innovadores para guiar a tus clientes.</p>
                                             </div>
                                         </div>
                                     </li>
@@ -179,7 +179,7 @@ export const Home = () => {
                                                 <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
                                             </div>
                                             <div>
-                                                <p className="fw-semibold">Chatea y Ofrece Soporte Personalizado: Brinda consejos y motivación a través de chats directos, adaptando tu enfoque a cada fumador.</p>
+                                                <p className="fw-semibold">Chatea y Ofrece Soporte Personalizado.</p>
                                             </div>
                                         </div>
                                     </li>
@@ -224,7 +224,7 @@ export const Home = () => {
                                                     <i className="fa-solid fa-circle-check fa-2x mx-4"></i>
                                                 </div>
                                                 <div>
-                                                    <p className="fw-semibold"> Mantén el compromiso con tus clientes a través de sesiones de seguimiento.</p>
+                                                    <p className="fw-semibold"> Mantén el compromiso con tus clientes.</p>
                                                 </div>
                                             </div>
                                         </li>

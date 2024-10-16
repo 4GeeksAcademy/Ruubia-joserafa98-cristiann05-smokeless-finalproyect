@@ -154,6 +154,7 @@ const LoginSmoker = () => {
                             <img src={logoOscuro} alt="Logo Oscuro" className="logo w-25" />
                         </a>
                         <h1 className="ls-tight fw-bolder h1">Log in here</h1> 
+                        <p>If you don't have an account, <a href="/signup-smoker" className="text-primary">sign up here</a>.</p>
                     </div>
 
                     {error && <div className="alert alert-danger">{error}</div>}
