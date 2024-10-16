@@ -24,13 +24,9 @@ export const WhoAreWe = () => {
                             <p className="w-xl-75 lead text-white text-wrap">
                                  Sin importar tu nivel de consumo, estamos aquí para guiarte en cada paso del camino hacia una vida sin cigarrillos.
                             </p>
+                            <br />
+                            <br />
                         </div>
-                        <br></br>
-                    </div>
-                    <div className="mt-5 text-center">
-                        <Atropos className="my-atropos" activeOffset={40} shadowScale={1.05}>
-                            <img className="atropos-image" src={foto} data-atropos-offset="0" alt="3D Effect" />
-                        </Atropos>
                     </div>
                 </div>
             </div>
