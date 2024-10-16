@@ -56,11 +56,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                         throw new Error(`Error HTTP! status: ${response.status}`);
                     }
                     const data = await response.json();
-                    setStore({ loggedInSmoker: data }); // Guarda los datos del fumador en el store
+                    console.log("Datos del usuario recibidos:", data); // Para verificar que recibes los datos correctos
+                    setStore({ loggedInUser: { ...getStore().loggedInUser, ...data } }); // Actualiza la información del usuario
                 } catch (error) {
                     console.error("Error fetching smoker:", error);
                 }
             },
+            
 
             signupSmoker: async (smokerData) => {
                 try {
@@ -742,73 +744,71 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            generarConsejo: async () => {
-                try {
-                    // Obtener el ID del usuario desde localStorage
-                    const userId = localStorage.getItem('userId');
-                    console.log("ID almacenado en localStorage:", userId);
+            // generarConsejo: async (userId) => {
+            //     try {
+            //         // Obtener los datos del usuario desde el store
+            //         const store = getStore();
+            //         const userInfo = store.userInfo; // Asegúrate de que userInfo no sea nulo
             
-                    // Obtener los datos del usuario desde el store
-                    // const { userInfo } = getStore(); // Cambia a userInfo en lugar de loggedInUser
-                    
-                    const store = getStore ()
-                    console.log(store.userInfo);
-                    // Verifica que los datos del usuario estén completos
-                    if (!store.userInfo) {
-                        console.error("userInfo es null o undefined. Asegúrate de haber obtenido los datos del usuario.");
-                        alert("No se pudo encontrar información del usuario. Por favor, intenta de nuevo.");
-                        return; // Sale de la función si no hay información del usuario
-                    }
+            //         console.log("Información del usuario:", userInfo);
             
-                    // Asegúrate de que estos valores existan antes de usarlos
-                    const { tiempo_fumando, numero_cigarrillos, periodicidad_consumo } = userInfo;
+            //         // Verifica que los datos del usuario estén completos
+            //         if (!userInfo) {
+            //             console.error("userInfo es null o undefined. Asegúrate de haber obtenido los datos del usuario.");
+            //             alert("No se pudo encontrar información del usuario. Por favor, intenta de nuevo.");
+            //             return; // Sale de la función si no hay información del usuario
+            //         }
             
-                    if (!tiempo_fumando || !numero_cigarrillos || !periodicidad_consumo) {
-                        console.error("Los datos del usuario son incompletos.");
-                        alert("Por favor, completa tu información antes de solicitar un consejo.");
-                        return; // Sale de la función si los datos no son válidos
-                    }
+            //         // Asegúrate de que estos valores existan antes de usarlos
+            //         const { tiempo_fumando, numero_cigarrillos, periodicidad_consumo } = userInfo;
             
-                    const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
+            //         if (!tiempo_fumando || !numero_cigarrillos || !periodicidad_consumo) {
+            //             console.error("Los datos del usuario son incompletos.");
+            //             alert("Por favor, completa tu información antes de solicitar un consejo.");
+            //             return; // Sale de la función si los datos no son válidos
+            //         }
             
-                    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${apiKey}`,
-                        },
-                        body: JSON.stringify({
-                            model: 'gpt-3.5-turbo',
-                            messages: [
-                                {
-                                    role: 'user',
-                                    content: `Soy un fumador que ha estado fumando durante ${tiempo_fumando} años. Fumo ${numero_cigarrillos} cigarrillos al día y consumo de forma ${periodicidad_consumo}. ¿Puedes darme un consejo sobre cómo dejar de fumar?`
-                                }
-                            ]
-                        }),
-                    });
+            //         const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
             
-                    if (!response.ok) {
-                        const errorDetails = await response.text();
-                        throw new Error(`HTTP error! status: ${response.status}, details: ${errorDetails}`);
-                    }
+            //         const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            //             method: 'POST',
+            //             headers: {
+            //                 'Content-Type': 'application/json',
+            //                 'Authorization': `Bearer ${apiKey}`,
+            //             },
+            //             body: JSON.stringify({
+            //                 model: 'gpt-3.5-turbo',
+            //                 messages: [
+            //                     {
+            //                         role: 'user',
+            //                         content: `Soy un fumador que ha estado fumando durante ${tiempo_fumando} años. Fumo ${numero_cigarrillos} cigarrillos al día y consumo de forma ${periodicidad_consumo}. ¿Puedes darme un consejo sobre cómo dejar de fumar?`
+            //                     }
+            //                 ]
+            //             }),
+            //         });
             
-                    const data = await response.json();
-                    console.log("Consejo recibido de la API:", data);
+            //         if (!response.ok) {
+            //             const errorDetails = await response.text();
+            //             throw new Error(`HTTP error! status: ${response.status}, details: ${errorDetails}`);
+            //         }
             
-                    // Actualiza el consejo en el store
-                    setStore({
-                        ...getStore(),
-                        userInfo: {
-                            ...userInfo,
-                            consejo: data.choices[0].message.content
-                        }
-                    });
+            //         const data = await response.json();
+            //         console.log("Consejo recibido de la API:", data);
             
-                } catch (error) {
-                    console.error("Error fetching consejo:", error.message);
-                }
-            },
+            //         // Actualiza el consejo en el store
+            //         setStore({
+            //             ...getStore(),
+            //             userInfo: {
+            //                 ...userInfo,
+            //                 consejo: data.choices[0].message.content
+            //             }
+            //         });
+            
+            //     } catch (error) {
+            //         console.error("Error fetching consejo:", error.message);
+            //     }
+            // },
+            
 
         },
     };
