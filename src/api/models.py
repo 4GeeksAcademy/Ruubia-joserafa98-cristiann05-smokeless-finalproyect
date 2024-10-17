@@ -129,6 +129,8 @@ class Mensajes(db.Model):
     contenido = db.Column(db.String, nullable=False)
     fecha_envio = db.Column(db.DateTime, default=datetime.utcnow)
     visto = db.Column(db.Boolean, default=False)
+    is_coach = db.Column(db.Boolean, default=False)
+    is_user = db.Column(db.Boolean, default=False)
 
     def serialize(self):
         return {
@@ -137,5 +139,8 @@ class Mensajes(db.Model):
             'id_coach': self.id_coach,
             'contenido': self.contenido,
             'fecha_envio': self.fecha_envio.strftime("%d/%m/%Y %H:%M:%S"),
-            'visto': self.visto
+            'visto': self.visto,
+            'is_coach': self.is_coach,
+            'is_user': self.is_user,
+
         }

@@ -1,11 +1,10 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./src/front/**/*.{js,jsx,ts,tsx}", // Esto cubre todos los archivos JS/JSX en la carpeta front
-    "./src/front/styles/**/*.css", // Asegúrate de incluir tus archivos CSS
+    "./src/front/**/*.{js,jsx,ts,tsx}", // Todos los archivos JS/JSX
+    "./src/front/styles/**/*.css",      // Archivos CSS donde puedan haber clases
   ],
   theme: {
     extend: {},
   },
   plugins: [],
-}
+};

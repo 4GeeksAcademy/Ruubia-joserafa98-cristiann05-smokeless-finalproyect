@@ -61,7 +61,7 @@ const CoachProfileFromUser = () => {
                         <h2 className="text-center text-3xl font-bold mb-6 text-white">Perfil del Coach</h2>
                         <div className="flex flex-col items-center mb-8">
                             <img 
-                                src={store.coach.foto_coach || "https://via.placeholder.com/300"} 
+                                src={store.coach.public_id || "https://via.placeholder.com/300"} 
                                 alt="Foto del Coach" 
                                 className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-lg mb-4" 
                             />

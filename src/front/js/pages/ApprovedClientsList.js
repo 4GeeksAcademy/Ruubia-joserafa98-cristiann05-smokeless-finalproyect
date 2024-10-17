@@ -31,7 +31,7 @@ const ListaClientesAprobados = () => {
         };
 
         fetchSolicitudes();
-    }, [store.loggedInUser, actions]);
+    }, [store.loggedInUser]);
 
     const userId = store.loggedInUser?.id || localStorage.getItem("userId");
     const stringUserId = String(userId);
@@ -60,6 +60,11 @@ const ListaClientesAprobados = () => {
         setSelectedCliente(cliente); // Guardamos el cliente seleccionado
     };
 
+    // Verificación de la imagen del usuario
+    useEffect(() => {
+        console.log("Imagen del usuario:", store.loggedInUser?.public_id);
+    }, [store.loggedInUser]);
+
     return (
         <div className={`flex min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
             <Sidebar 
@@ -86,7 +91,7 @@ const ListaClientesAprobados = () => {
                                             <div className="flex items-center mb-4">
                                                 <img 
                                                     className="w-16 h-16 rounded-full border-2 border-blue-500" 
-                                                    src={solicitud.imagen_coach || "https://via.placeholder.com/100"} 
+                                                    src={store.loggedInUser?.public_id || "https://via.placeholder.com/100"} 
                                                     alt={solicitud.nombre_coach} 
                                                 />
                                                 <div className="ml-4">

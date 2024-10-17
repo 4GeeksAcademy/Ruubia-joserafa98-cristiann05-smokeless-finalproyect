@@ -45,11 +45,17 @@ const ChatCoach = () => {
         }, 2000);
 
         return () => clearInterval(intervalId);
-    }, [store.loggedInCoach, actions, navigate]);
+    }, [store.loggedInCoach]);
 
     const solicitudesAprobadas = store.solicitudes.filter(solicitud =>
         solicitud.id_coach === store.loggedInCoach?.id && solicitud.estado === true
     );
+
+    useEffect(() => {
+        
+        console.log(mensajes);
+
+    }, [mensajes]);
 
     useEffect(() => {
         const fetchMensajes = async () => {
@@ -103,6 +109,8 @@ const ChatCoach = () => {
             id_usuario: selectedSolicitud.id_usuario,
             id_coach: userId,
             contenido,
+            is_coach: true,
+            is_user: false
         };
 
         try {
@@ -177,7 +185,7 @@ const ChatCoach = () => {
                                         mensajes.map((mensaje) => (
                                             <div
                                                 key={mensaje.id}
-                                                className={`message ${mensaje.id_usuario === selectedSolicitud.id_usuario ? 'sent' : 'received'}`}
+                                                className={`${mensaje.is_coach ? 'bg-danger' : 'bg-light'} message ${mensaje.id_usuario === selectedSolicitud.id_usuario ? 'sent' : 'received'}`}
                                                 style={{ marginBottom: '0.5rem' }}
                                             >
                                                 <p style={{
