@@ -32,7 +32,7 @@ const ChatSmoker = () => {
         };
 
         fetchData();
-    }, [navigate]);
+    }, []);
 
     const approvedSolicitudes = store.solicitudes.filter(solicitud => 
         solicitud.estado === true && 
@@ -45,31 +45,38 @@ const ChatSmoker = () => {
     const approvedCoaches = store.coaches.filter(coach => approvedCoachIds.includes(coach.id));
 
     useEffect(() => {
-        const fetchMensajes = async () => {
-            if (!selectedCoachId) return;
+        
+        console.log(mensajes);
 
-            const token = localStorage.getItem('jwtToken');
-            const userId = localStorage.getItem('userId');
+    }, [mensajes]);
 
-            try {
-                const response = await fetch(`${process.env.BACKEND_URL}/api/mensajes/${userId}/${selectedCoachId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
+    const fetchMensajes = async () => {
+        if (!selectedCoachId) return;
 
-                if (response.ok) {
-                    const mensajesData = await response.json();
-                    setMensajes(mensajesData);
-                } else {
-                    console.error('Error al obtener mensajes', response.status);
+        const token = localStorage.getItem('jwtToken');
+        const userId = localStorage.getItem('userId');
+
+        try {
+            const response = await fetch(`${process.env.BACKEND_URL}/api/mensajes/${userId}/${selectedCoachId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
-            } catch (error) {
-                console.error('Error en la conexión:', error);
+            });
+
+            if (response.ok) {
+                const mensajesData = await response.json();
+                setMensajes(mensajesData);
+            } else {
+                console.error('Error al obtener mensajes', response.status);
             }
-        };
+        } catch (error) {
+            console.error('Error en la conexión:', error);
+        }
+    };
+    
+    useEffect(() => {
 
         fetchMensajes();
         const intervalId = setInterval(fetchMensajes, 2000);
@@ -96,6 +103,8 @@ const ChatSmoker = () => {
             id_usuario: userId,
             id_coach: selectedCoachId,
             contenido,
+            is_coach: false,
+            is_user: true
         };
 
         try {
@@ -110,7 +119,8 @@ const ChatSmoker = () => {
 
             if (response.ok) {
                 setContenido('');
-                setMensajes((prevMensajes) => [...prevMensajes, { ...nuevoMensaje, id: Date.now() }]);
+                fetchMensajes();
+                //setMensajes((prevMensajes) => [...prevMensajes, { ...nuevoMensaje, id: Date.now() }]);
             } else {
                 const errorResponse = await response.json();
                 console.error('Error al enviar el mensaje:', errorResponse);
@@ -164,7 +174,7 @@ const ChatSmoker = () => {
                                             mensajes.map((mensaje) => (
                                                 <div
                                                     key={mensaje.id}
-                                                    className={`my-2 p-2 rounded ${mensaje.id_usuario === store.loggedInUser.id ? 'bg-light text-dark self-end' : 'bg-gray-200 text-gray-900 self-start'}`}
+                                                    className={`my-2 p-2 ${mensaje.is_user ? 'bg-danger' : 'bg-light'} rounded ${mensaje.id_usuario === store.loggedInUser.id ? 'text-dark self-end' : 'bg-gray-200 text-gray-900 self-start'}`}
                                                 >
                                                     {mensaje.contenido}
                                                 </div>

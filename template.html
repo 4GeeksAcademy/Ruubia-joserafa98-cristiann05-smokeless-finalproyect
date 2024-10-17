@@ -13,6 +13,27 @@
     <!-- En tu archivo HTML -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/atropos@latest/css/atropos.css">
     <script src="https://kit.fontawesome.com/2a04b1758b.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                clifford: '#da373d',
+              }
+            }
+          }
+        }
+      </script>
+     <style type="text/tailwindcss">
+        @layer utilities {
+          .content-auto {
+            content-visibility: auto;
+          }
+        }
+      </style>
+      <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script>
+
 
 
 

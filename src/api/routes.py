@@ -538,7 +538,9 @@ def create_mensaje():
         id_usuario=body.get('id_usuario'),
         id_coach=body.get('id_coach'),
         contenido=body.get('contenido'),
-        fecha_envio=datetime.utcnow()
+        fecha_envio=datetime.utcnow(),
+        is_coach=body.get('is_coach'),
+        is_user=body.get('is_user')
     )
 
     db.session.add(nuevo_mensaje)

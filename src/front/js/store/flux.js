@@ -250,7 +250,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             checkAuth: () => {
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('jwtToken');
 
                 if (token) {
                     setStore({
@@ -261,7 +261,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             // Logout
             logoutsmoker: () => {
-                localStorage.removeItem('token');
+                localStorage.removeItem('jwtToken');
                 setStore({
                     loggedInUser: null,
                     isAuthenticated: false,
@@ -312,7 +312,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                            'Authorization': `Bearer ${localStorage.getItem('jwtTokenCoach')}`,
                         },
                         body: JSON.stringify(coachData),
                     });

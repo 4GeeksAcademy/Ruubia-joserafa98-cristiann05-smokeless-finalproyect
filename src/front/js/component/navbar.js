@@ -5,7 +5,7 @@ import logoimagen from '../../img/logos/logoblanco.png';
 
 export default function Navbar() {
   return (
-    <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-80 backdrop-filter backdrop-blur-lg rounded-full shadow-2xl px-8 py-4 z-50">
+    <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-80 backdrop-filter backdrop-blur-lg rounded-full shadow-2xl px-8  z-50">
       <div className="flex items-center justify-between space-x-8">
         <Link to="/" className="flex items-center space-x-2">
           <img src={logoimagen} alt="Logo" className="w-15 h-20" />
